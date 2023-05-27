@@ -3,7 +3,7 @@
     {
       "tileName": "Introduction",
       "content": "Hi, I am Tejas",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#228B22"
     },
     {
@@ -15,13 +15,13 @@
     {
       "tileName": "SAMPLE TEXT",
       "content": "asjdiasjdsjd",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#28b8a7"
     },
     {
       "tileName": "Education",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#FF4500"
     },
     {
@@ -33,7 +33,7 @@
     {
       "tileName": "Skills",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#800080"
     },
     {
@@ -45,7 +45,7 @@
     {
       "tileName": "Certifications",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#4169E1"
     },
     {
@@ -57,7 +57,7 @@
     {
       "tileName": "Interests",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#00CED1"
     },
     {
@@ -69,7 +69,7 @@
     {
       "tileName": "Publications",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#4B0082"
     },
     {
@@ -81,7 +81,7 @@
     {
       "tileName": "References",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#6A5ACD"
     },
     {
@@ -93,7 +93,7 @@
     {
       "tileName": "Contact Information",
       "content": "",
-      "isSquare": true,
+      "isSquare": false,
       "color": "#1E90FF"
     }
   ]

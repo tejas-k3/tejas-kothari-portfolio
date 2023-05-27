@@ -8,9 +8,25 @@ const Tile = ({ tileName, content, isSquare, color }) => {
   const tileStyle = {
     '--tile-color': color,
     '--text-color': isDarkMode ? 'white' : 'black', // Update the text color based on the theme value
-    '--tile-width': isSquare ? '200px' : '400px',
-    '--tile-height': isSquare ? '200px' : 'auto',
   };
+
+  const getRandomSize = () => {
+    const minSize = 50;
+    const maxSize = 400;
+    var num = Math.floor(Math.random() * (maxSize - minSize + 1) + minSize);
+    // console.log(num);
+    return num;
+  };
+
+  const tileSize = `${getRandomSize()}px`;
+
+  if (isSquare) {
+    tileStyle['--tile-width'] = tileSize;
+    tileStyle['--tile-height'] = tileSize;
+  } else {
+    tileStyle['--tile-width'] = '400px';
+    tileStyle['--tile-height'] = tileSize;
+  }
 
   return (
     <div className="tile" style={tileStyle}>
