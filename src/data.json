@@ -3,98 +3,98 @@
     {
       "tileName": "Introduction",
       "content": "Hi, I am Tejas",
-      "isSquare": false,
-      "color": "#228B22"
+      "isSquare": true,
+      "color": "#FF5252"
     },
     {
       "tileName": "About",
       "content": "FFFFFF",
       "isSquare": false,
-      "color": "#00FF00"
-    },
-    {
-      "tileName": "SAMPLE TEXT",
-      "content": "asjdiasjdsjd",
-      "isSquare": false,
-      "color": "#28b8a7"
-    },
-    {
-      "tileName": "Education",
-      "content": "",
-      "isSquare": false,
-      "color": "#FF4500"
-    },
-    {
-      "tileName": "Work Experience",
-      "content": "",
-      "isSquare": false,
-      "color": "#FF69B4"
+      "color": "#FF9800"
     },
     {
       "tileName": "Skills",
       "content": "",
-      "isSquare": false,
-      "color": "#800080"
+      "isSquare": true,
+      "color": "#FFC107"
     },
     {
       "tileName": "Projects",
       "content": "",
       "isSquare": false,
-      "color": "#008000"
+      "color": "#4CAF50"
+    },
+    {
+      "tileName": "Experience",
+      "content": "",
+      "isSquare": true,
+      "color": "#03A9F4"
+    },
+    {
+      "tileName": "Education",
+      "content": "",
+      "isSquare": false,
+      "color": "#9C27B0"
     },
     {
       "tileName": "Certifications",
       "content": "",
-      "isSquare": false,
-      "color": "#4169E1"
+      "isSquare": true,
+      "color": "#E91E63"
     },
     {
-      "tileName": "Languages",
+      "tileName": "Contact",
       "content": "",
       "isSquare": false,
-      "color": "#FFD700"
+      "color": "#00BCD4"
     },
     {
-      "tileName": "Interests",
+      "tileName": "Portfolio",
       "content": "",
-      "isSquare": false,
-      "color": "#00CED1"
+      "isSquare": true,
+      "color": "#FF4081"
     },
     {
-      "tileName": "Volunteer Work",
+      "tileName": "Services",
       "content": "",
       "isSquare": false,
-      "color": "#FF8C00"
+      "color": "#8BC34A"
     },
     {
-      "tileName": "Publications",
+      "tileName": "Testimonials",
       "content": "",
-      "isSquare": false,
-      "color": "#4B0082"
+      "isSquare": true,
+      "color": "#CDDC39"
     },
     {
-      "tileName": "Awards",
+      "tileName": "Clients",
       "content": "",
       "isSquare": false,
-      "color": "#DC143C"
+      "color": "#009688"
     },
     {
-      "tileName": "References",
+      "tileName": "Gallery",
       "content": "",
-      "isSquare": false,
-      "color": "#6A5ACD"
+      "isSquare": true,
+      "color": "#673AB7"
     },
     {
-      "tileName": "Hobbies",
+      "tileName": "Blog",
       "content": "",
       "isSquare": false,
-      "color": "#FF1493"
+      "color": "#3F51B5"
     },
     {
-      "tileName": "Contact Information",
+      "tileName": "Test Scores",
+      "content": "",
+      "isSquare": true,
+      "color": "#F06292"
+    },
+    {
+      "tileName": "Contact Info",
       "content": "",
       "isSquare": false,
-      "color": "#1E90FF"
+      "color": "#0097A7"
     }
   ]
 }

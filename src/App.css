@@ -3,17 +3,21 @@
   padding: 20px;
   min-height: 100vh;
   transition: background-color 0.3s;
-  color:Black;
+  color: Black;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
   margin-bottom: 20px;
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px; /* Add margin-bottom for the desired gap */
   font-size: 24px;
   font-weight: bold;
 }
@@ -45,6 +49,5 @@
 /* Dark theme styles */
 .dark {
   background-color: black;
-  color:white;
+  color: white;
 }
-
