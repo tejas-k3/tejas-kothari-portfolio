@@ -17,6 +17,84 @@
       "content": "asjdiasjdsjd",
       "isSquare": true,
       "color": "#28b8a7"
+    },
+    {
+      "tileName": "Education",
+      "content": "",
+      "isSquare": true,
+      "color": "#FF4500"
+    },
+    {
+      "tileName": "Work Experience",
+      "content": "",
+      "isSquare": false,
+      "color": "#FF69B4"
+    },
+    {
+      "tileName": "Skills",
+      "content": "",
+      "isSquare": true,
+      "color": "#800080"
+    },
+    {
+      "tileName": "Projects",
+      "content": "",
+      "isSquare": false,
+      "color": "#008000"
+    },
+    {
+      "tileName": "Certifications",
+      "content": "",
+      "isSquare": true,
+      "color": "#4169E1"
+    },
+    {
+      "tileName": "Languages",
+      "content": "",
+      "isSquare": false,
+      "color": "#FFD700"
+    },
+    {
+      "tileName": "Interests",
+      "content": "",
+      "isSquare": true,
+      "color": "#00CED1"
+    },
+    {
+      "tileName": "Volunteer Work",
+      "content": "",
+      "isSquare": false,
+      "color": "#FF8C00"
+    },
+    {
+      "tileName": "Publications",
+      "content": "",
+      "isSquare": true,
+      "color": "#4B0082"
+    },
+    {
+      "tileName": "Awards",
+      "content": "",
+      "isSquare": false,
+      "color": "#DC143C"
+    },
+    {
+      "tileName": "References",
+      "content": "",
+      "isSquare": true,
+      "color": "#6A5ACD"
+    },
+    {
+      "tileName": "Hobbies",
+      "content": "",
+      "isSquare": false,
+      "color": "#FF1493"
+    },
+    {
+      "tileName": "Contact Information",
+      "content": "",
+      "isSquare": true,
+      "color": "#1E90FF"
     }
   ]
 }

@@ -1,0 +1,27 @@
+.tile-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  gap: 2px;
+}
+
+.tile {
+    background-color: var(--tile-color);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color); /* Use variable for text color */
+    width: var(--tile-width); /* Use variable for tile width */
+    height: var(--tile-height); /* Use variable for tile height */
+    border-radius: var(--tile-border-radius); /* Use variable for border radius */
+  }
+  
+  .tile-name {
+    font-weight: bold;
+  }
+
+  .tile.dark {
+    color: white;
+  }
