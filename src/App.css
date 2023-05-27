@@ -1,70 +1,44 @@
 .App {
   text-align: center;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
+  padding: 20px;
+  min-height: 100vh; /* Ensure the App div takes up the full height of the viewport */
+  transition: background-color 0.3s; /* Add a smooth transition effect */
+  color:black;
+}
+
+.header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  transition: background-color 0.2s ease;
+  margin-bottom: 20px;
+  /* color: white; Set header text color to white */
 }
 
-.App.dark {
-  background-color: #000;
+.title {
+  font-size: 24px;
+  font-weight: bold;
 }
 
-.slider-container {
-  position: relative;
-  display: inline-block;
-}
-
-.slider {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider-label {
-  position: relative;
-  display: block;
-  width: 40px;
-  height: 20px;
+.theme-toggle {
+  background-color: transparent;
+  border: none;
   cursor: pointer;
+  outline: none;
 }
 
-.slider-button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  transition: background-color 0.2s ease;
+.theme-toggle img {
+  width: 24px;
+  height: 24px;
+  background-color: white; /* Set a white background for the button's image */
+  border-radius: 50%; /* Optional: Add border radius for a circular appearance */
+  padding: 4px; /* Optional: Add padding to adjust the size of the button's image */
 }
 
-.slider-button.night {
-  background-color: #000;
+/* Dark theme styles */
+.dark {
+  background-color: black; /* Set background color to black */
 }
 
-.slider-icon {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  background-color: #ad4949;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
-}
-
-input.slider:checked + .slider-label .slider-button {
-  background-color: #000;
-}
-
-input.slider:checked + .slider-label .slider-icon {
-  transform: translateX(20px);
+.dark .header {
+  color: white; /* Set header text color to white in dark mode */
 }
