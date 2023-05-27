@@ -1,0 +1,22 @@
+{
+  "tiles": [
+    {
+      "tileName": "Introduction",
+      "content": "Hi, I am Tejas",
+      "isSquare": true,
+      "color": "#228B22"
+    },
+    {
+      "tileName": "About",
+      "content": "FFFFFF",
+      "isSquare": false,
+      "color": "#00FF00"
+    },
+    {
+      "tileName": "SAMPLE TEXT",
+      "content": "asjdiasjdsjd",
+      "isSquare": true,
+      "color": "#28b8a7"
+    }
+  ]
+}
