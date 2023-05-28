@@ -34,17 +34,36 @@ const Tile = ({ tileName, content, isSquare, color, shuffleColors }) => {
       setIsFlipped(!isFlipped);
     }
   };
+  const renderContent = () => {
+    if (content.type === 'iconLink') {
+      return (
+        <a href={content.url}>
+          <div
+            className="icon-container"
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <img
+              src={content.iconSrc}
+              alt={content.iconAlt}
+              className={`icon ${isFlipped ? 'flipped' : ''}`}
+            />
+          </div>
+        </a>
+      );
+    } else {
+      return <div className="tile-content">{content}</div>;
+    }
+  };
 
-  const tileClass = `tile ${isFlipped ? 'flipped' : ''}`;
+  const tileClass = `tile ${isFlipped ? '' : 'flipped'}`;
 
   return (
     <div className={tileClass} style={tileStyle} onClick={handleClick}>
-      <div className="tile-content">
-        {isFlipped ? (
-          <div className="tile-name">{content}</div>
-          ) : (
-            <div className="tile-name">{tileName}</div>
-        )}
+        <div className="tile-name">
+        {isFlipped ? <div className="tile-name">{tileName}</div> : renderContent()}
       </div>
     </div>
   );

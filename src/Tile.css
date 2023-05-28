@@ -13,6 +13,7 @@
   perspective: 1000px;
   transform-style: preserve-3d;
   text-align: center;
+  max-width: 30vw; /* Add max-width for responsiveness */
 }
 
 .tile-name {
@@ -20,29 +21,23 @@
   font-weight: bold;
   color: var(--text-color);
   margin-bottom: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   transition: transform 0.3s ease;
+  white-space: normal; /* Allow multiline text */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Add ellipsis for very long content */
 }
 
 .tile-content {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-weight: lighter;
   font-size: 18px;
   color: var(--text-color);
   transition: transform 0.3s ease;
+  white-space: normal; /* Allow multiline text */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Add ellipsis for very long content */
   display: -webkit-box;
   -webkit-line-clamp: 4; /* Number of lines to show */
   -webkit-box-orient: vertical;
-}
-
-.tile-content a {
-  display: inline-block;
-  text-decoration: none;
-  color: inherit;
 }
 
 .tile-container {
@@ -95,4 +90,20 @@
 
 .front {
   z-index: 2;
+}
+
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.icon {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
 }

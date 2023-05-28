@@ -4,97 +4,87 @@
       "tileName": "Welcome!",
       "content": "Namaste",
       "isSquare": true,
-      "color": "#FF5252"
+      "color": "#603F83FF"
     },
     {
       "tileName": "Click me!",
       "content": "Click on Tejas twice!",
       "isSquare": false,
-      "color": "#FF9800"
+      "color": "#C7D3D4FF"
     },
     {
-      "tileName": "Introduction",
+      "tileName": "Who am I?",
       "content": "Software Enginner coding for passion & engineering",
       "isSquare": true,
-      "color": "#FFC107"
+      "color": "#00539CFF"
     },
     {
-      "tileName": "Github",
-      "content": "https://github.com/tejas-k3",
+      "tileName": "Skills",
+      "content": "Python, Java, [Vertica, MySQL](SQL), MongoDB, Spring boot, Pytest",
       "isSquare": false,
-      "color": "#4CAF50"
+      "color": "#EEA47FFF"
     },
     {
-      "tileName": "Experience",
-      "content": "",
-      "isSquare": true,
-      "color": "#03A9F4"
-    },
-    {
-      "tileName": "Education",
-      "content": "",
+      "tileName": "My Github",
+      "content": {
+        "type": "iconLink",
+        "url": "https://github.com/tejas-k3",
+        "iconSrc": "https://pic.onlinewebfonts.com/svg/img_258190.png",
+        "iconAlt": "Icon"
+      },
       "isSquare": false,
-      "color": "#9C27B0"
+      "color": "#4183C4"
+    },
+    {
+      "tileName": "Located at",
+      "content": {
+        "type": "iconLink",
+        "url": "https://goo.gl/maps/Nxo6C9UbddUbrQ616",
+        "iconSrc": "https://cdn.onlinewebfonts.com/svg/img_466606.png",
+        "iconAlt": "Icon"
+      },
+      "isSquare": false,
+      "color": "#DB4437"
     },
     {
       "tileName": "Color Shuffle",
       "content": "Color Shuffle",
       "isSquare": true,
-      "color": "#E91E63"
+      "color": "#FFF"
     },
     {
-      "tileName": "Contact",
-      "content": "",
+      "tileName": "LinkedIn",
+      "content": {
+        "type": "iconLink",
+        "url": "https://www.linkedin.com/in/tejaskothari03/",
+        "iconSrc": "https://pic.onlinewebfonts.com/svg/img_424410.png",
+        "iconAlt": "Icon"
+      },
       "isSquare": false,
-      "color": "#00BCD4"
+      "color": "#0e76a8"
+    },
+    {
+      "tileName": "Rock Playlist", 
+      "content": {
+        "type": "iconLink",
+        "url": "https://open.spotify.com/playlist/37i9dQZF1DWXRqgorJj26U",
+        "iconSrc": "https://pic.onlinewebfonts.com/svg/img_424438.png",
+        "iconAlt": "Icon"
+      },
+      "isSquare": true,
+      "color": "#1ED760"
     },
     {
       "tileName": "About this site!",
-      "content": "100% made by me, chatgpt, stackoverflow",
+      "content": "Made with \u2764  by me, chatgpt, stackoverflow",
       "isSquare": true,
-      "color": "#FF4081"
+      "color": "#FC766AFF"
     },
     {
-      "tileName": "Services",
-      "content": "",
-      "isSquare": false,
-      "color": "#8BC34A"
-    },
-    {
-      "tileName": "Testimonials",
-      "content": "",
+      "tileName": "Currently I'm",
+      "content": "Software Engineer @ Sandvine Technologies",
       "isSquare": true,
-      "color": "#CDDC39"
-    },
-    {
-      "tileName": "Clients",
-      "content": "",
-      "isSquare": false,
-      "color": "#009688"
-    },
-    {
-      "tileName": "Gallery",
-      "content": "",
-      "isSquare": true,
-      "color": "#673AB7"
-    },
-    {
-      "tileName": "Blog",
-      "content": "",
-      "isSquare": false,
-      "color": "#3F51B5"
-    },
-    {
-      "tileName": "Test Scores",
-      "content": "",
-      "isSquare": true,
-      "color": "#F06292"
-    },
-    {
-      "tileName": "Contact Info",
-      "content": "",
-      "isSquare": false,
-      "color": "#0097A7"
+      "color": "#5B84B1FF"
     }
   ]
 }
