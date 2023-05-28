@@ -30,6 +30,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: lighter;
   font-size: 18px;
   color: var(--text-color);
   transition: transform 0.3s ease;

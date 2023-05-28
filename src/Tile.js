@@ -2,21 +2,20 @@ import React, { useContext, useState } from 'react';
 import './Tile.css';
 import { ThemeContext } from './App';
 
-const Tile = ({ tileName, content, isSquare, color }) => {
+const Tile = ({ tileName, content, isSquare, color, shuffleColors }) => {
   const isDarkMode = useContext(ThemeContext);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [tileColors, setTileColors] = useState([]);
-
-  const tileStyle = {
-    '--tile-color': color,
-    '--text-color': isDarkMode ? 'white' : 'black',
-  };
 
   const getRandomSize = () => {
     const minSize = 50;
     const maxSize = 200;
-    var num = Math.floor(Math.random() * (maxSize - minSize + 1) + minSize);
+    const num = Math.floor(Math.random() * (maxSize - minSize + 1) + minSize);
     return num;
+  };
+
+  const tileStyle = {
+    '--tile-color': color,
+    '--text-color': isDarkMode ? 'white' : 'black',
   };
 
   const tileSize = `${getRandomSize()}px`;
@@ -29,20 +28,11 @@ const Tile = ({ tileName, content, isSquare, color }) => {
   }
 
   const handleClick = () => {
-    if (tileName === "Color Shuffle") {
-      shuffleColors();
+    if (tileName === 'Color Shuffle') {
+      shuffleColors(); // Call the shuffleColors function passed from App.js
     } else {
       setIsFlipped(!isFlipped);
     }
-  };
-
-  const shuffleColors = () => {
-    const shuffledColors = [...tileColors];
-    for (let i = shuffledColors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]];
-    }
-    setTileColors(shuffledColors);
   };
 
   const tileClass = `tile ${isFlipped ? 'flipped' : ''}`;
