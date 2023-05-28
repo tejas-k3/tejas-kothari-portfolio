@@ -1,0 +1,90 @@
+{
+  "tiles": [
+    {
+      "tileName": "Welcome!",
+      "content": "Namaste",
+      "isSquare": true,
+      "color": "#603F83FF"
+    },
+    {
+      "tileName": "Click me!",
+      "content": "Click on Tejas twice!",
+      "isSquare": false,
+      "color": "#C7D3D4FF"
+    },
+    {
+      "tileName": "Who am I?",
+      "content": "Software Enginner coding for passion & engineering",
+      "isSquare": true,
+      "color": "#00539CFF"
+    },
+    {
+      "tileName": "Skills",
+      "content": "Python, Java, [Vertica, MySQL](SQL), MongoDB, Spring boot, Pytest",
+      "isSquare": false,
+      "color": "#EEA47FFF"
+    },
+    {
+      "tileName": "My Github",
+      "content": {
+        "type": "iconLink",
+        "url": "https://github.com/tejas-k3",
+        "iconSrc": "https://pic.onlinewebfonts.com/svg/img_258190.png",
+        "iconAlt": "Icon"
+      },
+      "isSquare": false,
+      "color": "#4183C4"
+    },
+    {
+      "tileName": "Located at",
+      "content": {
+        "type": "iconLink",
+        "url": "https://goo.gl/maps/Nxo6C9UbddUbrQ616",
+        "iconSrc": "https://cdn.onlinewebfonts.com/svg/img_466606.png",
+        "iconAlt": "Icon"
+      },
+      "isSquare": false,
+      "color": "#DB4437"
+    },
+    {
+      "tileName": "Color Shuffle",
+      "content": "Color Shuffle",
+      "isSquare": true,
+      "color": "#FFF"
+    },
+    {
+      "tileName": "LinkedIn",
+      "content": {
+        "type": "iconLink",
+        "url": "https://www.linkedin.com/in/tejaskothari03/",
+        "iconSrc": "https://pic.onlinewebfonts.com/svg/img_424410.png",
+        "iconAlt": "Icon"
+      },
+      "isSquare": false,
+      "color": "#0e76a8"
+    },
+    {
+      "tileName": "Rock Playlist", 
+      "content": {
+        "type": "iconLink",
+        "url": "https://open.spotify.com/playlist/37i9dQZF1DWXRqgorJj26U",
+        "iconSrc": "https://pic.onlinewebfonts.com/svg/img_424438.png",
+        "iconAlt": "Icon"
+      },
+      "isSquare": true,
+      "color": "#1ED760"
+    },
+    {
+      "tileName": "About this site!",
+      "content": "Made with \u2764  by me, chatgpt, stackoverflow",
+      "isSquare": true,
+      "color": "#FC766AFF"
+    },
+    {
+      "tileName": "Currently I'm",
+      "content": "Software Engineer @ Sandvine Technologies",
+      "isSquare": true,
+      "color": "#5B84B1FF"
+    }
+  ]
+}
