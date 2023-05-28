@@ -41,9 +41,9 @@ const Tile = ({ tileName, content, isSquare, color, shuffleColors }) => {
     <div className={tileClass} style={tileStyle} onClick={handleClick}>
       <div className="tile-content">
         {isFlipped ? (
-          <div className="tile-name">{tileName}</div>
-        ) : (
           <div className="tile-name">{content}</div>
+          ) : (
+            <div className="tile-name">{tileName}</div>
         )}
       </div>
     </div>
