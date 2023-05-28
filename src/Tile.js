@@ -5,6 +5,7 @@ import { ThemeContext } from './App';
 const Tile = ({ tileName, content, isSquare, color }) => {
   const isDarkMode = useContext(ThemeContext);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [tileColors, setTileColors] = useState([]);
 
   const tileStyle = {
     '--tile-color': color,
@@ -28,7 +29,20 @@ const Tile = ({ tileName, content, isSquare, color }) => {
   }
 
   const handleClick = () => {
-    setIsFlipped(!isFlipped);
+    if (tileName === "Color Shuffle") {
+      shuffleColors();
+    } else {
+      setIsFlipped(!isFlipped);
+    }
+  };
+
+  const shuffleColors = () => {
+    const shuffledColors = [...tileColors];
+    for (let i = shuffledColors.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]];
+    }
+    setTileColors(shuffledColors);
   };
 
   const tileClass = `tile ${isFlipped ? 'flipped' : ''}`;
@@ -36,12 +50,14 @@ const Tile = ({ tileName, content, isSquare, color }) => {
   return (
     <div className={tileClass} style={tileStyle} onClick={handleClick}>
       <div className="tile-content">
-        {isFlipped ? content : <div className="tile-name">{tileName}</div>}
+        {isFlipped ? (
+          <div className="tile-name">{tileName}</div>
+        ) : (
+          <div className="tile-name">{content}</div>
+        )}
       </div>
     </div>
   );
 };
 
-
 export default Tile;
-

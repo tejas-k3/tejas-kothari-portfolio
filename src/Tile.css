@@ -10,7 +10,9 @@
   height: var(--tile-height);
   cursor: pointer;
   transition: transform 0.3s ease;
-  perspective: 1000px; /* Add perspective for 3D transformation */
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  text-align: center;
 }
 
 .tile-name {
@@ -18,9 +20,10 @@
   font-weight: bold;
   color: var(--text-color);
   margin-bottom: 10px;
-  transform: rotateY(
-    180deg
-  ); /* Add this property to ensure proper orientation */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: transform 0.3s ease;
 }
 
 .tile-content {
@@ -29,7 +32,16 @@
   white-space: nowrap;
   font-size: 18px;
   color: var(--text-color);
-  transform: rotateY(180deg);
+  transition: transform 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* Number of lines to show */
+  -webkit-box-orient: vertical;
+}
+
+.tile-content a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .tile-container {
@@ -39,18 +51,36 @@
   align-content: flex-start;
   gap: 10px;
   opacity: 1;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.5s;
+}
+
+.fallen-tiles {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.fallen-tiles.fade-in {
+  opacity: 1;
 }
 
 .tile-container.fade-out {
   opacity: 0;
 }
+
 .tile.dark {
   color: white;
 }
 
 .tile.flipped {
-  transform: rotateY(180deg);
+  transform: rotateY(360deg);
 }
 
 .side {
@@ -64,8 +94,4 @@
 
 .front {
   z-index: 2;
-}
-
-.back {
-  transform: rotateY(180deg);
 }

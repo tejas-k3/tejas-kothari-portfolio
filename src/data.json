@@ -1,26 +1,26 @@
 {
   "tiles": [
     {
-      "tileName": "Introduction",
-      "content": "Hi, I am Tejas",
+      "tileName": "Welcome!",
+      "content": "Namaste",
       "isSquare": true,
       "color": "#FF5252"
     },
     {
-      "tileName": "About",
-      "content": "FFFFFF",
+      "tileName": "Click me!",
+      "content": "Click on Tejas twice!",
       "isSquare": false,
       "color": "#FF9800"
     },
     {
-      "tileName": "Skills",
-      "content": "",
+      "tileName": "Introduction",
+      "content": "Software Enginner coding for passion & engineering",
       "isSquare": true,
       "color": "#FFC107"
     },
     {
-      "tileName": "Projects",
-      "content": "",
+      "tileName": "Github",
+      "content": "https://github.com/tejas-k3",
       "isSquare": false,
       "color": "#4CAF50"
     },
@@ -37,7 +37,7 @@
       "color": "#9C27B0"
     },
     {
-      "tileName": "Certifications",
+      "tileName": "Color Shuffle",
       "content": "",
       "isSquare": true,
       "color": "#E91E63"
@@ -49,8 +49,8 @@
       "color": "#00BCD4"
     },
     {
-      "tileName": "Portfolio",
-      "content": "",
+      "tileName": "About this site!",
+      "content": "100% made by me, chatgpt, stackoverflow",
       "isSquare": true,
       "color": "#FF4081"
     },

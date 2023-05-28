@@ -4,7 +4,7 @@ import sunIcon from "./sun.svg";
 import moonIcon from "./moon.svg";
 import Tile from "./Tile";
 import data from "./data.json";
-import itachiImage from "./pfp.jpg"; // Import the image
+import itachiImage from "./pfp.jpg";
 
 const ThemeContext = createContext();
 
@@ -13,6 +13,7 @@ function App() {
   const titleRef = useRef(null);
   const [imageSize, setImageSize] = useState(0);
   const [areTilesVisible, setAreTilesVisible] = useState(true);
+  const [tileColors, setTileColors] = useState([]);
 
   useEffect(() => {
     if (titleRef.current) {
@@ -22,14 +23,8 @@ function App() {
   }, []);
 
   const handleTitleClick = () => {
-    setAreTilesVisible(false); // Hide the tiles
-    setTimeout(() => setAreTilesVisible(true), 600); // Show the tiles after 2 seconds
+    setAreTilesVisible(!areTilesVisible); // Toggle the visibility of tiles
   };
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
   const imageStyle = {
     height: `${imageSize}px`,
     width: `${imageSize}px`,
@@ -42,22 +37,26 @@ function App() {
         <header className="header">
           <div className="title">
             <img className="portrait" src={itachiImage} alt="Portrait" style={imageStyle} />
-            <span ref={titleRef} onClick={handleTitleClick}>Tejas Kothari</span>
+            <span ref={titleRef} onClick={handleTitleClick}>
+              Tejas Kothari
+            </span>
+            {/* Wrap Tejas Kothari in a span */}
           </div>
-          <button className="theme-toggle" onClick={toggleTheme}>
+          <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
             <img src={isDarkMode ? moonIcon : sunIcon} alt="Theme toggle" />
           </button>
         </header>
-        <div className={`tile-container ${areTilesVisible ? "" : "fade-out"}`}>
-          {data.tiles.map((tile, index) => (
-            <Tile
-              key={index}
-              tileName={tile.tileName}
-              content={tile.content}
-              isSquare={tile.isSquare}
-              color={tile.color}
-            />
-          ))}
+        <div className="tile-container">
+          {areTilesVisible &&
+            data.tiles.map((tile, index) => (
+              <Tile
+                key={index}
+                tileName={tile.tileName}
+                content={tile.content}
+                isSquare={tile.isSquare}
+                color={tile.color}
+              />
+            ))}
         </div>
       </div>
     </ThemeContext.Provider>
