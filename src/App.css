@@ -1,8 +1,7 @@
 .App {
   text-align: center;
   padding: 20px;
-  min-height: fit-content;
-  max-height: 150vh;
+  min-height: 100vh;
   transition: background-color 0.3s;
   color: Black;
 }

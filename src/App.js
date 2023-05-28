@@ -63,7 +63,7 @@ function App() {
 
   return (
     <ThemeContext.Provider value={isDarkMode}>
-      <div style={{overflow: 'hidden'}} className={`App ${isDarkMode ? 'dark' : 'light'}`}>
+      <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
         <header className="header">
           <div className="title">
             <img style={{height: '40px', width: '40px'}} className="portrait" src={itachiImage} alt="Portrait" />
