@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: center;
   background-color: var(--tile-color);
-  padding: 20px;
+  padding: 10px;
   width: var(--tile-width);
   height: var(--tile-height);
   cursor: pointer;
@@ -20,11 +20,11 @@
   font-size: 24px;
   font-weight: bold;
   color: var(--text-color);
-  margin-bottom: 10px;
   transition: transform 0.3s ease;
   white-space: normal; /* Allow multiline text */
   overflow: hidden; /* Hide overflowing content */
   text-overflow: ellipsis; /* Add ellipsis for very long content */
+  overflow-wrap: anywhere;
 }
 
 .tile-content {
@@ -43,15 +43,15 @@
 .tile-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  align-content: flex-start;
+  justify-content: space-between;
+  align-content: space-between;
   gap: 10px;
   opacity: 1;
   transition: opacity 0.5s;
 }
 
 .fallen-tiles {
-  position: absolute;
+  position: realtive;
   left: 0;
   right: 0;
   bottom: 0;
