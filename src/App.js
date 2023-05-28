@@ -1,27 +1,26 @@
 import React, { useState, createContext, useRef, useEffect } from 'react';
 import './App.css';
-import sunIcon from './sun.svg';
-import moonIcon from './moon.svg';
 import Tile from './Tile';
 import data from './data.json';
 import itachiImage from './pfp.jpg';
+import { Sun, Moon } from 'react-feather';
 
 const ThemeContext = createContext();
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const titleRef = useRef(null);
-  const [imageSize, setImageSize] = useState(0);
+  //const [imageSize, setImageSize] = useState(0); // why are you updating the state of an image? this is not needed.
   const [areTilesVisible, setAreTilesVisible] = useState(true);
   const [tileColors, setTileColors] = useState([]);
   const [tileSizes, setTileSizes] = useState({});
 
-  useEffect(() => {
-    if (titleRef.current) {
-      const titleHeight = titleRef.current.offsetHeight;
-      setImageSize(titleHeight);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (titleRef.current) {
+  //     const titleHeight = titleRef.current.offsetHeight;
+  //     setImageSize(titleHeight);
+  //   }
+  // }, []); // useEffect here was unnecessary
 
   useEffect(() => {
     setTileSizes(generateTileSizes());
@@ -56,25 +55,25 @@ function App() {
     return color;
   };
   
-  const imageStyle = {
-    height: `${imageSize}px`,
-    width: `${imageSize}px`,
-    marginRight: '10px', // Add margin to create space between image and text
-  };
+  // const imageStyle = {
+  //   height: `${imageSize}px`,
+  //   width: `${imageSize}px`,
+  //   marginRight: '10px', // Add margin to create space between image and text
+  // }; // All the styles should always separately be in styles folder
 
   return (
     <ThemeContext.Provider value={isDarkMode}>
       <div className={`App ${isDarkMode ? 'dark' : 'light'}`}>
         <header className="header">
           <div className="title">
-            <img className="portrait" src={itachiImage} alt="Portrait" style={imageStyle} />
-            <span ref={titleRef} onClick={handleTitleClick}>
+            <img style={{height: '40px', width: '40px'}} className="portrait" src={itachiImage} alt="Portrait" />
+            <span style={{marginLeft: '20px'}} ref={titleRef} onClick={handleTitleClick}>
               Tejas Kothari
             </span>
             {/* Wrap Tejas Kothari in a span */}
           </div>
           <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-            <img src={isDarkMode ? moonIcon : sunIcon} alt="Theme toggle" />
+            {isDarkMode ? <Moon size='30px' color="#D3D3D3" /> : <Sun size='30px' color="#E8A317" />}
           </button>
         </header>
         <div className="tile-container">
