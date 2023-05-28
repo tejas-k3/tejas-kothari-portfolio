@@ -10,17 +10,9 @@ const ThemeContext = createContext();
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const titleRef = useRef(null);
-  //const [imageSize, setImageSize] = useState(0); // why are you updating the state of an image? this is not needed.
   const [areTilesVisible, setAreTilesVisible] = useState(true);
   const [tileColors, setTileColors] = useState([]);
   const [tileSizes, setTileSizes] = useState({});
-
-  // useEffect(() => {
-  //   if (titleRef.current) {
-  //     const titleHeight = titleRef.current.offsetHeight;
-  //     setImageSize(titleHeight);
-  //   }
-  // }, []); // useEffect here was unnecessary
 
   useEffect(() => {
     setTileSizes(generateTileSizes());
@@ -54,12 +46,6 @@ function App() {
     }
     return color;
   };
-  
-  // const imageStyle = {
-  //   height: `${imageSize}px`,
-  //   width: `${imageSize}px`,
-  //   marginRight: '10px', // Add margin to create space between image and text
-  // }; // All the styles should always separately be in styles folder
 
   return (
     <ThemeContext.Provider value={isDarkMode}>
