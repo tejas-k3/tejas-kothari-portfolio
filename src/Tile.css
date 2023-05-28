@@ -1,0 +1,109 @@
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--tile-color);
+  padding: 20px;
+  width: var(--tile-width);
+  height: var(--tile-height);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  text-align: center;
+  max-width: 30vw; /* Add max-width for responsiveness */
+}
+
+.tile-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+  white-space: normal; /* Allow multiline text */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Add ellipsis for very long content */
+}
+
+.tile-content {
+  font-weight: lighter;
+  font-size: 18px;
+  color: var(--text-color);
+  transition: transform 0.3s ease;
+  white-space: normal; /* Allow multiline text */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Add ellipsis for very long content */
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* Number of lines to show */
+  -webkit-box-orient: vertical;
+}
+
+.tile-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  gap: 10px;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.fallen-tiles {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.fallen-tiles.fade-in {
+  opacity: 1;
+}
+
+.tile-container.fade-out {
+  opacity: 0;
+}
+
+.tile.dark {
+  color: white;
+}
+
+.tile.flipped {
+  transform: rotateY(360deg);
+}
+
+.side {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.front {
+  z-index: 2;
+}
+
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.icon {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
