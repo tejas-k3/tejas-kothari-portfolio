@@ -21,10 +21,10 @@ export const Content = styled("div")(() => ({
   flexWrap: "wrap",
   justifyContent: "space-between",
   alignContent: "space-between",
-  alignItems: 'center',
+  alignItems: "center",
   gap: "10px",
   opacity: 1,
-  transition: 'opacity 0.5s',
+  transition: "opacity 0.5s",
   padding: "20px",
 }));
 
@@ -38,6 +38,7 @@ export const LogoContainer = styled("img")(() => ({
   objectFit: "contain",
   height: "40px",
   width: "40px",
+  borderRadius: "5px",
 }));
 
 export const Title = styled("span")(() => ({

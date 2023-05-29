@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 
-export const Tile = styled("div")((isDarkMode) => ({
+export const Tile = styled("div")(({ isDarkMode }) => ({
   position: "relative",
   display: "flex",
   flexDirection: "column",
@@ -15,6 +15,8 @@ export const Tile = styled("div")((isDarkMode) => ({
   transformStyle: "preserve-3d",
   textAlign: "center",
   maxWidth: "30vw",
+  borderRadius: "5PX",
+  boxShadow: isDarkMode ? "" : "5px 5px 5px #111111",
 }));
 
 export const TileName = styled("div")(() => ({
@@ -38,12 +40,10 @@ export const TileContent = styled("div")(() => ({
   WebkitBoxOrient: "vertical",
 }));
 
-
 export const FlippedTile = styled("img")(() => ({
   height: "100%",
   width: "100%",
 }));
-
 
 export const IconContainer = styled("div")(() => ({
   display: "flex",
