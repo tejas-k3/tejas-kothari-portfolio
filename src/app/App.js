@@ -21,7 +21,6 @@ export const App = () => {
   const [tileColors, setTileColors] = useState([]);
   const [tileSizes, setTileSizes] = useState({});
 
-
   useEffect(() => {
     setTileSizes(getTileSizes());
   }, [areTilesVisible]);

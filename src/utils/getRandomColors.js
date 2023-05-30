@@ -1,11 +1,13 @@
-import { getColorHue } from './getColorHue.js';
-let previousColor = null;
-let lowestSaturation = 50;
-let highestSaturation = 100;
-let lowestLightness = 30;
-let highestLightness = 60;
+import { getColorHue } from "./getColorHue.js";
+
 export const getRandomColors = () => {
   let color = "";
+  let previousColor = null;
+  let lowestSaturation = 50;
+  let highestSaturation = 100;
+  let lowestLightness = 30;
+  let highestLightness = 60;
+
   if (previousColor) {
     const prevHue = getColorHue(previousColor);
     const newHue = (prevHue + getRandomInt(10, 40)) % 360;
@@ -20,6 +22,7 @@ export const getRandomColors = () => {
     color = getOriginalColor();
   }
   previousColor = color;
+
   return color;
 };
 
@@ -30,9 +33,10 @@ const getRandomInt = (min, max) => {
 const getOriginalColor = () => {
   const letters = "0123456789ABCDEF";
   let color = "#";
+
   for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
+
   return color;
 };
-
