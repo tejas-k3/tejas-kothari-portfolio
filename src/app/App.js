@@ -30,8 +30,9 @@ export const App = () => {
   };
 
   const shuffleColors = () => {
-    const shuffledColors = data.tiles.map(() => getRandomColors());
-    setTileColors(shuffledColors);
+    let shuffledColors;
+    shuffledColors = data.tiles.map(() => getRandomColors());
+    setTileColors([...shuffledColors]);
   };
 
   return (
