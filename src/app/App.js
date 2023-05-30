@@ -21,6 +21,7 @@ export const App = () => {
   const [tileColors, setTileColors] = useState([]);
   const [tileSizes, setTileSizes] = useState({});
 
+
   useEffect(() => {
     setTileSizes(getTileSizes());
   }, [areTilesVisible]);
@@ -30,8 +31,9 @@ export const App = () => {
   };
 
   const shuffleColors = () => {
-    const shuffledColors = data.tiles.map(() => getRandomColors());
-    setTileColors(shuffledColors);
+    let shuffledColors;
+    shuffledColors = data.tiles.map(() => getRandomColors());
+    setTileColors([...shuffledColors]);
   };
 
   return (
