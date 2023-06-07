@@ -18,13 +18,13 @@ export const Tiles = ({
 }) => {
   const isDarkMode = useContext(ThemeContext);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [tileSize, setTileSize] = useState(`${getRandomSize()}px`);
 
   const tileStyle = {
     "--tile-color": color,
     "--text-color": isDarkMode ? "white" : "black",
   };
-
-  const tileSize = `${getRandomSize()}px`;
 
   if (isSquare) {
     tileStyle["--tile-width"] = tileSize;
@@ -35,10 +35,20 @@ export const Tiles = ({
   }
 
   const handleClick = () => {
+    setIsAnimating(true);
+
     if (tileName === "Color Shuffle") {
-      shuffleColors(); // Call the shuffleColors function passed from App.js
+      setTileSize(`${getRandomSize()}px`);
+      setTimeout(() => {
+        setIsAnimating(false);
+        shuffleColors();
+      }, 700);
     } else {
-      setIsFlipped(!isFlipped);
+      setTileSize(`${getRandomSize()}px`);
+      setTimeout(() => {
+        setIsAnimating(false);
+        setIsFlipped(!isFlipped);
+      }, 700);
     }
   };
 
@@ -61,7 +71,7 @@ export const Tiles = ({
   };
 
   return (
-    <Tile style={tileStyle} onClick={handleClick}>
+    <Tile style={tileStyle} isAnimating={isAnimating} tileSize={tileSize} onClick={handleClick}>
       <TileName>
         {isFlipped ? <TileName>{tileName}</TileName> : renderContent()}
       </TileName>

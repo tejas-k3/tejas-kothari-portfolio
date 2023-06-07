@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 
-export const Tile = styled("div")(({ isDarkMode }) => ({
+export const Tile = styled("div")(({ isDarkMode, isAnimating }) => ({
   position: "relative",
   display: "flex",
   flexDirection: "column",
@@ -17,6 +17,16 @@ export const Tile = styled("div")(({ isDarkMode }) => ({
   maxWidth: "30vw",
   borderRadius: "5PX",
   boxShadow: isDarkMode ? "" : "5px 5px 5px #111111",
+  animation: isAnimating ? "rotation 0.5s forwards" : "none",
+  transition: "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
+  "@keyframes rotation": {
+    "0%": {
+      transform: "rotateY(0deg)",
+    },
+    "100%": {
+      transform: "rotateY(360deg)",
+    },
+  },
 }));
 
 export const TileName = styled("div")(() => ({
