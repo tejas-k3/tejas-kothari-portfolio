@@ -42,13 +42,13 @@ export const Tiles = ({
       setTimeout(() => {
         setIsAnimating(false);
         shuffleColors();
-      }, 700);
+      }, 600);
     } else {
       setTileSize(`${getRandomSize()}px`);
       setTimeout(() => {
         setIsAnimating(false);
         setIsFlipped(!isFlipped);
-      }, 700);
+      }, 600);
     }
   };
 

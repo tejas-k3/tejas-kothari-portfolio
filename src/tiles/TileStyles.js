@@ -17,7 +17,7 @@ export const Tile = styled("div")(({ isDarkMode, isAnimating }) => ({
   maxWidth: "30vw",
   borderRadius: "5PX",
   boxShadow: isDarkMode ? "" : "5px 5px 5px #111111",
-  animation: isAnimating ? "rotation 0.5s forwards" : "none",
+  animation: isAnimating ? "rotation 0.4s forwards" : "none",
   transition: "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
   "@keyframes rotation": {
     "0%": {
