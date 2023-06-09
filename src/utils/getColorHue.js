@@ -22,6 +22,9 @@ export const getColorHue = (color) => {
       case b:
         hue = (r - g) / delta + 4;
         break;
+      default:
+        hue = 0; // Handle unmatched cases
+        break;
     }
     hue *= 60;
     if (hue < 0) {
