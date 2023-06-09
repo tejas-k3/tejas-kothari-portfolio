@@ -76,9 +76,7 @@ export const Tiles = ({
       tileSize={tileSize}
       onClick={handleClick}
     >
-      <TileName>
-        {isFlipped ? <TileName>{tileName}</TileName> : renderContent()}
-      </TileName>
+      <TileName>{isFlipped ? tileName : renderContent()}</TileName>
     </Tile>
   );
 };

@@ -36,7 +36,7 @@ export const App = () => {
   };
 
   return (
-    <ThemeContext.Provider>
+    <ThemeContext.Provider value={isDarkMode}>
       <Portfolio isDarkMode={isDarkMode}>
         <Header>
           <TitleContainer>
