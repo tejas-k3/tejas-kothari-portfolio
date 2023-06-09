@@ -54,7 +54,7 @@ export const Tiles = ({
   const renderContent = () => {
     if (content.type === "iconLink") {
       return (
-        <a href={content.url}>
+        <a href={content.url} target="_blank" rel="noopener noreferrer">
           <IconContainer>
             {!isFlipped ? (
               <FlippedTile src={content.iconSrc} alt={content.iconAlt} />
