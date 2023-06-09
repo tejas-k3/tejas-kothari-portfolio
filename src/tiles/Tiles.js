@@ -35,20 +35,19 @@ export const Tiles = ({
   }
 
   const handleClick = () => {
+    setTileSize(`${getRandomSize()}px`);
+    setIsFlipped(!isFlipped);
     setIsAnimating(true);
 
     if (tileName === "Color Shuffle") {
-      setTileSize(`${getRandomSize()}px`);
       setTimeout(() => {
         setIsAnimating(false);
         shuffleColors();
-      }, 600);
+      }, 300);
     } else {
-      setTileSize(`${getRandomSize()}px`);
       setTimeout(() => {
         setIsAnimating(false);
-        setIsFlipped(!isFlipped);
-      }, 600);
+      }, 300);
     }
   };
 
@@ -71,7 +70,12 @@ export const Tiles = ({
   };
 
   return (
-    <Tile style={tileStyle} isAnimating={isAnimating} tileSize={tileSize} onClick={handleClick}>
+    <Tile
+      style={tileStyle}
+      isAnimating={isAnimating}
+      tileSize={tileSize}
+      onClick={handleClick}
+    >
       <TileName>
         {isFlipped ? <TileName>{tileName}</TileName> : renderContent()}
       </TileName>
