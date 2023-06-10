@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/tejas-kothari-portfolio/precache-manifest.683c6f61b58ee5902e3eb828e2a1fa54.js"
+  "/tejas-kothari-portfolio/precache-manifest.d8969dd57f9d6deea605de7a34f8798a.js"
 );
 
 workbox.clientsClaim();
