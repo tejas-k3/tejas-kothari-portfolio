@@ -38,18 +38,16 @@ export const Tiles = ({
   const handleClick = () => {
     setTileSize(`${getRandomSize()}px`);
     setIsAnimating(true);
-  
+
     setTimeout(() => {
       setIsAnimating(false);
       if (tileName === "Color Shuffle") {
         shuffleColors();
       }
     }, 300);
-  
+
     setIsFlipped(!isFlipped);
   };
-  
-  
 
   useEffect(() => {
     if (shouldOpenLink) {
