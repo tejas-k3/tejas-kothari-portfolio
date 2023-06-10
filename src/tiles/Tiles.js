@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   TileName,
   IconContainer,
@@ -20,6 +20,7 @@ export const Tiles = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [tileSize, setTileSize] = useState(`${getRandomSize()}px`);
+  const [shouldOpenLink, setShouldOpenLink] = useState(false);
 
   const tileStyle = {
     "--tile-color": color,
@@ -36,33 +37,43 @@ export const Tiles = ({
 
   const handleClick = () => {
     setTileSize(`${getRandomSize()}px`);
-    setIsFlipped(!isFlipped);
     setIsAnimating(true);
-
-    if (tileName === "Color Shuffle") {
-      setTimeout(() => {
-        setIsAnimating(false);
+  
+    setTimeout(() => {
+      setIsAnimating(false);
+      if (tileName === "Color Shuffle") {
         shuffleColors();
-      }, 300);
-    } else {
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 300);
-    }
+      }
+    }, 300);
+  
+    setIsFlipped(!isFlipped);
   };
+  
+  
+
+  useEffect(() => {
+    if (shouldOpenLink) {
+      const timer = setTimeout(() => {
+        window.open(content.url, "_blank");
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldOpenLink, content.url]);
 
   const renderContent = () => {
     if (content.type === "iconLink") {
+      const handleLinkClick = () => {
+        setShouldOpenLink(true);
+      };
+
       return (
-        <a href={content.url} target="_blank" rel="noopener noreferrer">
-          <IconContainer>
-            {!isFlipped ? (
-              <FlippedTile src={content.iconSrc} alt={content.iconAlt} />
-            ) : (
-              <Tile />
-            )}
-          </IconContainer>
-        </a>
+        <IconContainer isAnimating={isAnimating} onClick={handleLinkClick}>
+          {!isFlipped ? (
+            <FlippedTile src={content.iconSrc} alt={content.iconAlt} />
+          ) : (
+            <Tile />
+          )}
+        </IconContainer>
       );
     } else {
       return <TileContent>{content}</TileContent>;
