@@ -74,7 +74,7 @@ export const Tiles = ({
         </IconContainer>
       );
     } else {
-      return <TileContent>{content}</TileContent>;
+      return <TileContent>{tileName}</TileContent>;
     }
   };
 
@@ -85,7 +85,7 @@ export const Tiles = ({
       tileSize={tileSize}
       onClick={handleClick}
     >
-      <TileName>{isFlipped ? tileName : renderContent()}</TileName>
+      <TileName>{isFlipped ? content : renderContent()}</TileName>
     </Tile>
   );
 };
