@@ -18,7 +18,8 @@ export const Tile = styled("div")(({ isDarkMode, isAnimating }) => ({
   borderRadius: "5PX",
   boxShadow: isDarkMode ? "" : "5px 5px 5px #111111",
   animation: isAnimating ? "rotation 0.4s forwards" : "none",
-  transition: "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
+  transition:
+    "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
   "@keyframes rotation": {
     "0%": {
       transform: "rotateY(0deg)",
@@ -50,15 +51,26 @@ export const TileContent = styled("div")(() => ({
   WebkitBoxOrient: "vertical",
 }));
 
-export const FlippedTile = styled("img")(() => ({
+export const FlippedTile = styled("img")(({ isAnimating }) => ({
   height: "100%",
   width: "100%",
 }));
 
-export const IconContainer = styled("div")(() => ({
+export const IconContainer = styled("div")(({ isAnimating }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   width: "100%",
   height: "100%",
+  animation: isAnimating ? "rotation 0.4s forwards" : "none",
+  transition:
+    "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
+  "@keyframes rotation": {
+    "0%": {
+      transform: "rotateY(0deg)",
+    },
+    "100%": {
+      transform: "rotateY(360deg)",
+    },
+  },
 }));
