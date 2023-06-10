@@ -14,3 +14,6 @@ To run locally do the below steps :
 1. Go to the project directory.
 2. Do `npm install` to install the packages.
 3. Run using `npm start`.
+
+In case of any run/start/build failure please refer to Wiki Page 
+https://github.com/tejas-k3/tejas-kothari-portfolio/wiki/Project's-node-&-npm-versions
