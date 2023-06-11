@@ -15,9 +15,10 @@ export const Tiles = ({
   isSquare,
   color,
   shuffleColors,
+  flipped,
 }) => {
   const isDarkMode = useContext(ThemeContext);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(flipped);
   const [isAnimating, setIsAnimating] = useState(false);
   const [tileSize, setTileSize] = useState(`${getRandomSize()}px`);
   const [shouldOpenLink, setShouldOpenLink] = useState(false);
@@ -74,7 +75,7 @@ export const Tiles = ({
         </IconContainer>
       );
     } else {
-      return <TileContent>{tileName}</TileContent>;
+      return <TileContent>{content}</TileContent>;
     }
   };
 
@@ -85,7 +86,7 @@ export const Tiles = ({
       tileSize={tileSize}
       onClick={handleClick}
     >
-      <TileName>{isFlipped ? content : renderContent()}</TileName>
+      <TileName>{isFlipped ? tileName : renderContent()}</TileName>
     </Tile>
   );
 };

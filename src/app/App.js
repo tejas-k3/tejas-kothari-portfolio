@@ -58,6 +58,7 @@ export const App = () => {
                 color={tileColors[index] || tile.color} // Use the shuffled color if available
                 shuffleColors={shuffleColors} // Pass the shuffleColors function
                 tileSize={tileSizes[index]}
+                flipped={tile.flipped}
               />
             ))}
         </Content>
