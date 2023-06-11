@@ -15,9 +15,10 @@ export const Tiles = ({
   isSquare,
   color,
   shuffleColors,
+  flipped,
 }) => {
   const isDarkMode = useContext(ThemeContext);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(flipped);
   const [isAnimating, setIsAnimating] = useState(false);
   const [tileSize, setTileSize] = useState(`${getRandomSize()}px`);
   const [shouldOpenLink, setShouldOpenLink] = useState(false);
@@ -46,7 +47,8 @@ export const Tiles = ({
       }
     }, 300);
 
-    setIsFlipped(!isFlipped);
+    if(tileName!="Color Shuffle")
+      setIsFlipped(!isFlipped);
   };
 
   useEffect(() => {
