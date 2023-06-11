@@ -57,7 +57,7 @@
       "content": "Color Shuffle",
       "isSquare": true,
       "color": "#FFFFFF",
-      "flipped": false
+      "flipped": true
     },
     {
       "tileName": "LinkedIn",

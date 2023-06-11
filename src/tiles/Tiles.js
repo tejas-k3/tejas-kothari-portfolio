@@ -47,7 +47,8 @@ export const Tiles = ({
       }
     }, 300);
 
-    setIsFlipped(!isFlipped);
+    if(tileName!="Color Shuffle")
+      setIsFlipped(!isFlipped);
   };
 
   useEffect(() => {
