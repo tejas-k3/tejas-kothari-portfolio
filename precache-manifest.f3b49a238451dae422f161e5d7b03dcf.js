@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "2d456dd0d0a823fc928e",
+    "revision": "28724fcb834c92b96ef6",
     "url": "/tejas-kothari-portfolio/static/css/main.366ca1dc.chunk.css"
   },
   {
-    "revision": "2d456dd0d0a823fc928e",
-    "url": "/tejas-kothari-portfolio/static/js/main.e68b933d.chunk.js"
+    "revision": "28724fcb834c92b96ef6",
+    "url": "/tejas-kothari-portfolio/static/js/main.90b4c19a.chunk.js"
   },
   {
     "revision": "03ac90a4d612061dfc2a",
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/tejas-kothari-portfolio/static/media/logo-image.797b2677.png"
   },
   {
-    "revision": "eb6fc1693fbf780e6e8196821a750f9a",
+    "revision": "e348ba0a1b264484c243b193d61e92e0",
     "url": "/tejas-kothari-portfolio/index.html"
   }
 ];
