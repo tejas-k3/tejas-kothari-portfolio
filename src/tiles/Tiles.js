@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   TileName,
   IconContainer,
@@ -21,7 +21,6 @@ export const Tiles = ({
   const [isFlipped, setIsFlipped] = useState(flipped);
   const [isAnimating, setIsAnimating] = useState(false);
   const [tileSize, setTileSize] = useState(`${getRandomSize()}px`);
-  const [shouldOpenLink, setShouldOpenLink] = useState(false);
 
   const tileStyle = {
     "--tile-color": color,
@@ -47,23 +46,16 @@ export const Tiles = ({
       }
     }, 300);
 
-    if(tileName!="Color Shuffle")
+    if(tileName !== "Color Shuffle")
       setIsFlipped(!isFlipped);
   };
-
-  useEffect(() => {
-    if (shouldOpenLink) {
-      const timer = setTimeout(() => {
-        window.open(content.url, "_blank");
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [shouldOpenLink, content.url]);
 
   const renderContent = () => {
     if (content.type === "iconLink") {
       const handleLinkClick = () => {
-        setShouldOpenLink(true);
+        setTimeout(() => {
+          window.open(content.url, "_blank");
+        }, 500);
       };
 
       return (
