@@ -50,14 +50,14 @@ export const Tiles = ({
       setIsFlipped(!isFlipped);
   };
 
+  const handleLinkClick = () => {
+    setTimeout(() => {
+      window.open(content.url, "_blank");
+    }, 500);
+  };
+
   const renderContent = () => {
     if (content.type === "iconLink") {
-      const handleLinkClick = () => {
-        setTimeout(() => {
-          window.open(content.url, "_blank");
-        }, 500);
-      };
-
       return (
         <IconContainer isAnimating={isAnimating} onClick={handleLinkClick}>
           {!isFlipped ? (
