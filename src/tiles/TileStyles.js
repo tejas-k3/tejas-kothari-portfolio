@@ -37,7 +37,7 @@ export const TileName = styled("div")(() => ({
   whiteSpace: "normal" /* Allow multiline text */,
   overflow: "hidden" /* Hide overflowing content */,
   textOverflow: "ellipsis" /* Add ellipsis for very long content */,
-  overflowWrap: "anywhere",
+  // overflowWrap: "anywhere",
 }));
 
 export const TileContent = styled("div")(() => ({
