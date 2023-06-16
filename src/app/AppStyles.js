@@ -44,14 +44,11 @@ export const LogoContainer = styled("img")(() => ({
 export const Title = styled("span")(() => ({
   marginLeft: "20px",
   fontSize: "30px",
-  fontWeight: "bold",
   cursor: "pointer",
 }));
 
 export const ThemeIconContainer = styled("span")(() => ({
   display: "block",
   objectFit: "contain",
-  height: "30px",
-  width: "30px",
   cursor: "pointer",
 }));

@@ -16,7 +16,7 @@ export const Tile = styled("div")(({ isDarkMode, isAnimating }) => ({
   textAlign: "center",
   maxWidth: "30vw",
   borderRadius: "5PX",
-  boxShadow: isDarkMode ? "" : "5px 5px 5px #111111",
+  boxShadow: isDarkMode ? "none" : "5px 5px 5px #111111",
   animation: isAnimating ? "rotation 0.4s forwards" : "none",
   transition:
     "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
@@ -47,8 +47,6 @@ export const TileContent = styled("div")(() => ({
   whiteSpace: "normal" /* Allow multiline text */,
   overflow: "hidden" /* Hide overflowing content */,
   textOverflow: "ellipsis" /* Add ellipsis for very long content */,
-  WebkitLineClamp: 4 /* Number of lines to show */,
-  WebkitBoxOrient: "vertical",
 }));
 
 export const FlippedTile = styled("img")(({ isAnimating }) => ({
@@ -62,15 +60,4 @@ export const IconContainer = styled("div")(({ isAnimating }) => ({
   justifyContent: "center",
   width: "100%",
   height: "100%",
-  animation: isAnimating ? "rotation 0.4s forwards" : "none",
-  transition:
-    "background-color 0.2s ease, box-shadow 0.2s ease, width 0.2s ease 0.2s, height 0.2s ease 0.2s",
-  "@keyframes rotation": {
-    "0%": {
-      transform: "rotateY(0deg)",
-    },
-    "100%": {
-      transform: "rotateY(360deg)",
-    },
-  },
 }));
