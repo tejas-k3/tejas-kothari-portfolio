@@ -59,7 +59,7 @@ export const Tiles = ({
   const renderContent = () => {
     if (content.type === "iconLink") {
       return (
-        <IconContainer isAnimating={isAnimating} onClick={handleLinkClick}>
+        <IconContainer onClick={handleLinkClick}>
           {!isFlipped ? (
             <FlippedTile src={content.iconSrc} alt={content.iconAlt} />
           ) : (

@@ -11,14 +11,14 @@
       "tileName": "Click me!",
       "content": "Click on Tejas twice!",
       "isSquare": false,
-      "color": "#C7D3D4FF",
+      "color": "#0BFFFF",
       "flipped": true
     },
     {
       "tileName": "Who am I?",
-      "content": "Software Enginner coding for passion & engineering",
+      "content": "Software Engineer coding for passion & engineering",
       "isSquare": true,
-      "color": "#00539CFF",
+      "color": "#ccc4e9",
       "flipped": true
     },
     {
@@ -37,7 +37,7 @@
         "iconAlt": "Icon"
       },
       "isSquare": false,
-      "color": "#4183C4",
+      "color": "#ffbf00",
       "flipped": false
     },
     {
@@ -56,7 +56,7 @@
       "tileName": "Color Shuffle",
       "content": "Color Shuffle",
       "isSquare": true,
-      "color": "#FFFFFF",
+      "color": "#C0C0C0",
       "flipped": true
     },
     {
@@ -68,7 +68,7 @@
         "iconAlt": "Icon"
       },
       "isSquare": false,
-      "color": "#0e76a8",
+      "color": "#0077b5",
       "flipped": false
     },
     {
@@ -85,16 +85,16 @@
     },
     {
       "tileName": "About this site!",
-      "content": "Made with \u2764  by me, chatgpt, stackoverflow",
+      "content": "Made with ❤ by me, chatgpt, stackoverflow",
       "isSquare": true,
-      "color": "#FC766AFF",
+      "color": "#a28192",
       "flipped": true
     },
     {
       "tileName": "Currently I'm",
       "content": "Software Engineer @ Sandvine Technologies",
       "isSquare": true,
-      "color": "#5B84B1FF",
+      "color": "#ff9dff",
       "flipped": true
     }
   ]
