@@ -16,17 +16,30 @@ export const Header = styled("div")(() => ({
   padding: "20px",
 }));
 
+// export const Content = styled("div")(() => ({
+//   display: "flex",
+//   flexWrap: "wrap",
+//   justifyContent: "space-between",
+//   alignContent: "space-between",
+//   alignItems: "center",
+//   gap: "10px",
+//   opacity: 1,
+//   transition: "opacity 0.5s",
+//   padding: "20px",
+// }));
+
 export const Content = styled("div")(() => ({
   display: "flex",
   flexWrap: "wrap",
-  justifyContent: "space-between",
-  alignContent: "space-between",
-  alignItems: "center",
+  justifyContent: "flex-start", // Change from "space-between" to "flex-start"
+  alignContent: "flex-start", // Change from "space-between" to "flex-start"
+  alignItems: "flex-start", // Change from "center" to "flex-start"
   gap: "10px",
   opacity: 1,
   transition: "opacity 0.5s",
   padding: "20px",
 }));
+
 
 export const TitleContainer = styled("div")(() => ({
   display: "flex",
