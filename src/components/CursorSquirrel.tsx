@@ -100,7 +100,8 @@ export function CursorSquirrel() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    enabledRef.current = !window.matchMedia("(pointer: coarse)").matches;
+    // Enable on both desktop (mouse) and mobile (touch)
+    enabledRef.current = true;
     const start = cfg.start(window.innerWidth, window.innerHeight);
     posRef.current = { ...start };
     targetRef.current = { ...start };
@@ -124,8 +125,19 @@ export function CursorSquirrel() {
       const el = document.elementFromPoint(e.clientX, e.clientY);
       setHiding(!!el?.closest(".tile-3d.flipped"));
     };
+    const onTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      targetRef.current = { x: touch.clientX, y: touch.clientY };
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      setHiding(!!el?.closest(".tile-3d.flipped"));
+    };
     window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
   }, [ready]);
 
   useEffect(() => {

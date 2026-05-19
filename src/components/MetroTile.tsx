@@ -98,9 +98,21 @@ function useBirthdayCountdown() {
 export function MetroTile({ tile, color, deco, area, onResumeClick, onShuffle }: Props) {
   const [flipped, setFlipped] = useState(false);
   const heatmapClicks = useRef(0);
+  const heroTappedRef = useRef(false);
   const countdown = useBirthdayCountdown();
 
   const nightOn = useNightMode();
+
+  // Auto-flip hero tile every 5 seconds until the user taps it once
+  useEffect(() => {
+    if (tile?.kind !== "hero") return;
+    const id = setInterval(() => {
+      if (!heroTappedRef.current) {
+        setFlipped((f) => !f);
+      }
+    }, 5000);
+    return () => clearInterval(id);
+  }, [tile?.kind]);
 
   if (deco || !tile) {
     return (
@@ -180,6 +192,7 @@ export function MetroTile({ tile, color, deco, area, onResumeClick, onShuffle }:
       return;
     }
     if (isStatic) return; // keep static so inner controls stay clickable
+    if (isHero) heroTappedRef.current = true;
     setFlipped((f) => !f);
   };
 
@@ -241,7 +254,7 @@ export function MetroTile({ tile, color, deco, area, onResumeClick, onShuffle }:
               <div className={`font-bold leading-[1.05] ${valueSize}`}>
                 {tile.front.value}
               </div>
-              <div className="text-[10px] opacity-80">tap → press SPACE to start</div>
+              <div className="text-[10px] opacity-80">tap → swipe or space to play</div>
             </>
           ) : isRandomizer ? (
             <RandomizerFront label={tile.front.label} value={tile.front.value ?? "Shuffle"} labelSize={labelSize} valueSize={valueSize} />

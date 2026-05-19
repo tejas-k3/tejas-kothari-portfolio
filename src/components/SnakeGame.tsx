@@ -65,6 +65,48 @@ export function SnakeGame({ active }: { active: boolean }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [active, dead, reset, setDir, started]);
 
+  // Touch: swipe to steer, tap to start/restart
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const t = e.touches[0];
+      touchStartRef.current = { x: t.clientX, y: t.clientY };
+      // Tap to start/restart
+      if (dead) { reset(); return; }
+      if (!started) { setStarted(true); return; }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!touchStartRef.current || !started || dead) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartRef.current.x;
+      const dy = t.clientY - touchStartRef.current.y;
+      touchStartRef.current = null;
+      const minSwipe = 15;
+      if (Math.abs(dx) < minSwipe && Math.abs(dy) < minSwipe) return;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        setDir(dx > 0 ? "R" : "L");
+      } else {
+        setDir(dy > 0 ? "D" : "U");
+      }
+    };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: false });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [active, dead, reset, setDir, started]);
+
   // Tick
   useEffect(() => {
     if (!active || dead || !started) return;
@@ -111,7 +153,7 @@ export function SnakeGame({ active }: { active: boolean }) {
   return (
     <div className="flex flex-col h-full min-h-0 min-w-0 gap-1 overflow-hidden" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] font-semibold opacity-90 shrink-0">
-        <span className="truncate">🐍 {started ? "← ↑ ↓ →" : "SPACE to play"}</span>
+        <span className="truncate">🐍 {started ? "← ↑ ↓ →" : "tap / space to play"}</span>
         <span className="tabular-nums">{score}</span>
       </div>
       <div ref={wrapRef} className="flex-1 min-h-0 min-w-0 grid place-items-center relative overflow-hidden">
@@ -150,7 +192,7 @@ export function SnakeGame({ active }: { active: boolean }) {
         </div>
         {!started && !dead && (
           <div className="absolute pointer-events-none text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-black/55 px-1.5 py-0.5 rounded-sm">
-            SPACE
+            TAP / SPACE
           </div>
         )}
         {dead && (
