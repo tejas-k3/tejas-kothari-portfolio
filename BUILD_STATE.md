@@ -12,7 +12,7 @@ Hero default: "I ENGINEER CODE / THAT WRITES CODE / THAT RUNS CODE / THAT SHIPS.
 - [x] 2 design tokens + layout + header (theme, mode toggle: story/engineering/recruiter)
 - [x] 3 hero + ASCII portrait (placeholder until photo; scripts/image-to-ascii.mjs)
 - [x] 4 selected work + experience + stack + currently + interests + contact
-- [ ] 5 project pages: /projects/rupee-engine, /projects/system-design-playground (+ architecture explorer)
+- [x] 5 project pages: /projects/rupee-engine, /projects/system-design-playground (+ architecture explorer)
 - [ ] 6 GitHub: scripts/sync-github.mjs + client refresh + freshness/stale/error states
 - [ ] 7 command palette (Ctrl/Cmd+K), hidden terminal, easter eggs
 - [ ] 8 SEO (meta, OG, sitemap, JSON-LD), 404, a11y, reduced motion, mobile QA

@@ -1,0 +1,54 @@
+---
+import type { ArchNode } from "../data/caseStudies";
+interface Props { nodes: ArchNode[]; intro: string }
+const { nodes, intro } = Astro.props;
+---
+<div class="arch" data-arch>
+  <p class="intro">{intro}</p>
+  <ol class="flow" aria-label="Architecture stages">
+    {nodes.map((n, i) => (
+      <li>
+        <button type="button" class="node" aria-pressed={i === 0 ? "true" : "false"} data-i={i} data-event="architecture_opened">
+          <span class="idx mono">{String(i + 1).padStart(2, "0")}</span>{n.label}
+        </button>
+        {i < nodes.length - 1 && <span class="arrow" aria-hidden="true">→</span>}
+      </li>
+    ))}
+  </ol>
+  <div class="panel card" role="region" aria-live="polite" aria-label="Selected stage details"></div>
+  <script type="application/json" class="data" set:html={JSON.stringify(nodes)} />
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>("[data-arch]").forEach((root) => {
+    const nodes = JSON.parse(root.querySelector(".data")!.textContent!) as { label: string; does: string; why: string; tradeoff: string; failure: string }[];
+    const panel = root.querySelector<HTMLElement>(".panel")!;
+    const btns = root.querySelectorAll<HTMLButtonElement>(".node");
+    const rows: [string, keyof (typeof nodes)[number]][] = [["What it does", "does"], ["Why it exists", "why"], ["Trade-off", "tradeoff"], ["Failure mode", "failure"]];
+    const show = (i: number) => {
+      btns.forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+      panel.replaceChildren();
+      const h = document.createElement("h3"); h.textContent = nodes[i].label; panel.append(h);
+      for (const [t, k] of rows) {
+        const d = document.createElement("div"); const dt = document.createElement("span"); dt.className = "k mono"; dt.textContent = t;
+        const p = document.createElement("p"); p.textContent = nodes[i][k]; d.append(dt, p); panel.append(d);
+      }
+    };
+    btns.forEach((b, i) => { b.addEventListener("click", () => show(i)); b.addEventListener("mouseenter", () => matchMedia("(hover:hover)").matches && show(i)); });
+    show(0);
+  });
+</script>
+<style>
+  .intro { color: var(--muted); margin-bottom: 20px; }
+  .flow { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .flow li { display: flex; align-items: center; gap: 8px; }
+  .arrow { color: var(--muted); }
+  .node { cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px 16px; min-height: 48px; font: 600 14px var(--font-body); text-align: left; transition: border-color var(--dur), background var(--dur), transform var(--dur) var(--ease); }
+  .node:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .node[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .idx { color: var(--accent); margin-right: 8px; font-size: 12px; }
+  .panel { margin-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 28px; }
+  .panel :global(h3) { grid-column: 1 / -1; font-size: 24px; }
+  .panel :global(.k) { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .panel :global(p) { color: var(--muted); margin-top: 4px; font-size: 15px; }
+  @media (max-width: 700px) { .panel { grid-template-columns: 1fr; } .arrow { display: none; } .flow { flex-direction: column; align-items: stretch; } .flow li { display: block; } .node { width: 100%; } }
+</style>
