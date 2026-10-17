@@ -1,0 +1,120 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { person } from "../data/content";
+// Snapshot is written at build time by scripts/sync-github.mjs and committed; if missing, a static fallback renders (never "0 commits").
+const mods = import.meta.glob("../data/github.generated.json", { eager: true, import: "default" }) as Record<string, any>;
+const snap: any = Object.values(mods)[0] ?? null;
+const days: Record<string, number> = snap?.calendar?.days ?? {};
+const dates = Object.keys(days).sort();
+const hasCal = dates.length > 0;
+const counts = dates.map((d) => days[d]).filter((n) => n > 0).sort((a, b) => a - b);
+const q = (p: number) => counts[Math.min(counts.length - 1, Math.floor(counts.length * p))] ?? 1;
+const cuts = [q(0.25), q(0.5), q(0.75)];
+const level = (n: number) => (n <= 0 ? 0 : n <= cuts[0] ? 1 : n <= cuts[1] ? 2 : n <= cuts[2] ? 3 : 4);
+const cells = dates.map((d, i) => {
+  const dow = new Date(d + "T00:00:00Z").getUTCDay();
+  const first = new Date(dates[0] + "T00:00:00Z").getUTCDay();
+  return { d, n: days[d], l: level(days[d]), x: Math.floor((i + first) / 7), y: dow };
+});
+const cols = cells.length ? cells[cells.length - 1].x + 1 : 0;
+const activeDays = dates.filter((d) => days[d] > 0).length;
+const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count));
+---
+<section id="activity" aria-label="GitHub activity">
+  <div class="wrap">
+    <SectionHead eyebrow="Engineering activity" title="Still building." lede="Public GitHub activity from the last year, synced automatically." />
+    {snap ? (
+      <div class="panel card reveal" id="gh" data-fetched={snap.fetchedAt} data-user={person.handle}>
+        <div class="status" role="status" aria-live="polite"><span class="dot" id="gh-dot"></span><span id="gh-status" class="mono">Snapshot</span></div>
+        {hasCal ? (
+          <>
+            <div class="stats">
+              <div><b id="gh-total">{snap.calendar.total.toLocaleString("en-US")}</b><span>contributions, last year</span></div>
+              <div><b id="gh-active">{activeDays}</b><span>active days</span></div>
+              <div><b>{snap.profile.repos}</b><span>public repositories</span></div>
+            </div>
+            <div class="scroll" tabindex="0" role="group" aria-label="Contribution calendar, scrollable">
+              <svg id="gh-svg" viewBox={`0 0 ${cols * 14} 98`} width={cols * 14} height="98" role="img" aria-label={`Contribution calendar: ${snap.calendar.total} contributions in the last year`}>
+                {cells.map((c) => <rect x={c.x * 14} y={c.y * 14} width="11" height="11" rx="2.5" class={`l${c.l}`}><title>{c.n} contributions on {c.d}</title></rect>)}
+              </svg>
+            </div>
+          </>
+        ) : <p class="empty">Contribution calendar unavailable right now. See the live profile on GitHub.</p>}
+        <div class="cols">
+          <div>
+            <h3 class="mono">Recently active repositories</h3>
+            <ul class="repos">
+              {snap.repos.map((r: any) => (
+                <li><a href={r.url} target="_blank" rel="noopener">{r.name}</a>{r.language && <span class="chip">{r.language}</span>}<time class="mono ago" datetime={r.pushedAt}>{r.pushedAt.slice(0, 10)}</time></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="mono">Languages across repos</h3>
+            <ul class="langs">
+              {snap.languages.slice(0, 6).map((l: any) => <li><span>{l.name}</span><i style={`--w:${(l.count / maxLang) * 100}%`}></i><span class="mono">{l.count}</span></li>)}
+            </ul>
+            <p class="note">Public repositories and contributions only; private work isn't counted.</p>
+          </div>
+        </div>
+        <p class="foot"><a class="btn" href={person.github} target="_blank" rel="noopener" data-event="github_clicked">View GitHub profile ↗</a></p>
+      </div>
+    ) : (
+      <div class="panel card reveal"><p class="empty">Live activity is temporarily unavailable.</p><p class="foot"><a class="btn" href={person.github} target="_blank" rel="noopener">View GitHub profile ↗</a></p></div>
+    )}
+  </div>
+</section>
+<script>
+  // Freshness + best-effort live refresh. Never blocks rendering; falls back to the build snapshot with an honest label.
+  const root = document.getElementById("gh");
+  if (root) {
+    const st = document.getElementById("gh-status")!, dot = document.getElementById("gh-dot")!;
+    const ago = (iso: string) => {
+      const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+      return m < 2 ? "just now" : m < 90 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`;
+    };
+    const set = (kind: "fresh" | "stale" | "loading" | "error", msg: string) => { root.dataset.state = kind; st.textContent = msg; dot.className = "dot " + kind; };
+    const fetched = root.dataset.fetched!;
+    const age = Date.now() - new Date(fetched).getTime();
+    set(age > 864e5 ? "stale" : "fresh", `Snapshot synced ${ago(fetched)}${age > 864e5 ? ". Some data may be delayed." : ""}`);
+    const KEY = "gh-cal:" + root.dataset.user;
+    const apply = (j: any) => {
+      document.getElementById("gh-total")!.textContent = (j.total?.lastYear ?? 0).toLocaleString("en-US");
+      const byDate: Record<string, number> = {}; (j.contributions as any[]).forEach((c) => (byDate[c.date] = c.count));
+      document.getElementById("gh-active")!.textContent = String(Object.values(byDate).filter((n) => n > 0).length);
+    };
+    (async () => {
+      set("loading", "Syncing engineering activity…");
+      try {
+        const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 6000);
+        const r = await fetch(`https://github-contributions-api.jogruber.de/v4/${root.dataset.user}?y=last`, { signal: ctl.signal });
+        clearTimeout(t);
+        if (!r.ok) throw new Error(String(r.status));
+        const j = await r.json();
+        if (!j?.contributions?.length || !j.total?.lastYear) throw new Error("empty"); // never show zeros from a bad response
+        apply(j);
+        try { localStorage.setItem(KEY, JSON.stringify({ at: Date.now() })); } catch {}
+        set("fresh", "Updated just now");
+      } catch {
+        set("stale", `Live refresh failed. Showing snapshot from ${ago(fetched)}. Some data may be delayed.`);
+      }
+    })();
+  }
+</script>
+<style>
+  .panel { margin-top: 36px; padding: clamp(18px, 3vw, 32px); display: grid; gap: 24px; }
+  .status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); } .dot.fresh { background: var(--success); } .dot.stale { background: var(--warning); } .dot.error { background: var(--danger); }
+  .dot.loading { background: var(--accent); animation: pulse 1s ease-in-out infinite; } @keyframes pulse { 50% { opacity: .3; } }
+  .stats { display: flex; flex-wrap: wrap; gap: 12px 40px; } .stats div { display: flex; flex-direction: column; } .stats b { font: 700 clamp(26px, 4vw, 40px) var(--font-display); letter-spacing: -.02em; } .stats span { color: var(--muted); font-size: 13px; }
+  .scroll { overflow-x: auto; padding-bottom: 6px; } svg { display: block; }
+  rect { fill: var(--surface-2); transition: fill var(--dur), transform var(--dur); transform-box: fill-box; transform-origin: center; } rect:hover { transform: scale(1.35); }
+  .l1 { fill: color-mix(in srgb, var(--accent) 25%, var(--surface-2)); } .l2 { fill: color-mix(in srgb, var(--accent) 50%, var(--surface-2)); }
+  .l3 { fill: color-mix(in srgb, var(--accent) 75%, var(--surface-2)); } .l4 { fill: var(--accent); }
+  .cols { display: grid; grid-template-columns: 1.2fr .8fr; gap: 32px; } h3 { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+  .repos, .langs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .repos li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } .repos a { font-weight: 600; text-decoration: none; } .repos a:hover { color: var(--accent); } .ago { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .langs li { display: grid; grid-template-columns: 96px 1fr 20px; gap: 10px; align-items: center; font-size: 14px; } .langs i { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) var(--w), var(--surface-2) var(--w)); }
+  .note, .empty { color: var(--muted); font-size: 13px; margin-top: 14px; } .foot { display: flex; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+</style>
