@@ -8,7 +8,7 @@
     "build": "node scripts/sync-github.mjs && astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "ascii": "node scripts/image-to-ascii.mjs"
+    "ascii": "python3 scripts/image_to_ascii.py"
   },
   "dependencies": {
     "astro": "^5.14.0"
