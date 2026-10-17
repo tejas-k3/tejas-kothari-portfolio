@@ -1,0 +1,48 @@
+---
+import Base from "../../layouts/Base.astro";
+import ArchExplorer from "../../components/ArchExplorer.astro";
+import { caseStudies } from "../../data/caseStudies";
+export function getStaticPaths() { return caseStudies.map((c) => ({ params: { slug: c.slug }, props: { c } })); }
+const { c } = Astro.props;
+// TODO(tejas) placeholders are visible in dev only; never shown on the deployed site.
+const change = c.change.filter((x) => import.meta.env.DEV || !x.startsWith("TODO(tejas)"));
+---
+<Base title={`${c.ogTitle} | Tejas Kothari`} description={c.blurb} path={`/projects/${c.slug}`} type="article">
+  <article class="wrap cs">
+    <nav aria-label="Breadcrumb" class="crumb mono"><a href="/">Home</a> / <a href="/#work">Work</a> / {c.name}</nav>
+    <header>
+      <p class="eyebrow">Case study</p>
+      <h1>{c.name}</h1>
+      <p class="lede">{c.blurb}</p>
+      <dl class="facts">{c.facts.map((f) => <div><dt class="mono">{f.k}</dt><dd>{f.v}</dd></div>)}</dl>
+      {c.links.length > 0 && <p class="ls">{c.links.map((l) => <a class="btn" href={l.h} target="_blank" rel="noopener">{l.t} ↗</a>)}</p>}
+    </header>
+
+    <section><h2>Problem</h2><p>{c.problem}</p></section>
+    <section><h2>Context</h2><p>{c.context}</p></section>
+    <section><h2>Constraints</h2><ul>{c.constraints.map((x) => <li>{x}</li>)}</ul></section>
+    <section><h2>Architecture</h2><ArchExplorer nodes={c.arch} intro={c.archIntro} /></section>
+    <section>
+      <h2>Decisions</h2>
+      <div class="dec">{c.decisions.map((d) => <details class="card"><summary>{d.q}</summary><p>{d.a}</p></details>)}</div>
+    </section>
+    <section><h2>Trade-offs</h2><ul>{c.tradeoffs.map((x) => <li>{x}</li>)}</ul></section>
+    <section class="eng-only"><h2>Implementation</h2><ul>{c.implementation.map((x) => <li>{x}</li>)}</ul></section>
+    <section><h2>Outcome</h2><ul>{c.outcome.map((x) => <li>{x}</li>)}</ul></section>
+    <section><h2>Lessons</h2><ul>{c.lessons.map((x) => <li>{x}</li>)}</ul></section>
+    {change.length > 0 && <section><h2>What I would change today</h2><ul>{change.map((x) => <li>{x}</li>)}</ul></section>}
+    <p class="back"><a class="btn" href="/#work">← All work</a> <a class="btn primary" href="/#contact">Let's talk →</a></p>
+  </article>
+</Base>
+<style>
+  .cs { padding-top: 32px; padding-bottom: 64px; max-width: 880px; }
+  .crumb { font-size: 12px; color: var(--muted); margin-bottom: 32px; } .crumb a { color: var(--muted); }
+  h1 { font-size: clamp(38px, 7vw, 72px); font-weight: 800; margin-top: 14px; letter-spacing: -.035em; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin: 32px 0 0; padding: 20px 0; border-block: 1px solid var(--border); }
+  dt { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); } dd { margin: 4px 0 0; font-weight: 500; }
+  .ls { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .cs section { padding: 40px 0 0; } h2 { font-size: clamp(24px, 3.4vw, 34px); margin-bottom: 14px; }
+  .cs p, .cs li { color: var(--muted); font-size: 17px; max-width: 70ch; } ul { padding-left: 20px; display: grid; gap: 8px; }
+  .dec { display: grid; gap: 10px; } details { padding: 16px 20px; } summary { cursor: pointer; font-weight: 600; font-size: 17px; min-height: 28px; } details p { margin-top: 10px; }
+  .back { margin-top: 56px; display: flex; gap: 10px; flex-wrap: wrap; }
+</style>
