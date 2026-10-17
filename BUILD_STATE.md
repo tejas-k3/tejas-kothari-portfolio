@@ -10,10 +10,12 @@ Hero default: "I ENGINEER CODE / THAT WRITES CODE / THAT RUNS CODE / THAT SHIPS.
 - [x] 0 branch tejas-v3 pushed, old code removed, Astro scaffold + config
 - [x] 1 content model src/data/content.ts
 - [x] 2 design tokens + layout + header (theme, mode toggle: story/engineering/recruiter)
-- [ ] 3 hero + ASCII portrait (placeholder until photo; scripts/image-to-ascii.mjs)
+- [x] 3 hero + ASCII portrait (placeholder until photo; scripts/image-to-ascii.mjs)
 - [ ] 4 selected work + experience + stack + currently + interests + contact
 - [ ] 5 project pages: /projects/rupee-engine, /projects/system-design-playground (+ architecture explorer)
 - [ ] 6 GitHub: scripts/sync-github.mjs + client refresh + freshness/stale/error states
 - [ ] 7 command palette (Ctrl/Cmd+K), hidden terminal, easter eggs
 - [ ] 8 SEO (meta, OG, sitemap, JSON-LD), 404, a11y, reduced motion, mobile QA
 - [ ] 9 final audit vs spec checklist; README with Cloudflare preview steps
+
+NOTE: visual QA (screenshots desktop/mobile, both themes) still pending -> do in phase 8. Portrait quality is mediocre: revisit scripts/image_to_ascii.py params in phase 8 if time.
