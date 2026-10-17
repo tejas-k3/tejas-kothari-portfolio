@@ -1,0 +1,40 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { stack } from "../data/content";
+---
+<section id="stack" aria-label="Tech stack">
+  <div class="wrap">
+    <SectionHead eyebrow="Tech stack" title="Tools, and where I've used them." lede="Tap a technology to see the work behind it." />
+    <div class="groups">
+      {stack.map((g) => (
+        <div class="group reveal">
+          <h3 class="mono">{g.group}</h3>
+          <div class="items">
+            {g.items.map((i) => <button type="button" class="chip tech" aria-pressed="false" data-used={JSON.stringify(i.used)} data-name={i.name}>{i.name}</button>)}
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="detail card" id="stack-detail" role="status" aria-live="polite"><span class="mono">Select a technology.</span></div>
+  </div>
+</section>
+<script>
+  const detail = document.getElementById("stack-detail")!;
+  const btns = document.querySelectorAll<HTMLButtonElement>(".tech");
+  btns.forEach((b) => b.addEventListener("click", () => {
+    btns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    const used: string[] = JSON.parse(b.dataset.used || "[]");
+    detail.innerHTML = "";
+    const t = document.createElement("strong"); t.textContent = b.dataset.name || "";
+    const ul = document.createElement("span"); ul.className = "mono"; ul.textContent = " → " + used.join(" · ");
+    detail.append(t, ul);
+  }));
+</script>
+<style>
+  .groups { display: grid; gap: 28px; margin-top: 40px; }
+  h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+  .items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tech { cursor: pointer; font-size: 14px; padding: 8px 14px; min-height: 40px; color: var(--text); transition: border-color var(--dur), background var(--dur); }
+  .tech:hover, .tech[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .detail { margin-top: 28px; font-size: 15px; padding: 18px 22px; } .detail strong { color: var(--accent); } .detail .mono { color: var(--muted); font-size: 14px; }
+</style>
