@@ -1,0 +1,44 @@
+---
+import { person, experience, projects, stack, currently } from "../data/content";
+// Data for the palette + terminal. Static, public-safe only. No command here executes arbitrary input.
+const data = {
+  person: { name: person.name, title: person.title, focus: person.focus, location: person.location, email: person.email, github: person.github, linkedin: person.linkedin, resume: person.resumeUrl },
+  experience: experience.map((e) => `${e.from} – ${e.to}  ${e.company}, ${e.title}`),
+  projects: projects.map((p) => ({ name: p.name, line: p.what, page: p.page ?? p.href ?? p.repo ?? null })),
+  stack: stack.map((g) => `${g.group}: ${g.items.map((i) => i.name).join(", ")}`),
+  currently: currently.map((c) => `${c.k}: ${c.v}`),
+};
+---
+<dialog id="palette" aria-label="Command palette" class="ov">
+  <form method="dialog" class="box">
+    <input id="pal-input" type="text" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list" placeholder="Type a command or search…" autocomplete="off" spellcheck="false" />
+    <ul id="pal-list" role="listbox" aria-label="Commands"></ul>
+    <p class="hint mono"><kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>↵</kbd> run · <kbd>esc</kbd> close</p>
+  </form>
+</dialog>
+<dialog id="term" aria-label="Terminal" class="ov term">
+  <div class="box">
+    <div class="bar mono"><span>tejas@portfolio ~ </span><button type="button" id="term-x" aria-label="Close terminal">esc</button></div>
+    <div id="term-out" class="out mono" role="log" aria-live="polite"></div>
+    <label class="line mono"><span aria-hidden="true">$</span><input id="term-in" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal command" /></label>
+  </div>
+</dialog>
+<script type="application/json" id="site-data" set:html={JSON.stringify(data)} />
+<style is:global>
+  dialog.ov { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+  dialog.ov::backdrop { background: rgba(5,6,8,.55); backdrop-filter: blur(3px); }
+  dialog.ov .box { margin: 0; padding: 12px; }
+  #pal-input { width: 100%; min-height: 48px; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font: 500 17px var(--font-body); padding: 0 12px; outline: none; }
+  #pal-list { list-style: none; margin: 8px 0 0; padding: 0; max-height: 50vh; overflow: auto; }
+  #pal-list li { padding: 12px; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; min-height: 44px; align-items: center; }
+  #pal-list li[aria-selected="true"] { background: var(--accent-soft); }
+  #pal-list li small { color: var(--muted); font: 400 12px var(--font-mono); }
+  .hint { color: var(--muted); font-size: 12px; margin: 10px 12px 2px; }
+  dialog.term { width: min(760px, calc(100vw - 24px)); background: #0b0d10; color: #d8dde6; border-color: #252a33; }
+  .term .bar { display: flex; justify-content: space-between; color: #8b93a1; font-size: 12px; padding: 4px 6px 10px; border-bottom: 1px solid #252a33; }
+  .term .bar button { background: none; border: 1px solid #252a33; color: #8b93a1; border-radius: 6px; cursor: pointer; font: inherit; min-height: 28px; padding: 0 8px; }
+  .term .out { height: min(52vh, 420px); overflow: auto; padding: 12px 6px; font-size: 13px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+  .term .out a { color: #ffb454; } .term .out .p { color: #ffb454; }
+  .term .line { display: flex; gap: 8px; padding: 8px 6px 2px; border-top: 1px solid #252a33; color: #ffb454; font-size: 14px; }
+  .term .line input { flex: 1; background: none; border: 0; color: #eceae4; font: inherit; outline: none; min-height: 32px; }
+</style>
