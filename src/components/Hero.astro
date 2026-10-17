@@ -28,7 +28,8 @@ const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email
 <style>
   .hero { padding: clamp(32px, 6vw, 72px) 0 clamp(32px, 5vw, 56px); overflow: hidden; }
   .grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 24px; align-items: center; }
-  h1 { font-size: clamp(34px, 6.4vw, 78px); font-weight: 800; margin-top: 20px; line-height: .98; letter-spacing: -.035em; }
+  .copy { min-width: 0; }
+  h1 { font-size: clamp(28px, 3.9vw, 54px); font-weight: 800; margin-top: 20px; line-height: .98; letter-spacing: -.035em; }
   .line { display: block; animation: rise .7s var(--ease) both; animation-delay: calc(var(--i) * 90ms); }
   .line.last { color: var(--accent); }
   .sub { color: var(--muted); font-size: clamp(16px, 1.6vw, 19px); max-width: 52ch; margin-top: 24px; }
@@ -41,5 +42,5 @@ const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email
   .proof b { font: 700 clamp(22px, 3vw, 32px) var(--font-display); letter-spacing: -.02em; }
   .proof span { color: var(--muted); font-size: 13px; line-height: 1.4; }
   @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } .proof { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } h1 { font-size: clamp(28px, 8.4vw, 44px); } .proof { grid-template-columns: repeat(2, 1fr); } }
 </style>
