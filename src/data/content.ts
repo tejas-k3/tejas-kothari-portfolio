@@ -11,9 +11,8 @@ export const person = {
   email: "tejaskothari03@gmail.com",
   linkedin: "https://www.linkedin.com/in/tejaskothari03",
   github: "https://github.com/tejas-k3",
-  // Phone is intentionally NOT public. Resume PDF is intentionally NOT published (it contains the phone number).
-  // TODO(tejas): if you want a public resume, upload a phone-free PDF to /public and set this.
-  resumeUrl: null as string | null,
+  // Phone is not shown on the page. The resume PDF (has the phone) is download-only and robots-disallowed (Tejas approved).
+  resumeUrl: "/Tejas_Kothari_Resume.pdf" as string | null, // published on request-only basis: not indexed (robots.txt), not shown inline
 };
 
 // HERO — default is #1. TODO(tone): swap by changing `heroIndex`.

@@ -3,7 +3,7 @@
 Stack: Astro 5 static site + vanilla TS, deployed via Cloudflare (wrangler.jsonc assets -> dist).
 Rules: no resume work-history bullets (company/title/dates only); Rupee Engine described generically (README is source of truth: 13 algorithms, 1300+ NSE stocks per resume);
 tone = weirdness 3/10, humor 5/10, every joke tagged `TODO(tone)`; light/dark adaptive; interests: watches, markets, code, travel (no invented specifics);
-email+LinkedIn public, phone NOT public, location Bengaluru, India; no analytics (concise comment block only); no resume PDF published (contains phone).
+email+LinkedIn public, phone not shown on page; location Bengaluru, India; no analytics (comment block only). Resume PDF IS published at /Tejas_Kothari_Resume.pdf as download-only (Tejas approved; robots-disallowed). Primary CTA = "Let's talk". Portrait = ASCII art from ~/Downloads/gojo_pfp.jpg with cool sunglasses (Tejas approved reference).
 Hero default: "I ENGINEER CODE / THAT WRITES CODE / THAT RUNS CODE / THAT SHIPS." (alternates in src/data/content.ts)
 
 ## Phases (tick when committed + pushed)
