@@ -8,7 +8,7 @@ Hero default: "I ENGINEER CODE / THAT WRITES CODE / THAT RUNS CODE / THAT SHIPS.
 
 ## Phases (tick when committed + pushed)
 - [x] 0 branch tejas-v3 pushed, old code removed, Astro scaffold + config
-- [ ] 1 content model src/data/content.ts
+- [x] 1 content model src/data/content.ts
 - [ ] 2 design tokens + layout + header (theme, mode toggle: story/engineering/recruiter)
 - [ ] 3 hero + ASCII portrait (placeholder until photo; scripts/image-to-ascii.mjs)
 - [ ] 4 selected work + experience + stack + currently + interests + contact
