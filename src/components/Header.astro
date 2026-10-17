@@ -1,0 +1,18 @@
+---
+import { person } from "../data/content";
+const links = [["Work", "/#work"], ["Experience", "/#experience"], ["How I work", "/#how"], ["Activity", "/#activity"], ["Stack", "/#stack"], ["Contact", "/#contact"]];
+---
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label={`${person.name}, home`}>tejas<span>.</span>k</a>
+    <nav class="nav" id="nav" aria-label="Primary">
+      {links.map(([t, h]) => <a href={h}>{t}</a>)}
+    </nav>
+    <div class="tools">
+      <button class="tool" id="mode-btn" type="button" aria-label="Switch view mode" title="View mode: story / engineering / recruiter">story</button>
+      <button class="tool hide-sm" id="palette-btn" type="button" aria-label="Open command palette"><kbd>⌘K</kbd></button>
+      <button class="tool" id="theme-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+      <button class="tool menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">☰</button>
+    </div>
+  </div>
+</header>
