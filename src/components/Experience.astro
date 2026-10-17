@@ -1,0 +1,27 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { experience, education } from "../data/content";
+---
+<section id="experience" aria-label="Experience">
+  <div class="wrap">
+    <SectionHead eyebrow="Experience" title="Where I've done the work." lede="Backend, platforms and observability across crypto, health-tech, conversation intelligence and network analytics." />
+    <ol class="tl">
+      {experience.map((e) => (
+        <li class="reveal">
+          <span class="when mono">{e.from} – {e.to}</span>
+          <div><h3>{e.company}</h3><p class="role">{e.title}</p><p class="theme">{e.theme}</p></div>
+        </li>
+      ))}
+      <li class="reveal edu"><span class="when mono">{education.from} – {education.to}</span><div><h3>{education.school}</h3><p class="role">{education.degree}</p></div></li>
+    </ol>
+  </div>
+</section>
+<style>
+  .tl { list-style: none; margin: 40px 0 0; padding: 0; border-left: 1px solid var(--border); }
+  li { display: grid; grid-template-columns: 190px 1fr; gap: 20px; padding: 22px 0 22px 28px; position: relative; }
+  li::before { content: ""; position: absolute; left: -5px; top: 32px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+  .edu::before { background: var(--border); }
+  .when { color: var(--muted); font-size: 13px; padding-top: 6px; }
+  h3 { font-size: 26px; } .role { margin-top: 4px; } .theme { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  @media (max-width: 640px) { li { grid-template-columns: 1fr; gap: 4px; } }
+</style>

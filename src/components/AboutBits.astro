@@ -1,0 +1,28 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { currently, interests, philosophy } from "../data/content";
+---
+<section id="beyond" aria-label="Currently and interests">
+  <div class="wrap">
+    <SectionHead eyebrow="Currently" title="Right now, and off the clock." />
+    <div class="cols">
+      <dl class="card now reveal">
+        {currently.map((c) => <div><dt class="mono">{c.k}</dt><dd>{c.v}</dd></div>)}
+      </dl>
+      <ul class="int">
+        {interests.map((i) => <li class="card reveal"><span class="ic mono" aria-hidden="true">{i.icon}</span><h3>{i.t}</h3><p>{i.d}</p></li>)}
+      </ul>
+    </div>
+    <blockquote class="why reveal">
+      {philosophy.map((p) => <p>{p}</p>)}
+    </blockquote>
+  </div>
+</section>
+<style>
+  .cols { display: grid; grid-template-columns: .8fr 1.2fr; gap: 20px; margin-top: 40px; }
+  .now { margin: 0; display: grid; gap: 18px; align-content: start; } dt { color: var(--accent); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; } dd { margin: 4px 0 0; }
+  .int { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .ic { font-size: 22px; color: var(--accent); } h3 { font-size: 20px; margin: 10px 0 6px; } .int p { color: var(--muted); font-size: 14px; }
+  .why { margin: 56px 0 0; padding: 0 0 0 20px; border-left: 2px solid var(--accent); display: grid; gap: 10px; font: 500 clamp(18px, 2.4vw, 26px)/1.3 var(--font-display); }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+</style>

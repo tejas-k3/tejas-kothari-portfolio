@@ -1,0 +1,21 @@
+---
+import { person, cta } from "../data/content";
+---
+<section id="contact" aria-labelledby="contact-h">
+  <div class="wrap box reveal">
+    <p class="eyebrow">Contact</p>
+    <h2 class="h2" id="contact-h">Let's build something.</h2>
+    <p class="lede">Open to distributed-systems and senior backend conversations, and to interesting problems in general. {/* TODO(tejas): confirm availability wording */}</p>
+    <div class="ctas">
+      <a class="btn primary" href={`mailto:${person.email}`}>{cta.primary} · {person.email}</a>
+      <a class="btn" href={person.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href={person.github} target="_blank" rel="noopener">GitHub ↗</a>
+      {person.resumeUrl && <a class="btn" href={person.resumeUrl} target="_blank" rel="noopener" data-resume>Resume ↓</a>}
+    </div>
+    <p class="loc mono">{person.location}</p>
+  </div>
+</section>
+<style>
+  .box { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: clamp(28px, 6vw, 72px) !important; max-width: calc(var(--max) - 2 * var(--gutter)); }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; } .loc { color: var(--muted); font-size: 13px; margin-top: 24px; }
+</style>

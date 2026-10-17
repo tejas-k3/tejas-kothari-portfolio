@@ -1,0 +1,17 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { howIWork } from "../data/content";
+---
+<section id="how" aria-label="How I work">
+  <div class="wrap">
+    <SectionHead eyebrow="How I work" title="Fast to learn. Careful to ship." lede="AI makes the first draft cheap. Judgment, tests and production habits make it good." />
+    <ol class="steps">
+      {howIWork.map((s) => <li class="card reveal"><span class="n mono">{s.n}</span><h3>{s.t}</h3><p>{s.d}</p></li>)}
+    </ol>
+  </div>
+</section>
+<style>
+  .steps { list-style: none; padding: 0; margin: 40px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .n { color: var(--accent); font-size: 13px; } h3 { font-size: 22px; margin: 14px 0 8px; } p { color: var(--muted); font-size: 15px; }
+  @media (max-width: 960px) { .steps { grid-template-columns: repeat(2, 1fr); } } @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+</style>
