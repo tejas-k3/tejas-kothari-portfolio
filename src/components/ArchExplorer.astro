@@ -11,7 +11,7 @@ const { nodes, intro } = Astro.props;
         <button type="button" class="node" aria-pressed={i === 0 ? "true" : "false"} data-i={i} data-event="architecture_opened">
           <span class="idx mono">{String(i + 1).padStart(2, "0")}</span>{n.label}
         </button>
-        {i < nodes.length - 1 && <span class="arrow" aria-hidden="true">→</span>}
+        {i < nodes.length - 1 && <span class="arrow" aria-hidden="true" style={`--k:${i}`}>→</span>}
       </li>
     ))}
   </ol>
@@ -41,7 +41,8 @@ const { nodes, intro } = Astro.props;
   .intro { color: var(--muted); margin-bottom: 20px; }
   .flow { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .flow li { display: flex; align-items: center; gap: 8px; }
-  .arrow { color: var(--muted); }
+  .arrow { color: var(--muted); animation: packet 2.4s ease-in-out infinite; animation-delay: calc(var(--k, 0) * .3s); display: inline-block; }
+  @keyframes packet { 0%, 100% { color: var(--muted); transform: translateX(0); } 35% { color: var(--accent); transform: translateX(5px); } 70% { color: var(--muted); transform: none; } }
   .node { cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px 16px; min-height: 48px; font: 600 14px var(--font-body); text-align: left; transition: border-color var(--dur), background var(--dur), transform var(--dur) var(--ease); }
   .node:hover { transform: translateY(-2px); border-color: var(--accent); }
   .node[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
