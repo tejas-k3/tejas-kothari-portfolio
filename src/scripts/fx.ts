@@ -21,11 +21,11 @@ const cio = new IntersectionObserver((es) => es.forEach((e) => {
 counters.forEach((c) => cio.observe(c));
 
 // 3. ASCII portrait: rows materialise top to bottom
-const pre = document.querySelector<HTMLElement>(".portrait pre");
-if (pre && !reduce()) {
+document.querySelectorAll<HTMLElement>(".portrait pre").forEach((pre) => {
+  if (reduce()) return;
   const lines = pre.textContent!.split("\n"); pre.textContent = "";
   lines.forEach((l, i) => { const s = document.createElement("span"); s.className = "row"; s.style.setProperty("--i", String(i)); s.textContent = l + "\n"; pre.append(s); });
-}
+});
 
 // 4. Code-that-writes-code typewriter
 const stage = document.querySelector<HTMLElement>("[data-demo]");
@@ -38,6 +38,7 @@ if (stage) {
   document.querySelector("[data-replay]")?.addEventListener("click", play);
 }
 
+let lastMove = 0;
 if (fine) {
   // 5. Card spotlight + 3D tilt
   document.querySelectorAll<HTMLElement>(".card").forEach((c) => {
@@ -57,7 +58,8 @@ if (fine) {
   const hero = document.querySelector<HTMLElement>(".hero");
   hero?.addEventListener("pointermove", (e) => {
     const r = hero.getBoundingClientRect(); hero.style.setProperty("--hx", e.clientX - r.left + "px"); hero.style.setProperty("--hy", e.clientY - r.top + "px");
-    const p = hero.querySelector<HTMLElement>(".portrait"); if (p && !reduce()) p.style.transform = `translate(${((e.clientX / innerWidth - 0.5) * -14).toFixed(1)}px, ${((e.clientY / innerHeight - 0.5) * -10).toFixed(1)}px)`;
+    const p = hero.querySelector<HTMLElement>(".portrait");
+    if (p && !reduce()) { const b = p.getBoundingClientRect(); lastMove = performance.now(); p.style.setProperty("--px", e.clientX - b.left + "px"); p.style.setProperty("--py", e.clientY - b.top + "px"); p.style.setProperty("--ry", clamp(((e.clientX - (b.left + b.width / 2)) / innerWidth) * 26, -9, 9).toFixed(1) + "deg"); p.style.setProperty("--rx", clamp((-(e.clientY - (b.top + b.height / 2)) / innerHeight) * 16, -6, 6).toFixed(1) + "deg"); }
   });
 }
 
@@ -89,4 +91,17 @@ if (!reduce()) {
     const tick = (t: number) => { const p = clamp((t - t0) / 650, 0, 1); ln.textContent = text.split("").map((c, i) => (c === " " || i < p * text.length ? c : glyphs[Math.floor(Math.random() * glyphs.length)])).join(""); if (p < 1) requestAnimationFrame(tick); else ln.textContent = text; };
     requestAnimationFrame(tick);
   });
+}
+
+// Idle: when the cursor is away (or on touch) the light drifts across the portrait on its own.
+{
+  const fig = document.querySelector<HTMLElement>(".portrait");
+  if (fig) {
+    let vis = true; new IntersectionObserver((es) => (vis = es[0].isIntersecting)).observe(fig);
+    const loop = (t: number) => {
+      if (vis && !reduce() && t - lastMove > 2500) { const b = fig.getBoundingClientRect(); fig.style.setProperty("--px", (b.width * (0.5 + 0.38 * Math.sin(t / 1900))).toFixed(0) + "px"); fig.style.setProperty("--py", (b.height * (0.42 + 0.3 * Math.sin(t / 1300 + 1))).toFixed(0) + "px"); fig.style.setProperty("--ry", (Math.sin(t / 1900) * 5).toFixed(1) + "deg"); fig.style.setProperty("--rx", "0deg"); }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
 }
