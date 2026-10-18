@@ -7,11 +7,11 @@ import art from "../data/portrait.txt?raw";
 </figure>
 <style>
   .portrait { margin: 0; justify-self: end; max-width: 100%; }
-  pre { margin: 0; font: 400 clamp(11px, 2.3vw, 21px)/1 var(--font-mono); color: var(--accent); white-space: pre; overflow: hidden; text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent); }
+  pre { margin: 0; font: 400 clamp(8px, 1.55vw, 15px)/1 var(--font-mono); color: var(--accent); white-space: pre; overflow: hidden; text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent); }
   .portrait { transition: transform .4s var(--ease); position: relative; }
   .portrait :global(.row) { opacity: 0; animation: row .5s var(--ease) forwards; animation-delay: calc(var(--i) * 28ms + 300ms); }
   @keyframes row { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: none; } }
   .portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--accent) 28%, transparent) 50%, transparent 60%); background-size: 100% 300%; mix-blend-mode: screen; pointer-events: none; animation: scan 7s ease-in-out 2.4s infinite;  }
   @keyframes scan { 0% { background-position: 0 100%; opacity: 0; } 10% { opacity: 1; } 45% { background-position: 0 0; opacity: 0; } 100% { opacity: 0; } }
-  @media (max-width: 860px) { .portrait { justify-self: center; } pre { font-size: clamp(12px, 4.4vw, 18px); } }
+  @media (max-width: 860px) { .portrait { justify-self: center; } pre { font-size: clamp(8px, 2.7vw, 13px); } }
 </style>
