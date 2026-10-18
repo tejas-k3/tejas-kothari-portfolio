@@ -11,7 +11,7 @@ const used = Object.fromEntries(names.map((n) => [n, places[n]]));
 const RAD = Math.PI / 180;
 const km = (a: string, b: string) => { const [la1, lo1] = places[a], [la2, lo2] = places[b]; const h = Math.sin(((la2 - la1) * RAD) / 2) ** 2 + Math.cos(la1 * RAD) * Math.cos(la2 * RAD) * Math.sin(((lo2 - lo1) * RAD) / 2) ** 2; return 2 * 6371 * Math.asin(Math.sqrt(h)); };
 const list = trips.map(([a, b, m], i) => ({ i, a, b, meta: (m ?? {}) as TripMeta, km: km(a, b) }));
-const fmt = (w?: string) => { if (!w) return "date unknown"; const [y, mo, d] = w.split("-").map(Number); return new Date(Date.UTC(y, (mo || 1) - 1, d || 1)).toLocaleDateString("en-US", { month: "short", year: "numeric", ...(d ? { day: "numeric" } : {}), timeZone: "UTC" }); };
+const fmt = (w?: string) => { if (!w) return ""; const [y, mo, d] = w.split("-").map(Number); return new Date(Date.UTC(y, (mo || 1) - 1, d || 1)).toLocaleDateString("en-US", { month: "short", year: "numeric", ...(d ? { day: "numeric" } : {}), timeZone: "UTC" }); };
 const icon: Record<string, string> = { flight: "✈", cruise: "⛴", trek: "⛰", road: "🚗", train: "🚆" };
 const dated = list.filter((t) => t.meta.when).sort((x, y) => y.meta.when!.localeCompare(x.meta.when!));
 const log = [...dated, ...list.filter((t) => !t.meta.when)];
@@ -59,7 +59,7 @@ const stats = [
             <li>
               <button type="button" class="row" data-trip={t.i}>
                 <span class="r1"><b>{t.a} → {t.b}</b></span>
-                <span class="r2 mono"><span>{fmt(t.meta.when)}</span><span>{t.meta.mode ? icon[t.meta.mode] + " " : ""}{Math.round(t.km).toLocaleString("en-US")} km</span></span>
+                <span class="r2 mono">{t.meta.when ? <span>{fmt(t.meta.when)}</span> : null}<span>{t.meta.mode ? icon[t.meta.mode] + " " : ""}{Math.round(t.km).toLocaleString("en-US")} km</span></span>
                 {t.meta.note && <span class="r3">{t.meta.note}</span>}
                 {t.b === lastTrip && <span class="badge mono">last</span>}
               </button>
@@ -255,7 +255,7 @@ const stats = [
   .log ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .row { width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); padding: 12px 14px; cursor: pointer; display: grid; gap: 4px; position: relative; transition: border-color var(--dur), transform var(--dur) var(--ease); font: inherit; }
   .row:hover, .row:focus-visible { border-color: var(--accent); transform: translateX(3px); }
-  .r1 b { font-size: 15px; } .r2 { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); } .r3 { font-size: 12px; color: var(--muted); }
+  .r1 b { font-size: 15px; } .r2 { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted); } .r3 { font-size: 12px; color: var(--muted); }
   .badge { position: absolute; right: 12px; top: 10px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
   @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } .log { max-height: none; } }
 </style>
