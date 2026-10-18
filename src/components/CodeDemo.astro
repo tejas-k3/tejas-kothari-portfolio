@@ -25,6 +25,8 @@ const routes = [
   { name: "activity", path: "/activity", depth: 1, aliases: ["github", "gh"] },
   { name: "stack", path: "/experience#stack", depth: 1, aliases: ["tech"] },
   { name: "currently", path: "/about#beyond", depth: 1, aliases: ["beyond", "now"] },
+  { name: "interests", path: "/interests", depth: 1, aliases: ["hobbies", "watch", "cs2"] },
+  { name: "travel", path: "/interests#travel", depth: 2, aliases: ["map", "globe"] },
   { name: "contact", path: "/#contact", depth: 1, aliases: ["hire", "hire-me"] },
   ...(person.resumeUrl ? [{ name: "resume.pdf", path: person.resumeUrl, depth: 1, aliases: ["resume", "cv"] }] : []),
 ];

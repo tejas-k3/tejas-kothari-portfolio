@@ -1,0 +1,127 @@
+---
+import { trips, places, home, lastTrip, nextTrip } from "../data/travel";
+// Build-time validation: every name used in `trips` must exist in `places`.
+const names = [...new Set(trips.flat().concat([home, lastTrip]))];
+const missing = names.filter((n) => !places[n]);
+if (missing.length) throw new Error(`travel.ts: add coordinates in \`places\` for: ${missing.join(", ")}`);
+const used = Object.fromEntries(names.map((n) => [n, places[n]]));
+const payload = { trips, places: used, home, lastTrip, nextTrip };
+---
+<section id="travel" data-chapter="Travel" aria-label="Travel map">
+  <div class="wrap">
+    <header class="reveal">
+      <p class="eyebrow">Travel</p>
+      <h2 class="h2">Where the weekends went.</h2>
+      <p class="lede">Last destination: <b>{lastTrip}</b>. Upcoming destination: <b>{nextTrip}</b>. Drag the globe to spin it.</p>
+    </header>
+    <div class="globe card reveal" data-globe data-payload={JSON.stringify(payload)}>
+      <canvas aria-hidden="true" data-canvas></canvas>
+      <div class="hud mono">
+        <button type="button" data-zoom="1" aria-label="Zoom in">+</button><button type="button" data-zoom="-1" aria-label="Zoom out">−</button><button type="button" data-recenter aria-label="Recenter on India">◎</button>
+      </div>
+      <p class="legend mono"><span><i class="k a"></i>trips from {home}</span><span><i class="k b"></i>last: {lastTrip}</span><span><i class="k c"></i>next: ?</span></p>
+    </div>
+    <details class="routes reveal"><summary class="mono">Routes as text</summary><ul>{trips.map(([a, b]) => <li>{a} → {b}</li>)}</ul></details>
+  </div>
+</section>
+<script>
+  const box = document.querySelector<HTMLElement>("[data-globe]");
+  if (box) {
+    type Payload = { trips: [string, string][]; places: Record<string, [number, number]>; home: string; lastTrip: string; nextTrip: string };
+    const P: Payload = JSON.parse(box.dataset.payload!);
+    const cv = box.querySelector<HTMLCanvasElement>("[data-canvas]")!, ctx = cv.getContext("2d")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, RAD = Math.PI / 180;
+    let land: number[][][] = [], W = 0, H = 0, dpr = 1;
+    let lam0 = 88, phi0 = 15, zoom = 3.3; const base = { lam: 88, phi: 15 };
+    let drag: { x: number; y: number; l: number; p: number } | null = null, lastTouch = -1e9, visible = false, raf = 0;
+    let colors = { accent: "#4cc2ff", text: "#111", muted: "#888", border: "#ccc", surface: "#eee", bg: "#fff", danger: "#f55" }, cn = 0;
+    const readColors = () => { const s = getComputedStyle(document.documentElement); const g = (k: string) => s.getPropertyValue(k).trim(); colors = { accent: g("--accent"), text: g("--text"), muted: g("--muted"), border: g("--border"), surface: g("--surface-2"), bg: g("--bg"), danger: g("--danger") }; };
+
+    const resize = () => { const r = box.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = Math.max(360, Math.min(620, r.width * 0.62)); cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px"; };
+    const R = () => (Math.min(W, H) / 2) * 0.92 * zoom * 0.5;
+    // lon/lat (deg) + radius -> screen. Orthographic projection; z>0 faces the viewer.
+    const proj = (lon: number, lat: number, r = 1) => {
+      const l = lon * RAD, p = lat * RAD, d = l - lam0 * RAD, c0 = Math.cos(phi0 * RAD), s0 = Math.sin(phi0 * RAD);
+      const x = r * Math.cos(p) * Math.sin(d), y = r * (c0 * Math.sin(p) - s0 * Math.cos(p) * Math.cos(d)), z = r * (s0 * Math.sin(p) + c0 * Math.cos(p) * Math.cos(d));
+      const k = R(); return { x: W / 2 + x * k, y: H / 2 - y * k, z, vis: z > 0 || x * x + y * y > 1 };
+    };
+    const slerp = (a: [number, number], b: [number, number], t: number) => {
+      const v = (ll: [number, number]) => { const la = ll[0] * RAD, lo = ll[1] * RAD; return [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)]; };
+      const A = v(a), B = v(b), dot = Math.min(1, A[0] * B[0] + A[1] * B[1] + A[2] * B[2]), d = Math.acos(dot) || 1e-6;
+      const s1 = Math.sin((1 - t) * d) / Math.sin(d), s2 = Math.sin(t * d) / Math.sin(d), q = [s1 * A[0] + s2 * B[0], s1 * A[1] + s2 * B[1], s1 * A[2] + s2 * B[2]];
+      return { lat: Math.atan2(q[2], Math.hypot(q[0], q[1])) / RAD, lon: Math.atan2(q[1], q[0]) / RAD, d };
+    };
+    const arcPt = (a: [number, number], b: [number, number], t: number) => { const s = slerp(a, b, t); const h = 0.04 + 0.22 * (s.d / Math.PI); return proj(s.lon, s.lat, 1 + h * Math.sin(Math.PI * t) * 1.0); };
+
+    function draw(t: number) {
+      if (++cn % 40 === 1) readColors();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      const cx = W / 2, cy = H / 2, r = R();
+      // globe body
+      const g = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, r * 0.1, cx, cy, r);
+      g.addColorStop(0, colors.surface); g.addColorStop(1, colors.bg);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = colors.border; ctx.stroke();
+      // graticule
+      ctx.lineWidth = 0.6; ctx.strokeStyle = colors.border; ctx.globalAlpha = 0.55;
+      for (let lon = -180; lon < 180; lon += 30) { ctx.beginPath(); let pen = false; for (let lat = -90; lat <= 90; lat += 6) { const p = proj(lon, lat); if (p.z > 0) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; } ctx.stroke(); }
+      for (let lat = -60; lat <= 60; lat += 30) { ctx.beginPath(); let pen = false; for (let lon = -180; lon <= 180; lon += 6) { const p = proj(lon, lat); if (p.z > 0) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; } ctx.stroke(); }
+      ctx.globalAlpha = 1;
+      // land (hidden points clamp to the horizon so shapes stay closed)
+      ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip();
+      ctx.beginPath();
+      for (const ring of land) { let first = true, any = false; const pts: [number, number][] = []; for (const [lon, lat] of ring) { const l = lon * RAD, p = lat * RAD, d = l - lam0 * RAD, c0 = Math.cos(phi0 * RAD), s0 = Math.sin(phi0 * RAD); let x = Math.cos(p) * Math.sin(d), y = c0 * Math.sin(p) - s0 * Math.cos(p) * Math.cos(d); const z = s0 * Math.sin(p) + c0 * Math.cos(p) * Math.cos(d); if (z > 0) any = true; else { const m = Math.hypot(x, y) || 1; x /= m; y /= m; } pts.push([cx + x * r, cy - y * r]); } if (!any) continue; for (const [sx, sy] of pts) { first ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy); first = false; } ctx.closePath(); }
+      ctx.fillStyle = colors.accent; ctx.globalAlpha = 0.22; ctx.fill(); ctx.globalAlpha = 0.7; ctx.lineWidth = 0.8; ctx.strokeStyle = colors.accent; ctx.stroke(); ctx.globalAlpha = 1; ctx.restore();
+
+      // routes: lifted great-circle arcs
+      const N = 48;
+      P.trips.forEach(([a, b], i) => {
+        const A = P.places[a], B = P.places[b]; const isLast = b === P.lastTrip && a === P.home;
+        ctx.beginPath(); let pen = false;
+        for (let k = 0; k <= N; k++) { const p = arcPt(A, B, k / N); if (p.vis) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; }
+        ctx.lineWidth = isLast ? 2.6 : 1.7; ctx.strokeStyle = isLast ? colors.text : colors.accent; ctx.shadowColor = colors.accent; ctx.shadowBlur = 8; ctx.stroke(); ctx.shadowBlur = 0;
+        if (!reduce) { const p = arcPt(A, B, ((t / 2600 + i * 0.137) % 1)); if (p.vis) { ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, 7); ctx.fillStyle = colors.text; ctx.fill(); } }
+      });
+      // places + labels
+      const placed: { x: number; y: number; w: number; h: number }[] = [];
+      const names = [P.lastTrip, P.home, ...new Set(P.trips.flat())].filter((n, i, a) => a.indexOf(n) === i);
+      ctx.font = "500 11px ui-monospace, Menlo, monospace"; ctx.textBaseline = "middle";
+      names.forEach((n) => {
+        const p = proj(P.places[n][1], P.places[n][0]); if (p.z <= 0.02) return;
+        const isHome = n === P.home, isLast = n === P.lastTrip;
+        ctx.beginPath(); ctx.arc(p.x, p.y, isHome ? 5 : 3.5, 0, 7); ctx.fillStyle = isLast ? colors.text : colors.accent; ctx.fill();
+        if (isHome && !reduce) { const k = (t / 1400) % 1; ctx.beginPath(); ctx.arc(p.x, p.y, 5 + k * 16, 0, 7); ctx.strokeStyle = colors.accent; ctx.globalAlpha = 1 - k; ctx.lineWidth = 1.5; ctx.stroke(); ctx.globalAlpha = 1; }
+        const label = n === P.lastTrip ? `${n} · last` : n, w = ctx.measureText(label).width + 10;
+        const cands = [{ x: p.x + 8, y: p.y - 9 }, { x: p.x - 8 - w, y: p.y - 9 }, { x: p.x - w / 2, y: p.y - 28 }, { x: p.x - w / 2, y: p.y + 10 }, { x: p.x + 8, y: p.y + 6 }, { x: p.x - 8 - w, y: p.y + 6 }];
+        const rect = cands.map((c) => ({ ...c, w, h: 18 })).find((r) => !placed.some((q) => r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y));
+        if (!rect) return;
+        placed.push(rect); ctx.fillStyle = colors.bg; ctx.globalAlpha = 0.85; ctx.fillRect(rect.x, rect.y, rect.w, rect.h); ctx.globalAlpha = 1; ctx.fillStyle = colors.text; ctx.fillText(label, rect.x + 5, rect.y + 9.5);
+      });
+      // next trip: a floating "?"
+      const hp = P.places[P.home], q = proj(hp[1], hp[0], 1.18); if (q.vis) { const bob = reduce ? 0 : Math.sin(t / 500) * 3; ctx.beginPath(); ctx.arc(q.x - 26, q.y - 26 + bob, 11, 0, 7); ctx.fillStyle = colors.bg; ctx.fill(); ctx.setLineDash([3, 3]); ctx.strokeStyle = colors.accent; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = colors.accent; ctx.font = "700 13px ui-monospace, Menlo, monospace"; ctx.textAlign = "center"; ctx.fillText("?", q.x - 26, q.y - 25 + bob); ctx.textAlign = "left"; }
+    }
+    function frame(t: number) {
+      if (!visible) return;
+      if (!drag && !reduce && t - lastTouch > 3000) { lam0 = base.lam + Math.sin(t / 4200) * 7; phi0 = base.phi + Math.sin(t / 5300) * 2.5; }
+      draw(t); raf = requestAnimationFrame(frame);
+    }
+    const start = () => { if (!visible) { visible = true; raf = requestAnimationFrame(frame); } }, stop = () => { visible = false; cancelAnimationFrame(raf); };
+    new IntersectionObserver((es) => (es[0].isIntersecting ? start() : stop()), { threshold: 0.1 }).observe(box);
+    addEventListener("resize", () => { resize(); if (!visible) draw(performance.now()); });
+    cv.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, l: lam0, p: phi0 }; cv.setPointerCapture(e.pointerId); lastTouch = performance.now(); });
+    cv.addEventListener("pointermove", (e) => { if (!drag) return; const k = 90 / R(); lam0 = drag.l - (e.clientX - drag.x) * k * 0.6; phi0 = Math.max(-80, Math.min(80, drag.p + (e.clientY - drag.y) * k * 0.6)); base.lam = lam0; base.phi = phi0; lastTouch = performance.now(); if (reduce) draw(performance.now()); });
+    cv.addEventListener("pointerup", () => { drag = null; lastTouch = performance.now(); });
+    box.querySelectorAll<HTMLButtonElement>("[data-zoom]").forEach((b) => b.addEventListener("click", () => { zoom = Math.max(1.2, Math.min(5, zoom * (Number(b.dataset.zoom) > 0 ? 1.25 : 0.8))); if (reduce) draw(performance.now()); }));
+    box.querySelector("[data-recenter]")!.addEventListener("click", () => { base.lam = 88; base.phi = 15; lam0 = 88; phi0 = 15; zoom = 3.3; lastTouch = 0; if (reduce) draw(performance.now()); });
+    resize(); readColors();
+    fetch("/data/land.json").then((r) => r.json()).then((d) => { land = d; draw(performance.now()); }).catch(() => { /* globe still shows routes without land */ });
+    draw(performance.now());
+  }
+</script>
+<style>
+  .globe { position: relative; margin-top: 36px; padding: 0; overflow: hidden; } .globe::before { display: none; }
+  canvas { display: block; width: 100%; touch-action: pan-y; cursor: grab; } canvas:active { cursor: grabbing; }
+  .hud { position: absolute; right: 14px; top: 14px; display: flex; gap: 6px; } .hud button { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 15px; } .hud button:hover { border-color: var(--accent); }
+  .legend { position: absolute; left: 14px; bottom: 12px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: var(--muted); } .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .k { width: 14px; height: 3px; border-radius: 2px; display: inline-block; } .k.a { background: var(--accent); } .k.b { background: var(--text); } .k.c { background: none; border: 1.5px dashed var(--accent); height: 8px; width: 8px; border-radius: 50%; }
+  .routes { margin-top: 16px; color: var(--muted); } .routes summary { cursor: pointer; font-size: 12px; } .routes ul { columns: 2; padding-left: 18px; font-size: 14px; }
+</style>
