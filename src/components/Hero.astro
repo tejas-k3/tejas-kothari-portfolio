@@ -4,7 +4,7 @@ import { person, heroOptions, heroIndex, heroSub, cta, proof } from "../data/con
 const lines = heroOptions[heroIndex];
 const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email", `mailto:${person.email}`]];
 ---
-<section class="hero" aria-labelledby="hero-h">
+<section class="hero" id="top" data-chapter="Intro" aria-labelledby="hero-h">
   <div class="wrap recruiter-only rsum">
     <p class="eyebrow">{person.focus} · {person.location}</p>
     <h2>{person.name}, {person.title}</h2>
@@ -21,6 +21,7 @@ const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email
       <div class="ctas">
         <a class="btn primary" href={cta.primaryHref}>{cta.primary} →</a>
         <a class="btn" href={cta.secondaryHref}>{cta.secondary} ↓</a>
+        <button type="button" class="btn" data-open="tldr">30-second version</button>
         {person.resumeUrl && <a class="btn" href={person.resumeUrl} target="_blank" rel="noopener" data-resume>View resume →</a>}
       </div>
       <p class="links">{links.map(([t, h]) => <a href={h} target={h.startsWith("http") ? "_blank" : undefined} rel="noopener">{t}</a>)}</p>

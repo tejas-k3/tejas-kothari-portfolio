@@ -20,7 +20,7 @@ const cols = cells.length ? cells[cells.length - 1].x + 1 : 0;
 const activeDays = dates.filter((d) => days[d] > 0).length;
 const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count));
 ---
-<section id="activity" aria-label="GitHub activity">
+<section id="activity" data-chapter="Activity" aria-label="GitHub activity">
   <div class="wrap">
     <SectionHead eyebrow="Engineering activity" title="Still building." lede="Public GitHub activity from the last year, synced automatically." />
     {snap ? (
