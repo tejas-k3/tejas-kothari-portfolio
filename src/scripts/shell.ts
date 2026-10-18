@@ -10,7 +10,8 @@ if (box) {
   const go = (r: Route) => {
     say(`-> ${r.path}`, "d");
     setTimeout(() => {
-      if (r.path.startsWith("/#") && location.pathname === "/") { document.getElementById(r.path.slice(2))?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); history.replaceState(null, "", r.path.slice(1)); }
+      const [pg, hash] = r.path.split("#"); const same = (pg || "/") === location.pathname.replace(/\.html$/, "") || (pg === "/" && location.pathname === "/");
+      if (hash && same) { document.getElementById(hash)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); history.replaceState(null, "", "#" + hash); }
       else if (r.path.endsWith(".pdf")) window.open(r.path, "_blank", "noopener");
       else location.href = r.path;
     }, 350);
