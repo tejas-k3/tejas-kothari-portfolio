@@ -33,9 +33,10 @@ const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count))
               <div><b id="gh-active">{activeDays}</b><span>active days</span></div>
               <div><b>{snap.profile.repos}</b><span>public repositories</span></div>
             </div>
+            <div class="replay"><button type="button" class="btn" id="gh-replay">▶ Replay the year</button><span class="mono" id="gh-rlabel" aria-live="polite"></span></div>
             <div class="scroll" tabindex="0" role="group" aria-label="Contribution calendar, scrollable">
               <svg id="gh-svg" viewBox={`0 0 ${cols * 14} 98`} width={cols * 14} height="98" role="img" aria-label={`Contribution calendar: ${snap.calendar.total} contributions in the last year`}>
-                {cells.map((c) => <rect x={c.x * 14} y={c.y * 14} width="11" height="11" rx="2.5" class={`l${c.l}`} style={`--x:${c.x}`}><title>{c.n} contributions on {c.d}</title></rect>)}
+                {cells.map((c) => <rect x={c.x * 14} y={c.y * 14} width="11" height="11" rx="2.5" class={`l${c.l}`} style={`--x:${c.x}`} data-x={c.x} data-n={c.n}><title>{c.n} contributions on {c.d}</title></rect>)}
               </svg>
             </div>
           </>
@@ -101,7 +102,30 @@ const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count))
     })();
   }
 </script>
+<script>
+  const rbtn = document.getElementById("gh-replay") as HTMLButtonElement | null;
+  if (rbtn) {
+    const svg = document.getElementById("gh-svg")!, label = document.getElementById("gh-rlabel")!;
+    const rects = [...svg.querySelectorAll<SVGRectElement>("rect")];
+    let timer = 0;
+    rbtn.addEventListener("click", () => {
+      clearInterval(timer);
+      const cols = Math.max(...rects.map((r) => Number(r.dataset.x))) + 1;
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) { label.textContent = "All weeks shown"; return; }
+      svg.classList.add("replaying"); rects.forEach((r) => r.classList.remove("shown"));
+      let col = 0, total = 0; rbtn.disabled = true;
+      timer = window.setInterval(() => {
+        rects.filter((r) => Number(r.dataset.x) === col).forEach((r) => { r.classList.add("shown"); total += Number(r.dataset.n); });
+        label.textContent = `Week ${col + 1} of ${cols} · ${total.toLocaleString("en-US")} contributions`;
+        (svg.parentElement as HTMLElement).scrollTo({ left: Math.max(0, col * 14 - 300), behavior: "auto" });
+        if (++col >= cols) { clearInterval(timer); rbtn.disabled = false; svg.classList.remove("replaying"); label.textContent = `Replayed · ${total.toLocaleString("en-US")} contributions in the last year`; }
+      }, 70);
+    });
+  }
+</script>
 <style>
+  .replay { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; } #gh-rlabel { color: var(--muted); font-size: 12px; }
+  :global(svg.replaying) rect:not(.shown) { opacity: 0 !important; animation: none !important; } :global(svg.replaying) rect.shown { animation: cell .35s var(--ease) both !important; }
   .panel { margin-top: 36px; padding: clamp(18px, 3vw, 32px); display: grid; gap: 24px; }
   .status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); } .dot.fresh { background: var(--success); } .dot.stale { background: var(--warning); } .dot.error { background: var(--danger); }
