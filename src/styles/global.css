@@ -47,7 +47,10 @@ kbd { font: 500 11px var(--font-mono); border: 1px solid var(--border); border-b
 /* View modes: story (default) | engineering | recruiter */
 .eng-only { display: none; }
 html[data-mode="engineering"] .eng-only { display: block; }
-html[data-mode="recruiter"] .skip-recruiter { display: none !important; }
+html[data-mode="recruiter"] .hide-recruiter { display: none !important; }
+.recruiter-only { display: none; }
+html[data-mode="recruiter"] .recruiter-only { display: block; }
+html[data-mode="recruiter"] section { padding: clamp(28px, 4vw, 48px) 0; }
 html[data-mode="recruiter"] * { animation: none !important; transition: none !important; }
 
 /* Reveal on scroll: only transform/opacity; content stays visible without JS */
@@ -101,3 +104,15 @@ html[data-mode="recruiter"] * { animation: none !important; transition: none !im
 .btn.primary::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.35) 50%, transparent 65%); transform: translateX(-120%); animation: sheen 4.5s ease-in-out 2s infinite; }
 @keyframes sheen { 0%, 60% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
 .nav a { position: relative; } .nav a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); } .nav a:hover::after { transform: scaleX(1); }
+
+/* View-mode control + banner */
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 500 12px var(--font-mono); padding: 0 10px; min-height: 32px; border-radius: 7px; cursor: pointer; }
+.seg button:hover { color: var(--text); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg-mobile { display: none; }
+@media (max-width: 860px) { .seg-mobile { display: block; padding: 10px 8px 0; } .seg-mobile .seg { width: 100%; } .seg-mobile .seg button { flex: 1; min-height: 40px; } }
+.modebar { display: none; border-bottom: 1px solid var(--border); background: var(--accent-soft); font-size: 14px; }
+.modebar .wrap { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding-block: 10px; }
+.modebar button { margin-left: auto; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 8px; min-height: 32px; padding: 0 12px; cursor: pointer; font: 500 12px var(--font-mono); }
+html[data-mode="engineering"] .modebar, html[data-mode="recruiter"] .modebar { display: block; }

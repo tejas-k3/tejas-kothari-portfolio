@@ -7,9 +7,18 @@ const links = [["Work", "/#work"], ["Experience", "/#experience"], ["How I work"
     <a class="brand" href="/" aria-label={`${person.name}, home`}>tejas<span>.</span>k</a>
     <nav class="nav" id="nav" aria-label="Primary">
       {links.map(([t, h]) => <a href={h}>{t}</a>)}
+      <span class="seg-wrap seg-mobile"><div class="seg" role="group" aria-label="View mode">
+        <button type="button" data-mode="story" title="Story: the narrative version">Story</button>
+        <button type="button" data-mode="engineering" title="Engineering: architecture, decisions, trade-offs">Engineering</button>
+        <button type="button" data-mode="recruiter" title="Recruiter: compact summary, no motion">Recruiter</button>
+      </div></span>
     </nav>
     <div class="tools">
-      <button class="tool" id="mode-btn" type="button" aria-label="Switch view mode" title="View mode: story / engineering / recruiter">story</button>
+      <span class="seg-wrap hide-sm"><div class="seg" role="group" aria-label="View mode">
+        <button type="button" data-mode="story" title="Story: the narrative version">Story</button>
+        <button type="button" data-mode="engineering" title="Engineering: architecture, decisions, trade-offs">Engineering</button>
+        <button type="button" data-mode="recruiter" title="Recruiter: compact summary, no motion">Recruiter</button>
+      </div></span>
       <button class="tool hide-sm" id="palette-btn" type="button" aria-label="Open command palette"><kbd>⌘K</kbd></button>
       <button class="tool" id="theme-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
       <button class="tool menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">☰</button>

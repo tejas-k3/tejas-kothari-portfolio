@@ -1,6 +1,8 @@
 ---
 import SectionHead from "./SectionHead.astro";
 import { projects } from "../data/content";
+import { caseStudies } from "../data/caseStudies";
+const cs = (slug: string) => caseStudies.find((c) => c.slug === slug);
 const [flagship, ...rest] = projects;
 const major = projects.filter((p) => p.page);
 const minor = projects.filter((p) => !p.page);
@@ -21,6 +23,16 @@ const minor = projects.filter((p) => !p.page);
             <div><dt>How</dt><dd>{p.how}</dd></div>
             <div><dt>Result</dt><dd>{p.result}</dd></div>
           </dl>
+          {cs(p.slug) && (
+            <div class="eng-only under">
+              <h4 class="mono">Under the hood</h4>
+              <p class="flow">{cs(p.slug)!.arch.map((n, i) => <span><b class="mono">{String(i + 1).padStart(2, "0")}</b>{n.label}</span>)}</p>
+              <div class="cols">
+                <div><h5 class="mono">Key decisions</h5><ul>{cs(p.slug)!.decisions.slice(0, 3).map((d) => <li><b>{d.q}</b> {d.a}</li>)}</ul></div>
+                <div><h5 class="mono">Trade-offs</h5><ul>{cs(p.slug)!.tradeoffs.map((t) => <li>{t}</li>)}</ul></div>
+              </div>
+            </div>
+          )}
           <div class="foot">
             <p class="stack">{p.stack.map((s) => <span class="chip">{s}</span>)}</p>
             <p class="act">
@@ -58,6 +70,12 @@ const minor = projects.filter((p) => !p.page);
   dd { margin: 0; color: var(--muted); font-size: 15px; }
   .foot { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-top: 20px; }
   .stack { display: flex; flex-wrap: wrap; gap: 6px; } .act { display: flex; gap: 10px; flex-wrap: wrap; }
+  .under { margin-top: 20px; padding: 18px 20px; border: 1px dashed var(--border); border-radius: 12px; background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+  .under h4, .under h5 { font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+  .under .flow { display: flex; flex-wrap: wrap; gap: 8px; color: var(--text); font-size: 13px; margin-bottom: 16px; }
+  .under .flow span { border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; background: var(--surface); } .under .flow b { color: var(--accent); margin-right: 6px; font-weight: 500; }
+  .under .cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; } .under ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; color: var(--muted); font-size: 14px; } .under li b { color: var(--text); font-weight: 600; }
+  @media (max-width: 860px) { .under .cols { grid-template-columns: 1fr; } }
   .more { margin: 56px 0 16px; font-size: 20px; }
   .minor { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .minor .what { font-size: 16px; margin: 12px 0 8px; } .res { color: var(--muted); font-size: 14px; margin-bottom: 14px; }

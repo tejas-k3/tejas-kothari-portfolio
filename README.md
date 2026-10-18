@@ -7,7 +7,7 @@ bun install
 bun run dev        # local dev
 bun run build      # syncs GitHub snapshot, then builds to dist/
 bun run preview
-python3 scripts/image_to_ascii.py <photo.jpg> 96   # regenerate ASCII portrait
+python3 scripts/make_portrait.py <photo.jpg> 96   # regenerate ASCII portrait
 python3 scripts/make_og.py                          # regenerate social cards
 ```
 
