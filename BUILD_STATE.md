@@ -30,3 +30,6 @@ OPEN ITEMS for Tejas: (1) site domain in astro.config.mjs is a PLACEHOLDER (teja
 Round 2 (user feedback): logos for tech stack (public/logos, simple-icons via CSS mask, light/dark brand tints), even grids + marquee; "More projects" heading;
 effects (scroll progress, cursor spotlight, card tilt, magnetic buttons, counters, portrait row reveal + scan, heatmap wave, packet arrows, typed "code that writes code" demo);
 accent switched to electric blue (+ cool neutrals); portrait replaced by simple pixel-art sunglasses character (scripts/make_portrait.py; image_to_ascii.py kept as braille converter).
+
+Round 3: portrait = hand-authored 8-bit side-view sprite (scripts/make_portrait.py, 3 tones); tech stack = static always-coloured logo tiles in even 6-col rows (no marquee, no selection);
+"Code that writes code" gained site.sh: sitemap tree + `echo <section>` navigation (src/scripts/shell.ts, fixed route table).

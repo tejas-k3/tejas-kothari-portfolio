@@ -1,48 +1,37 @@
 #!/usr/bin/env python3
-"""Pixel-art portrait (spiky hair, sunglasses with glint, smirk). Authored as the LEFT half of a bitmap, mirrored,
-then rendered with half-block characters (2 pixel rows per text row). Run: python3 scripts/make_portrait.py"""
-HALF = [
-"...............#",
-"......#........#",
-"......##......##",
-"..#...###....###",
-"..##..####..####",
-".###..##########",
-"################",
-"################",
-"##.............#",
-"##..............",
-"#.##############",
-"#.##..##########",
-"#.##############",
-"#..##############"[:16],
-"#...############",
-"#....#########..",
-"#...............",
-"#.......#.......",
-"#......##.......",
-"#...............",
-"#....#..........",
-"#.....##########",
-".#..............",
-"..#.............",
-"...##...........",
-".....#######....",
-"......#.........",
-"..###.##........",
-".#####.###......",
-"########.###....",
-"################",
-"################",
+"""8-bit side-view sprite (facing left), authored by hand as a bitmap. Each pixel renders as 2 characters.
+Legend: # dark (shades / collar / outline)  h hair  o skin  . empty.   Run: python3 scripts/make_portrait.py"""
+BMP = [
+"........h.....h....h....",
+".......hhh...hhh..hhh...",
+"......hhhhh.hhhhh.hhhh..",
+".....hhhhhhhhhhhhhhhhhh.",
+"....hhhhhhhhhhhhhhhhhhhh",
+"....hhhhhhhhhhhhhhhhhhh.",
+"....hhhooooohhhhhhhhhhh.",
+"....hhoooooooohhhhhhhh..",
+"...#oooooooooohhhhhhhh..",
+"...#o############hhhhh..",
+"...#o##.######.##hhhhh..",
+"..#oo############ohhhh..",
+"..#ooo##########oooohh..",
+".##ooooooooooooooooooh..",
+"##oooooooooooooooooo....",
+"#o#ooooooooooooooooo....",
+".##oooooooooooooooo.....",
+"..#oooo####ooooooooo....",
+"..#ooooooooooooooooo....",
+"...#ooooooooooooooo.....",
+"....##oooooooooooo......",
+".....###ooooooooo.......",
+".......#ooooooooo.......",
+".......#ooooooooo.......",
+"....########oo#######...",
+"..####################..",
+".######################.",
 ]
-full = [r + r[::-1] for r in HALF]
-if len(full) % 2: full.append("." * len(full[0]))
-out = []
-for y in range(0, len(full), 2):
-    line = ""
-    for x in range(len(full[0])):
-        t, b = full[y][x] == "#", full[y + 1][x] == "#"
-        line += "█" if t and b else "▀" if t else "▄" if b else " "
-    out.append(line.rstrip())
+W = max(len(r) for r in BMP)
+glyph = {"#": "██", "h": "▓▓", "o": "░░", ".": "  "}
+out = ["".join(glyph[c] for c in r.ljust(W, ".")).rstrip() for r in BMP]
 open("src/data/portrait.txt", "w").write("\n".join(out) + "\n")
 print("\n".join(out))

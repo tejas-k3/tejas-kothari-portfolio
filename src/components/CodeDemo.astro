@@ -1,5 +1,6 @@
 ---
 import SectionHead from "./SectionHead.astro";
+import { person } from "../data/content";
 // Illustrative sketch of the idea "code that writes code". Not production code and not tied to any employer or project.
 const gen = `# generator: one spec in, typed client + tests out
 for op in spec.operations:
@@ -14,6 +15,19 @@ def test_get_account_contract():
     assert acct.id == FIXTURE_ID
 
 # 2 methods generated · 2 tests passed`;
+// Sitemap for the interactive shell. `aliases` are extra names accepted by `echo`. Fixed table: input is matched, never evaluated.
+const routes = [
+  { name: "work", path: "/#work", depth: 1 },
+  { name: "rupee-engine", path: "/projects/rupee-engine", depth: 2, aliases: ["rupee"] },
+  { name: "system-design-playground", path: "/projects/system-design-playground", depth: 2, aliases: ["playground", "sdp"] },
+  { name: "experience", path: "/#experience", depth: 1, aliases: ["exp", "career"] },
+  { name: "how-i-work", path: "/#how", depth: 1, aliases: ["how"] },
+  { name: "activity", path: "/#activity", depth: 1, aliases: ["github", "gh"] },
+  { name: "stack", path: "/#stack", depth: 1, aliases: ["tech"] },
+  { name: "currently", path: "/#beyond", depth: 1, aliases: ["beyond", "now"] },
+  { name: "contact", path: "/#contact", depth: 1, aliases: ["hire", "hire-me"] },
+  ...(person.resumeUrl ? [{ name: "resume.pdf", path: person.resumeUrl, depth: 1, aliases: ["resume", "cv"] }] : []),
+];
 ---
 <section id="demo" aria-label="Code that writes code">
   <div class="wrap">
@@ -28,6 +42,18 @@ def test_get_account_contract():
         <div class="bar mono"><i></i><i></i><i></i><span>client.py <em>generated</em></span></div>
         <pre class="code mono" data-target="out">{out}</pre>
       </div>
+    </div>
+    <div class="pane sh reveal" data-shell data-routes={JSON.stringify(routes)}>
+      <div class="bar mono"><i></i><i></i><i></i><span>site.sh</span><em class="hintbar">type <b>echo contact</b> and press enter</em></div>
+      <pre class="tree mono" aria-label="Site map"><span>~/tejas.k</span>
+{routes.map((r, i) => {
+  const later1 = routes.slice(i + 1).some((x) => x.depth === 1);
+  const next = routes[i + 1];
+  const prefix = r.depth === 1 ? (later1 ? "├── " : "└── ") : (later1 ? "│   " : "    ") + (next && next.depth === 2 ? "├── " : "└── ");
+  return <span><a href={r.path}>{prefix}{r.name}</a></span>;
+})}</pre>
+      <div class="log mono" data-log role="log" aria-live="polite"></div>
+      <label class="prompt mono"><span aria-hidden="true">$</span><input type="text" data-in autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="echo work" aria-label="Shell command, for example: echo work" /></label>
     </div>
     <p class="cap mono"><span>Illustrative sketch, not production code.</span> <button type="button" class="replay mono" data-replay>↻ replay</button></p>
   </div>
@@ -45,5 +71,14 @@ def test_get_account_contract():
   @keyframes flow { to { background-position: -200% 0; } } @keyframes blink { 50% { opacity: 0; } }
   .cap { color: var(--muted); font-size: 12px; margin-top: 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
   .replay { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; min-height: 32px; padding: 0 12px; cursor: pointer; } .replay:hover { color: var(--accent); border-color: var(--accent); }
+  .sh { margin-top: 16px; }
+  .sh .hintbar { margin-left: auto; font-style: normal; color: #8b93a1; } .sh .hintbar b { color: var(--accent); font-weight: 500; }
+  .tree { margin: 0; padding: 14px 18px 6px; font-size: 13px; line-height: 1.55; color: #8b93a1; display: grid; }
+  .tree > span:first-child { color: #d8dde6; }
+  .tree a { color: #d8dde6; text-decoration: none; white-space: pre; } .tree a:hover { color: var(--accent); }
+  .log { padding: 0 18px; font-size: 13px; line-height: 1.6; color: #d8dde6; min-height: 0; } .log :global(div) { white-space: pre-wrap; } .log :global(.p) { color: var(--accent); } .log :global(.d) { color: #8b93a1; }
+  .prompt { display: flex; gap: 10px; padding: 8px 18px 14px; color: var(--accent); font-size: 14px; border-top: 1px solid #252a33; margin-top: 8px; }
+  .prompt input { flex: 1; background: none; border: 0; outline: none; color: #eceae4; font: inherit; min-height: 32px; min-width: 0; }
+  .prompt:focus-within { background: rgba(76,194,255,.05); }
   @media (max-width: 820px) { .stage { grid-template-columns: 1fr; } .arrow { width: 100%; height: 28px; transform: rotate(90deg); } .code { min-height: 0; } }
 </style>
