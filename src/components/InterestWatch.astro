@@ -1,0 +1,51 @@
+---
+---
+<section id="watch" data-chapter="Watch" aria-label="Watch">
+  <div class="wrap two">
+    <div class="copy reveal">
+      <p class="eyebrow">Watch</p>
+      <h2 class="h2">Currently rocking a Tissot PRX Powermatic 80.</h2>
+      <p class="lede">An automatic movement with an 80-hour power reserve: no battery, no code, just a spring and a very stubborn escapement. The hands on the right show your local time.</p> <!-- TODO(tone) -->
+    </div>
+    <div class="dial reveal" data-watch>
+      <svg viewBox="0 0 240 240" role="img" aria-label="Animated watch dial showing the current local time">
+        <defs>
+          <radialGradient id="dg" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="var(--dial-hi)" /><stop offset="1" stop-color="var(--dial-lo)" /></radialGradient>
+          <linearGradient id="cs" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--case-hi)" /><stop offset="1" stop-color="var(--case-lo)" /></linearGradient>
+        </defs>
+        <circle cx="120" cy="120" r="114" fill="url(#cs)" /><circle cx="120" cy="120" r="104" fill="var(--case-lo)" />
+        <circle cx="120" cy="120" r="96" fill="url(#dg)" />
+        <g class="grid" aria-hidden="true">{Array.from({ length: 24 }, (_, i) => <line x1={120 + 92 * Math.cos((i * 15 * Math.PI) / 180)} y1={120 + 92 * Math.sin((i * 15 * Math.PI) / 180)} x2={120 + 66 * Math.cos((i * 15 * Math.PI) / 180)} y2={120 + 66 * Math.sin((i * 15 * Math.PI) / 180)} />)}</g>
+        <g class="idx">{Array.from({ length: 12 }, (_, i) => <rect x="118" y="26" width="4" height={i % 3 === 0 ? 16 : 11} rx="1" transform={`rotate(${i * 30} 120 120)`} />)}</g>
+        <text x="120" y="80" class="brand">TISSOT</text><text x="120" y="92" class="sub">PRX</text><text x="120" y="162" class="sub">POWERMATIC 80</text><text x="120" y="173" class="sub2">AUTOMATIC</text>
+        <g class="hand h" data-h><rect x="117.5" y="64" width="5" height="60" rx="2.5" /></g>
+        <g class="hand m" data-m><rect x="118.5" y="40" width="3" height="84" rx="1.5" /></g>
+        <g class="hand s" data-s><rect x="119.2" y="34" width="1.6" height="100" rx=".8" /><circle cx="120" cy="120" r="4" /></g>
+      </svg>
+    </div>
+  </div>
+</section>
+<script>
+  const w = document.querySelector<HTMLElement>("[data-watch]");
+  if (w) {
+    const h = w.querySelector<SVGGElement>("[data-h]")!, m = w.querySelector<SVGGElement>("[data-m]")!, s = w.querySelector<SVGGElement>("[data-s]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const set = () => { const n = new Date(), sec = n.getSeconds() + n.getMilliseconds() / 1000, min = n.getMinutes() + sec / 60, hr = (n.getHours() % 12) + min / 60;
+      h.style.transform = `rotate(${hr * 30}deg)`; m.style.transform = `rotate(${min * 6}deg)`;
+      if (reduce) s.style.transform = `rotate(${Math.floor(sec) * 6}deg)`; else { s.style.animationDelay = `-${sec.toFixed(3)}s`; } };
+    set(); setInterval(set, 1000);
+    if (!reduce) s.classList.add("sweep");
+  }
+</script>
+<style>
+  .two { display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: center; }
+  .dial { --dial-hi: #3b74c9; --dial-lo: #12306b; --case-hi: #d9dde4; --case-lo: #707782; max-width: 340px; justify-self: center; width: 100%; filter: drop-shadow(0 30px 40px rgba(0,0,0,.28)); transition: transform .5s var(--ease); }
+  :global(:root[data-theme="dark"]) .dial { --case-hi: #aab2be; --case-lo: #3a414d; }
+  .dial:hover { transform: rotate(-3deg) scale(1.03); } .dial:hover .idx rect { fill: #cfe6ff; filter: drop-shadow(0 0 4px #9fd0ff); }
+  .grid line { stroke: rgba(255,255,255,.07); stroke-width: 1; }
+  .idx rect { fill: #e9eef7; transition: fill .4s, filter .4s; }
+  text { fill: #e9eef7; text-anchor: middle; } .brand { font: 700 9px var(--font-body); letter-spacing: .28em; } .sub { font: 500 6.5px var(--font-mono); letter-spacing: .18em; opacity: .85; } .sub2 { font: 500 5px var(--font-mono); letter-spacing: .2em; opacity: .6; }
+  .hand { transform-origin: 120px 120px; transform-box: view-box; } .hand rect { fill: #f2f5fb; } .hand.m rect { fill: #f2f5fb; } .hand.s rect, .hand.s circle { fill: #ff7a45; }
+  .hand.s.sweep { animation: sweep 60s steps(360) infinite; } @keyframes sweep { to { transform: rotate(360deg); } }
+  @media (max-width: 820px) { .two { grid-template-columns: 1fr; } }
+</style>

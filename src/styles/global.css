@@ -148,3 +148,6 @@ html[data-mode="recruiter"] .sys { display: none; }
 @keyframes trail { to { opacity: 0; scale: .2; } }
 .pkt-chip { position: fixed; left: 0; top: 0; z-index: 201; pointer-events: none; font: 500 11px var(--font-mono); background: var(--surface); border: 1px solid var(--accent); color: var(--text); border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
 .nav a.hit { color: var(--accent); }
+.ck { position: fixed; z-index: 300; pointer-events: none; font: 600 11px var(--font-mono); padding: 2px 8px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); animation: ck .9s ease-out forwards; white-space: nowrap; }
+.ck.g { color: var(--success); border-color: color-mix(in srgb, var(--success) 50%, var(--border)); } .ck.r { color: var(--danger); border-color: var(--danger); }
+@keyframes ck { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-22px); } }

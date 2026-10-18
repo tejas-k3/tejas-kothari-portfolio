@@ -57,3 +57,17 @@ addEventListener("click", (e) => {
   requestAnimationFrame(step);
   setTimeout(go, 1200); // safety net
 });
+
+// ---------- Every click gets an HTTP status ----------
+let live = 0;
+addEventListener("click", (e) => {
+  if (reduce() || live > 10) return;
+  const t = e.target as HTMLElement;
+  const a = t.closest<HTMLAnchorElement>("a[href]"), ctl = t.closest<HTMLElement>("button, input, select, summary, label, [role=button], canvas, [data-arena]");
+  let code = "204 No Content", tone = "n"; // TODO(tone): status humor
+  if (a) { try { const u = new URL(a.href, location.href); code = u.origin !== location.origin ? "302 Found" : a.getAttribute("href")?.startsWith("mailto:") ? "202 Accepted" : "200 OK"; } catch { code = "200 OK"; } tone = "g"; }
+  else if (ctl) { code = (ctl as HTMLButtonElement).disabled ? "403 Forbidden" : "200 OK"; tone = (ctl as HTMLButtonElement).disabled ? "r" : "g"; }
+  else if (t.closest("h1, h2, h3")) { code = "418 I'm a teapot"; tone = "n"; }
+  const c = document.createElement("span"); c.className = `ck ${tone}`; c.textContent = code; c.style.left = e.clientX + 10 + "px"; c.style.top = e.clientY - 14 + "px"; document.body.append(c); live++;
+  setTimeout(() => { c.remove(); live--; }, 900);
+}, true);

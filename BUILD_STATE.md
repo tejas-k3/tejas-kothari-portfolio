@@ -42,3 +42,7 @@ Native cross-page View Transitions (CSS @view-transition) + Astro hover prefetch
 
 Round 6: alive.ts = footer status line (real interaction rate + rAF p95 frame time; green/amber/red) + routing packets on internal link clicks (dot + "GET /path" chip travels to the nav item, then navigates; skipped for reduced motion/recruiter);
 heatmap "Replay the year" (GithubActivity); cursor-lit two-layer ASCII portrait with 3D tilt + idle drifting light (Portrait.astro/fx.ts); brief->built diff reveal on /work cards (content.ts `brief` fields derived from each project's `why`/`what`).
+
+Round 7: /interests page (watch dial with live time + beat-rate sweep, CS2 crosshair arena, "Portfolio I dream of" 10L->40L chart, 3D travel globe from src/data/travel.ts [from,to] pairs; land = public/data/land.json from Natural Earth via world-atlas).
+Every click now shows an HTTP status chip (alive.ts). Interests removed from /about cards -> link cards to /interests.
+To add a trip: append [from, to] in src/data/travel.ts; unknown names need [lat, lon] in `places` (build fails with a message otherwise).

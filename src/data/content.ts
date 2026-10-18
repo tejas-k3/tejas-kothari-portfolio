@@ -188,11 +188,11 @@ export const howIWork = [
 ];
 
 export const interests = [
-  { icon: "◷", t: "Watches", d: "Mechanical things that keep time without a CPU." }, // TODO(tone) humor
-  { icon: "↗", t: "Markets", d: "Why Rupee Engine exists." },
-  { icon: "</>", t: "Code", d: "Especially code that makes more code." },
-  { icon: "✈", t: "Travel", d: "Offline mode, but for engineers." }, // TODO(tone) humor
-]; // TODO(tejas): add specifics (favourite watch, places) if you want them public.
+  { icon: "◷", t: "Watch", d: "Currently rocking a Tissot PRX Powermatic 80.", href: "/interests#watch" },
+  { icon: "⌖", t: "Gaming", d: "8,000+ hours in CS2.", href: "/interests#gaming" },
+  { icon: "↗", t: "Markets", d: "Investing in Indian equities, guided by Rupee Engine's predictions.", href: "/interests#markets" },
+  { icon: "✈", t: "Travel", d: "Last destination: Coorg. Upcoming: unknown.", href: "/interests#travel" },
+];
 
 export const currently = [
   { k: "Building", v: "Rupee Engine and the System Design Playground" },
