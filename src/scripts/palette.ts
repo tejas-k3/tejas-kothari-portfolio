@@ -117,4 +117,4 @@ document.addEventListener("keydown", (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); palette.open ? palette.close() : openPalette(); }
   else if (e.key === "`" && !typing(e.target) && !e.metaKey && !e.ctrlKey) { e.preventDefault(); term.open ? term.close() : openTerm(); }
 });
-if (!reduce) console.log("%cHello, curious one. Press ` to open a terminal, or Cmd/Ctrl+K.", "color:#ffb454"); // TODO(tone)
+if (!reduce) console.log("%cHello, curious one. Press ` to open a terminal, or Cmd/Ctrl+K.", "color:#4cc2ff"); // TODO(tone)
