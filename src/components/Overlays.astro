@@ -23,8 +23,23 @@ const data = {
     <label class="line mono"><span aria-hidden="true">$</span><input id="term-in" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal command" /></label>
   </div>
 </dialog>
+<dialog id="tldr" aria-label="30-second version" class="ov">
+  <div class="box tldr-box">
+    <p class="eyebrow">The 30-second version</p>
+    <h2>{person.name}</h2>
+    <ul>
+      <li><b>Who:</b> {person.title}, {person.focus.toLowerCase()}, {person.location}. Shipping backend systems since 2021.</li>
+      <li><b>Where:</b> {experience.map((e) => e.company).join(", ")}.</li>
+      <li><b>Flagship:</b> Rupee Engine: 13 pluggable algorithms scoring 1,300+ NSE stocks, with a CLI, API and dashboard.</li>
+      <li><b>Open source:</b> System Design Playground: a deterministic Go simulator you can break and fix in the browser.</li>
+      <li><b>Style:</b> learns fast, ships with AI-assisted development and keeps tests and judgment in the loop.</li>
+    </ul>
+    <p class="act"><a class="btn primary" href={`mailto:${person.email}`}>Email me</a><a class="btn" href="/work">See the work</a><a class="btn" href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a><button type="button" class="btn" data-close>Close</button></p>
+  </div>
+</dialog>
 <script type="application/json" id="site-data" set:html={JSON.stringify(data)} />
 <style is:global>
+  .tldr-box { padding: 24px !important; } .tldr-box h2 { font-size: 28px; margin: 10px 0 14px; } .tldr-box ul { padding-left: 18px; display: grid; gap: 10px; color: var(--muted); } .tldr-box b { color: var(--text); } .tldr-box .act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
   dialog.ov { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
   dialog.ov::backdrop { background: rgba(5,6,8,.55); backdrop-filter: blur(3px); }
   dialog.ov .box { margin: 0; padding: 12px; }
