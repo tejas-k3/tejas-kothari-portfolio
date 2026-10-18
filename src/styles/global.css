@@ -69,7 +69,7 @@ html[data-mode="recruiter"] * { animation: none !important; transition: none !im
 .brand span { color: var(--accent); }
 .nav { display: flex; gap: 4px; margin-left: auto; }
 .nav a { padding: 8px 12px; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: 14px; }
-.nav a:hover { color: var(--text); background: var(--surface-2); }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--text); background: var(--surface-2); }
 .tools { display: flex; gap: 8px; align-items: center; }
 .tool { min-width: 44px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: 500 13px var(--font-mono); cursor: pointer; padding: 0 10px; }
 .tool:hover { border-color: var(--accent); }
@@ -116,3 +116,10 @@ html[data-mode="recruiter"] * { animation: none !important; transition: none !im
 .modebar .wrap { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding-block: 10px; }
 .modebar button { margin-left: auto; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 8px; min-height: 32px; padding: 0 12px; cursor: pointer; font: 500 12px var(--font-mono); }
 html[data-mode="engineering"] .modebar, html[data-mode="recruiter"] .modebar { display: block; }
+
+/* Cross-page transitions (native MPA View Transitions; ignored where unsupported) */
+@view-transition { navigation: auto; }
+.hdr { view-transition-name: site-header; }
+::view-transition-old(root) { animation: vt-out .18s ease both; } ::view-transition-new(root) { animation: vt-in .32s var(--ease) both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-6px); } } @keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } }

@@ -1,0 +1,11 @@
+---
+import Base from "../layouts/Base.astro";
+import PageTitle from "../components/PageTitle.astro";
+import GithubActivity from "../components/GithubActivity.astro";
+import Contact from "../components/Contact.astro";
+---
+<Base title="Engineering activity | Tejas Kothari" description="Public GitHub activity of Tejas Kothari: contributions, recently active repositories and languages.">
+  <PageTitle eyebrow="Activity" title="Still building." lede="Public GitHub activity, synced automatically." />
+  <GithubActivity />
+  <Contact />
+</Base>

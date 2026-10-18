@@ -1,0 +1,13 @@
+---
+interface Props { eyebrow: string; title: string; lede?: string }
+const { eyebrow, title, lede } = Astro.props;
+---
+<div class="wrap pt">
+  <p class="eyebrow">{eyebrow}</p>
+  <h1>{title}</h1>
+  {lede && <p class="lede">{lede}</p>}
+</div>
+<style>
+  .pt { padding-top: clamp(40px, 7vw, 88px); }
+  h1 { font-size: clamp(40px, 7vw, 84px); font-weight: 800; letter-spacing: -.035em; margin-top: 14px; }
+</style>

@@ -17,14 +17,14 @@ def test_get_account_contract():
 # 2 methods generated · 2 tests passed`;
 // Sitemap for the interactive shell. `aliases` are extra names accepted by `echo`. Fixed table: input is matched, never evaluated.
 const routes = [
-  { name: "work", path: "/#work", depth: 1 },
+  { name: "work", path: "/work", depth: 1 },
   { name: "rupee-engine", path: "/projects/rupee-engine", depth: 2, aliases: ["rupee"] },
   { name: "system-design-playground", path: "/projects/system-design-playground", depth: 2, aliases: ["playground", "sdp"] },
-  { name: "experience", path: "/#experience", depth: 1, aliases: ["exp", "career"] },
-  { name: "how-i-work", path: "/#how", depth: 1, aliases: ["how"] },
-  { name: "activity", path: "/#activity", depth: 1, aliases: ["github", "gh"] },
-  { name: "stack", path: "/#stack", depth: 1, aliases: ["tech"] },
-  { name: "currently", path: "/#beyond", depth: 1, aliases: ["beyond", "now"] },
+  { name: "experience", path: "/experience", depth: 1, aliases: ["exp", "career"] },
+  { name: "how-i-work", path: "/about#how", depth: 1, aliases: ["how"] },
+  { name: "activity", path: "/activity", depth: 1, aliases: ["github", "gh"] },
+  { name: "stack", path: "/experience#stack", depth: 1, aliases: ["tech"] },
+  { name: "currently", path: "/about#beyond", depth: 1, aliases: ["beyond", "now"] },
   { name: "contact", path: "/#contact", depth: 1, aliases: ["hire", "hire-me"] },
   ...(person.resumeUrl ? [{ name: "resume.pdf", path: person.resumeUrl, depth: 1, aliases: ["resume", "cv"] }] : []),
 ];

@@ -1,12 +1,13 @@
 ---
 import { person } from "../data/content";
-const links = [["Work", "/#work"], ["Experience", "/#experience"], ["How I work", "/#how"], ["Activity", "/#activity"], ["Stack", "/#stack"], ["Contact", "/#contact"]];
+const links = [["Work", "/work"], ["Experience", "/experience"], ["Activity", "/activity"], ["About", "/about"], ["Contact", "/#contact"]];
+const here = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 <header class="hdr">
   <div class="wrap">
     <a class="brand" href="/" aria-label={`${person.name}, home`}>tejas<span>.</span>k</a>
     <nav class="nav" id="nav" aria-label="Primary">
-      {links.map(([t, h]) => <a href={h}>{t}</a>)}
+      {links.map(([t, h]) => <a href={h} aria-current={h === here ? "page" : undefined}>{t}</a>)}
       <span class="seg-wrap seg-mobile"><div class="seg" role="group" aria-label="View mode">
         <button type="button" data-mode="story" title="Story: the narrative version">Story</button>
         <button type="button" data-mode="engineering" title="Engineering: architecture, decisions, trade-offs">Engineering</button>

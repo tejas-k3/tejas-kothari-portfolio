@@ -1,0 +1,182 @@
+---
+// "Break the system": a toy queueing model inspired by my System Design Playground. Not the real engine.
+---
+<section id="sim" aria-label="Break the system" data-chapter="Try it">
+  <div class="wrap">
+    <header class="reveal">
+      <p class="eyebrow">Try it</p>
+      <h2 class="h2">Break the system.</h2>
+      <p class="lede">A tiny toy model of load balancing. Push the traffic, crash a server, then fix it with the switches. <span class="mono goal">Goal: stay above 99% success at 140 req/s with a server down.</span></p>
+    </header>
+    <div class="sim card reveal" data-sim>
+      <div class="viz">
+        <svg viewBox="0 0 560 290" role="img" aria-label="Diagram: clients send requests to a load balancer, which spreads them over app servers backed by a database. Server queues are shown as bars.">
+          <g class="wires" data-wires></g>
+          <g class="boxes">
+            <circle cx="34" cy="145" r="16" class="n" /><text x="34" y="150" class="t">users</text>
+            <rect x="120" y="125" width="52" height="40" rx="10" class="n" /><text x="146" y="150" class="t">LB</text>
+            <rect x="500" y="125" width="52" height="40" rx="10" class="n" /><text x="526" y="150" class="t">DB</text>
+          </g>
+          <g data-servers></g>
+          <g data-packets></g>
+        </svg>
+      </div>
+      <div class="panel">
+        <div class="stats mono" aria-live="off">
+          <div><b data-s="succ">100%</b><span>success (5 s)</span></div>
+          <div><b data-s="p95">0 ms</b><span>p95 latency</span></div>
+          <div><b data-s="rps">0</b><span>req/s in</span></div>
+        </div>
+        <label class="slider"><span class="mono">Traffic: <b data-s="rpsv">60</b> req/s</span><input type="range" min="20" max="240" value="60" step="5" data-rps aria-label="Traffic in requests per second" /></label>
+        <div class="btns"><button type="button" class="btn" data-crash>💥 Crash a server</button><button type="button" class="btn" data-reset>Reset</button></div>
+        <fieldset class="sw"><legend class="mono">Fixes</legend>
+          <label><input type="checkbox" data-opt="health" /><span>Health checks<small>stop sending traffic to dead servers</small></span></label>
+          <label><input type="checkbox" data-opt="shed" /><span>Load shedding<small>reject early when a queue is deep</small></span></label>
+          <label><input type="checkbox" data-opt="scale" /><span>Autoscaling<small>add servers (up to 6) under load</small></span></label>
+        </fieldset>
+        <p class="msg" data-msg role="status">Everything is healthy. Try 140 req/s, then crash a server.</p>
+        <p class="note mono">Toy model. The real thing: <a href="/projects/system-design-playground">System Design Playground</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  const root = document.querySelector<HTMLElement>("[data-sim]");
+  if (root) {
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const NS = "http://www.w3.org/2000/svg";
+    const el = (tag: string, attrs: Record<string, string | number>, parent?: Element) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, String(attrs[k])); parent?.append(e); return e; };
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const MU = 30, TIMEOUT = 2000, DT = 100, MAXS = 6, SHED_Q = 10;
+    let seed = 7; const rnd = () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const poisson = (l: number) => { let L = Math.exp(-l), k = 0, p = 1; do { k++; p *= rnd(); } while (p > L); return k - 1; };
+    type Srv = { up: boolean; downUntil: number; bootAt: number; q: number[]; credit: number; idle: number };
+    let now = 0, rr = 0, srv: Srv[] = [], log: { t: number; k: "ok" | "to" | "shed" | "ref"; lat?: number }[] = [], accIn: number[] = [];
+    const opt = { health: false, shed: false, scale: false };
+    const mk = (): Srv => ({ up: true, downUntil: 0, bootAt: 0, q: [], credit: 0, idle: 0 });
+    const reset = () => { now = 0; rr = 0; seed = 7; srv = [mk(), mk(), mk()]; log = []; accIn = []; $<HTMLElement>("[data-packets]").replaceChildren(); layout(); say("Reset. Everything is healthy."); };
+    const msgEl = $<HTMLElement>("[data-msg]"); let lastMsg = "";
+    const say = (m: string) => { if (m !== lastMsg) { msgEl.textContent = m; lastMsg = m; } };
+
+    const gS = $<SVGGElement>("[data-servers]"), gW = $<SVGGElement>("[data-wires]"), gP = $<SVGGElement>("[data-packets]");
+    const ys = (i: number, n: number) => 145 + (i - (n - 1) / 2) * 44;
+    let views: { box: SVGRectElement; bar: SVGRectElement; txt: SVGTextElement }[] = [];
+    function layout() {
+      gS.replaceChildren(); gW.replaceChildren(); views = [];
+      const n = srv.length;
+      srv.forEach((_, i) => {
+        const y = ys(i, n);
+        el("path", { d: `M172 145 C 220 145, 220 ${y}, 270 ${y}` }, gW); el("path", { d: `M400 ${y} C 450 ${y}, 450 145, 500 145` }, gW);
+        const box = el("rect", { x: 270, y: y - 16, width: 130, height: 32, rx: 8, class: "srv" }, gS) as SVGRectElement;
+        const bar = el("rect", { x: 272, y: y - 14, width: 0, height: 28, rx: 6, class: "bar" }, gS) as SVGRectElement;
+        const txt = el("text", { x: 335, y: y + 4, class: "t" }, gS) as SVGTextElement; txt.textContent = `app-${i + 1}`;
+        views.push({ box, bar, txt });
+      });
+      gW.prepend(el("path", { d: "M50 145 H120" }));
+    }
+    type P = { t0: number; y: number; ok: boolean; node: SVGCircleElement };
+    let packets: P[] = [];
+    function spawn(i: number, ok: boolean) {
+      if (reduce || packets.length > 40) return;
+      const node = el("circle", { r: 3.5, class: ok ? "p ok" : "p bad" }, gP) as SVGCircleElement;
+      packets.push({ t0: performance.now(), y: ys(i, srv.length), ok, node });
+    }
+    function frame() {
+      const t = performance.now();
+      packets = packets.filter((p) => {
+        const k = (t - p.t0) / 650;
+        if (k >= 1) { p.node.remove(); return false; }
+        let x: number, y: number;
+        if (k < 0.25) { x = 50 + (120 - 50) * (k / 0.25); y = 145; }
+        else { const u = Math.min(1, (k - 0.25) / (p.ok ? 0.75 : 0.45)); x = 172 + (270 - 172) * Math.min(1, u * 1.2) + (p.ok ? Math.max(0, u - 0.8) * 5 * 230 : 0); y = 145 + (p.y - 145) * Math.min(1, u * 1.4); if (!p.ok && u >= 1) { p.node.remove(); return false; } }
+        p.node.setAttribute("cx", String(x)); p.node.setAttribute("cy", String(y)); return true;
+      });
+      if (running) raf = requestAnimationFrame(frame);
+    }
+
+    function step() {
+      now += DT;
+      const rps = Number($<HTMLInputElement>("[data-rps]").value);
+      // recoveries
+      srv.forEach((s) => { if (!s.up && now >= s.downUntil) s.up = true; });
+      const live = srv.map((s, i) => i).filter((i) => srv[i].up && now >= srv[i].bootAt);
+      const arrivals = poisson((rps * DT) / 1000); accIn.push(arrivals); if (accIn.length > 10) accIn.shift();
+      for (let a = 0; a < arrivals; a++) {
+        const pool = opt.health ? live : srv.map((_, i) => i).filter((i) => now >= srv[i].bootAt);
+        if (!pool.length) { log.push({ t: now, k: "ref" }); continue; }
+        const i = pool[rr++ % pool.length], s = srv[i];
+        if (!s.up) { log.push({ t: now, k: "ref" }); if (a % 3 === 0) spawn(i, false); continue; }
+        if (opt.shed && s.q.length >= SHED_Q) { log.push({ t: now, k: "shed" }); if (a % 3 === 0) spawn(i, false); continue; }
+        if (s.q.length > 300) { log.push({ t: now, k: "to" }); continue; }
+        s.q.push(now); if (a % 3 === 0) spawn(i, true);
+      }
+      srv.forEach((s) => {
+        if (!s.up || now < s.bootAt) return;
+        s.credit += (MU * DT) / 1000; let busy = false;
+        while (s.credit >= 1 && s.q.length) { s.credit -= 1; busy = true; const t0 = s.q.shift()!, age = now - t0; log.push(age > TIMEOUT ? { t: now, k: "to" } : { t: now, k: "ok", lat: age + 35 }); }
+        if (!s.q.length) s.credit = Math.min(s.credit, 1);
+        s.idle = busy || s.q.length ? 0 : s.idle + DT;
+      });
+      // autoscale
+      if (opt.scale) {
+        const up = srv.filter((s) => s.up);
+        const avgQ = up.reduce((a, s) => a + s.q.length, 0) / Math.max(1, up.length);
+        if (avgQ > 6 && srv.length < MAXS && now % 1000 === 0) { const n = mk(); n.bootAt = now + 1500; srv.push(n); layout(); }
+        else if (srv.length > 3 && srv.slice(3).every((s) => s.idle > 6000) && now % 1000 === 0) { srv.pop(); layout(); }
+      }
+      log = log.filter((e) => e.t > now - 5000);
+    }
+    function render() {
+      const ok = log.filter((e) => e.k === "ok"), tot = log.length;
+      const succ = tot ? (ok.length / tot) * 100 : 100;
+      const lats = ok.map((e) => e.lat!).sort((a, b) => a - b), p95 = lats.length ? lats[Math.floor(lats.length * 0.95)] : 0;
+      const s = (k: string) => $<HTMLElement>(`[data-s="${k}"]`);
+      s("succ").textContent = succ.toFixed(succ > 99.5 ? 0 : 1) + "%"; s("succ").dataset.tone = succ >= 99 ? "good" : succ >= 90 ? "warn" : "bad";
+      s("p95").textContent = Math.round(p95) + " ms"; s("rps").textContent = String(Math.round(accIn.reduce((a, b) => a + b, 0) * (1000 / (DT * Math.max(1, accIn.length)))));
+      s("rpsv").textContent = $<HTMLInputElement>("[data-rps]").value;
+      srv.forEach((sv, i) => {
+        const v = views[i]; if (!v) return;
+        const booting = now < sv.bootAt, f = Math.min(1, sv.q.length / 40);
+        v.bar.setAttribute("width", String(Math.round(f * 126))); v.bar.setAttribute("class", "bar" + (f > 0.7 ? " hot" : ""));
+        v.box.setAttribute("class", "srv" + (!sv.up ? " dead" : booting ? " boot" : "")); v.txt.textContent = !sv.up ? `app-${i + 1}  ✕ down` : booting ? `app-${i + 1}  booting…` : `app-${i + 1}  q=${sv.q.length}`;
+      });
+      const cnt = (k: string) => log.filter((e) => e.k === k).length, deadNow = srv.some((x) => !x.up);
+      if (tot < 20) say("Everything is healthy. Try 140 req/s, then crash a server.");
+      else if (succ >= 99) say(deadNow ? "Holding up even with a server down. Nice." : "Healthy. Now crash a server, or push the traffic higher.");
+      else if (cnt("to") > tot * 0.25) say("Queues are longer than the 2 s client timeout, so servers burn effort on requests nobody is waiting for. Try load shedding or autoscaling.");
+      else if (cnt("ref") > tot * 0.1) say("Traffic is still being sent to a dead server. Try health checks.");
+      else if (cnt("shed") > tot * 0.1) say("Shedding protects latency but turns away traffic. Add capacity with autoscaling.");
+      else say("Degraded. Watch which failure dominates, then pick the fix that targets it.");
+    }
+    let acc = 0, last = performance.now(), running = false, raf = 0, timer = 0;
+    const loop = () => { const t = performance.now(); acc += Math.min(500, t - last); last = t; while (acc >= DT) { step(); acc -= DT; } render(); };
+    function start() { if (running) return; running = true; last = performance.now(); timer = window.setInterval(loop, 50); raf = requestAnimationFrame(frame); }
+    function stop() { running = false; clearInterval(timer); cancelAnimationFrame(raf); }
+    new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting && !document.hidden ? start() : stop())), { threshold: 0.15 }).observe(root);
+    document.addEventListener("visibilitychange", () => document.hidden && stop());
+
+    $("[data-crash]").addEventListener("click", () => { const up = srv.map((s, i) => i).filter((i) => srv[i].up); if (up.length <= 1) return; const i = up[Math.floor(rnd() * up.length)]; const s = srv[i]; s.up = false; s.downUntil = now + 8000; s.q.forEach(() => log.push({ t: now, k: "ref" })); s.q = []; say(`app-${i + 1} crashed. It restarts in 8 s.`); });
+    $("[data-reset]").addEventListener("click", reset);
+    root.querySelectorAll<HTMLInputElement>("[data-opt]").forEach((c) => c.addEventListener("change", () => { (opt as Record<string, boolean>)[c.dataset.opt!] = c.checked; }));
+    reset();
+  }
+</script>
+<style>
+  .goal { display: block; margin-top: 10px; color: var(--accent); font-size: 13px; }
+  .sim { margin-top: 36px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 28px; padding: clamp(16px, 3vw, 28px); }
+  .viz svg { width: 100%; height: auto; display: block; }
+  .viz :global(.wires path) { fill: none; stroke: var(--border); stroke-width: 2; }
+  .viz :global(.n), .viz :global(.srv) { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; transition: fill .2s, stroke .2s; }
+  .viz :global(.t) { fill: var(--text); font: 500 11px var(--font-mono); text-anchor: middle; pointer-events: none; }
+  .viz :global(.bar) { fill: color-mix(in srgb, var(--accent) 45%, transparent); transition: width .12s linear; } .viz :global(.bar.hot) { fill: color-mix(in srgb, var(--warning) 70%, transparent); }
+  .viz :global(.srv.dead) { stroke: var(--danger); fill: color-mix(in srgb, var(--danger) 14%, var(--surface-2)); } .viz :global(.srv.boot) { stroke-dasharray: 4 4; stroke: var(--accent); }
+  .viz :global(.p.ok) { fill: var(--accent); } .viz :global(.p.bad) { fill: var(--danger); }
+  .panel { display: grid; gap: 16px; align-content: start; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .stats div { display: grid; gap: 2px; } .stats b { font: 700 24px var(--font-display); letter-spacing: -.02em; } .stats b[data-tone="good"] { color: var(--success); } .stats b[data-tone="warn"] { color: var(--warning); } .stats b[data-tone="bad"] { color: var(--danger); } .stats span { color: var(--muted); font-size: 11px; }
+  .slider { display: grid; gap: 8px; font-size: 13px; } .slider input { width: 100%; accent-color: var(--accent); min-height: 32px; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sw { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px 14px; margin: 0; display: grid; gap: 10px; } .sw legend { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 0 6px; }
+  .sw label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 14px; min-height: 32px; } .sw input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent); } .sw small { display: block; color: var(--muted); font-size: 12px; }
+  .msg { font-size: 14px; min-height: 3.2em; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); } .note { font-size: 12px; color: var(--muted); } .note a { color: var(--accent); }
+  @media (max-width: 860px) { .sim { grid-template-columns: 1fr; } }
+</style>

@@ -10,17 +10,18 @@ const input = document.getElementById("pal-input") as HTMLInputElement;
 const list = document.getElementById("pal-list") as HTMLUListElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const go = (href: string, ext = false) => () => { palette.close(); if (ext) window.open(href, "_blank", "noopener"); else if (location.pathname === "/" && href.startsWith("/#")) location.hash = href.slice(1); else location.href = href; };
+const go = (href: string, ext = false) => () => { palette.close(); if (ext) window.open(href, "_blank", "noopener"); else if (href.startsWith("/#") && location.pathname === "/") location.hash = href.slice(1); else location.href = href; };
 const smoke = (msg: string) => () => { palette.close(); openTerm(msg); };
 
 type Cmd = { label: string; hint?: string; keys?: string; run: () => void; hidden?: boolean };
 const cmds: Cmd[] = [
-  { label: "Selected work", hint: "section", run: go("/#work") },
-  { label: "Experience", hint: "section", run: go("/#experience") },
-  { label: "How I work", hint: "section", run: go("/#how") },
-  { label: "GitHub activity", hint: "section", run: go("/#activity") },
-  { label: "Tech stack", hint: "section", run: go("/#stack") },
-  { label: "Contact", hint: "section", run: go("/#contact") },
+  { label: "Selected work", hint: "page", run: go("/work") },
+  { label: "Experience", hint: "page", run: go("/experience") },
+  { label: "How I work", hint: "page", run: go("/about#how") },
+  { label: "GitHub activity", hint: "page", run: go("/activity") },
+  { label: "Tech stack", hint: "page", run: go("/experience#stack") },
+  { label: "About", hint: "page", run: go("/about") },
+  { label: "Contact", hint: "page", run: go("/#contact") },
   { label: "Rupee Engine", hint: "case study", run: go("/projects/rupee-engine") },
   { label: "System Design Playground", hint: "case study", run: go("/projects/system-design-playground") },
   ...(site.person.resume ? [{ label: "Download resume", hint: "pdf", run: go(site.person.resume, true) }] : []),
