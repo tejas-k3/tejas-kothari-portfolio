@@ -5,7 +5,13 @@ const lines = heroOptions[heroIndex];
 const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email", `mailto:${person.email}`]];
 ---
 <section class="hero" aria-labelledby="hero-h">
-  <div class="wrap grid">
+  <div class="wrap recruiter-only rsum">
+    <p class="eyebrow">{person.focus} · {person.location}</p>
+    <h2>{person.name}, {person.title}</h2>
+    <p>5 years of backend and distributed-systems engineering across Sandvine, 1mg, ObserveAI and CoinTracker. Flagship project: Rupee Engine.</p>
+    <p class="act"><a class="btn primary" href={`mailto:${person.email}`}>Email</a><a class="btn" href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a><a class="btn" href={person.github} target="_blank" rel="noopener">GitHub</a>{person.resumeUrl && <a class="btn" href={person.resumeUrl} target="_blank" rel="noopener">Resume</a>}</p>
+  </div>
+  <div class="wrap grid hide-recruiter">
     <div class="copy">
       <p class="eyebrow">{person.title} · {person.focus} · {person.location}</p>
       <h1 id="hero-h">
@@ -19,7 +25,7 @@ const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email
       </div>
       <p class="links">{links.map(([t, h]) => <a href={h} target={h.startsWith("http") ? "_blank" : undefined} rel="noopener">{t}</a>)}</p>
     </div>
-    <Portrait />
+    <div class="hide-recruiter"><Portrait /></div>
   </div>
   <ul class="wrap proof" aria-label="At a glance">
     {proof.map((p) => <li><b>{p.k}</b><span>{p.v}</span></li>)}
@@ -37,6 +43,7 @@ const links = [["GitHub", person.github], ["LinkedIn", person.linkedin], ["Email
   .links { display: flex; gap: 20px; margin-top: 20px; font: 500 13px var(--font-mono); }
   .links a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--border); }
   .links a:hover { color: var(--accent); border-color: var(--accent); }
+  .rsum h2 { font-size: clamp(26px, 4vw, 40px); margin: 12px 0; } .rsum p { color: var(--muted); max-width: 62ch; } .rsum .act { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
   .proof { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border); }
   .proof li { display: flex; flex-direction: column; gap: 4px; }
   .proof b { font: 700 clamp(22px, 3vw, 32px) var(--font-display); letter-spacing: -.02em; }
