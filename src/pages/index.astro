@@ -1,23 +1,15 @@
 ---
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
+import ProjectRow from "../components/ProjectRow.astro";
+import MiniSim from "../components/MiniSim.astro";
 import CodeDemo from "../components/CodeDemo.astro";
-import Work from "../components/Work.astro";
-import Experience from "../components/Experience.astro";
-import HowIWork from "../components/HowIWork.astro";
-import GithubActivity from "../components/GithubActivity.astro";
-import Stack from "../components/Stack.astro";
-import AboutBits from "../components/AboutBits.astro";
 import Contact from "../components/Contact.astro";
 ---
 <Base>
   <Hero />
+  <ProjectRow />
+  <div class="hide-recruiter" style="display:contents"><MiniSim /></div>
   <div class="hide-recruiter" style="display:contents"><CodeDemo /></div>
-  <Work />
-  <Experience />
-  <div class="hide-recruiter" style="display:contents"><HowIWork /></div>
-  <div class="hide-recruiter" style="display:contents"><GithubActivity /></div>
-  <Stack />
-  <div class="hide-recruiter" style="display:contents"><AboutBits /></div>
   <Contact />
 </Base>

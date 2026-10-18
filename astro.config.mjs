@@ -5,5 +5,6 @@ export default defineConfig({
   output: "static",
   trailingSlash: "never",
   build: { format: "file", inlineStylesheets: "auto" },
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   devToolbar: { enabled: false },
 });

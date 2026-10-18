@@ -28,7 +28,7 @@ export const heroSub =
   "Senior software engineer in Bengaluru. Distributed systems, backend platforms and observability, with a habit of turning repetitive engineering into tools and shipping fast with AI-assisted development.";
 
 // Primary CTA. TODO(tejas): pick final wording; options are in the chat.
-export const cta = { primary: "Let's talk", primaryHref: "#contact", secondary: "See the work", secondaryHref: "#work" };
+export const cta = { primary: "Let's talk", primaryHref: "#contact", secondary: "Browse the work", secondaryHref: "/work" };
 
 // "Proof strip": only things verifiable from projects/READMEs/resume.
 export const proof = [
