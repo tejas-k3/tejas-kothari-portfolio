@@ -135,3 +135,16 @@ html[data-mode="engineering"] .modebar, html[data-mode="recruiter"] .modebar { d
 .pill { position: fixed; right: 20px; bottom: 20px; z-index: 60; background: var(--accent); color: var(--accent-ink); font: 600 14px var(--font-body); text-decoration: none; border-radius: 999px; padding: 12px 20px; box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--accent) 70%, transparent); transform: translateY(80px); opacity: 0; transition: transform .4s var(--ease), opacity .3s; pointer-events: none; }
 .pill.show { transform: none; opacity: 1; pointer-events: auto; }
 html[data-mode="recruiter"] .rail { display: none; }
+
+/* Site-as-a-system status + routing packets */
+.sys { position: fixed; left: 16px; bottom: 16px; z-index: 55; display: flex; align-items: center; gap: 8px; font: 500 11px var(--font-mono); color: var(--muted); background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; pointer-events: none; }
+.sys .d { width: 7px; height: 7px; border-radius: 50%; background: var(--success); transition: background .3s; }
+.sys .d[data-s="warn"] { background: var(--warning); } .sys .d[data-s="bad"] { background: var(--danger); animation: pulse 0.6s ease-in-out infinite; }
+.sys[data-s="bad"] { border-color: var(--danger); color: var(--text); }
+@media (max-width: 700px) { .sys { display: none; } }
+html[data-mode="recruiter"] .sys { display: none; }
+.pkt { position: fixed; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px 3px color-mix(in srgb, var(--accent) 70%, transparent); z-index: 200; pointer-events: none; }
+.pkt-tr { position: fixed; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); z-index: 199; pointer-events: none; animation: trail .5s ease-out forwards; }
+@keyframes trail { to { opacity: 0; scale: .2; } }
+.pkt-chip { position: fixed; left: 0; top: 0; z-index: 201; pointer-events: none; font: 500 11px var(--font-mono); background: var(--surface); border: 1px solid var(--accent); color: var(--text); border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+.nav a.hit { color: var(--accent); }

@@ -39,3 +39,6 @@ header segmented control + banner. Engineering = per-project "Under the hood" (a
 
 Round 5 (UX restructure): multi-page (/, /work, /experience, /activity, /about) + case studies; home = hero, Netflix-style ProjectRow (hover previews), MiniSim ("Break the system" toy queueing model), CodeDemo + site.sh, contact.
 Native cross-page View Transitions (CSS @view-transition) + Astro hover prefetch; chapter rail, sticky "Let's talk" pill, 30-second dialog, headline decode, timeline draw.
+
+Round 6: alive.ts = footer status line (real interaction rate + rAF p95 frame time; green/amber/red) + routing packets on internal link clicks (dot + "GET /path" chip travels to the nav item, then navigates; skipped for reduced motion/recruiter);
+heatmap "Replay the year" (GithubActivity); cursor-lit two-layer ASCII portrait with 3D tilt + idle drifting light (Portrait.astro/fx.ts); brief->built diff reveal on /work cards (content.ts `brief` fields derived from each project's `why`/`what`).

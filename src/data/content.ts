@@ -54,6 +54,7 @@ export type Project = {
   tag: string;
   status: string;
   dates: string;
+  brief: string;
   what: string;
   why: string;
   how: string;
@@ -71,6 +72,7 @@ export const projects: Project[] = [
     tag: "Flagship",
     status: "Active",
     dates: "Feb 2026 – present",
+    brief: "Compare stocks consistently across fundamentals, technicals and sentiment.",
     what: "A modular equity-analysis and portfolio engine for Indian markets, with a CLI, an API and a dashboard.",
     why: "Scattered fundamentals, technicals and sentiment are hard to compare. One pipeline makes the reasoning repeatable and testable.",
     how: "Async ingestion with TTL caching and incremental refresh feeds a relational store. A registry of pluggable algorithms scores each stock, and a risk/return-aware optimizer builds the portfolio.",
@@ -84,6 +86,7 @@ export const projects: Project[] = [
     tag: "Open source",
     status: "Active",
     dates: "Oct 2026 – present",
+    brief: "Let people watch systems break instead of reading about them.",
     what: "A browser simulator: sketch a system, send traffic, watch it break, then fix it.",
     why: "System design is learned by seeing queues fill, pools run dry and retries pile up, not by reading about them.",
     how: "A deterministic discrete-event engine in Go streams live state over WebSockets to a hand-drawn canvas UI in React.",
@@ -98,6 +101,7 @@ export const projects: Project[] = [
     tag: "Shipped",
     status: "Live",
     dates: "Jun – Aug 2023",
+    brief: "A studio needs an official website.",
     what: "The official website for AOV Studios, a React single-page app that I led and built.",
     why: "A studio needed a real web presence.",
     how: "React SPA, deployed to a custom domain.",
@@ -111,6 +115,7 @@ export const projects: Project[] = [
     tag: "Hackathon",
     status: "Archived",
     dates: "Oct 2021",
+    brief: "Spot malicious bots from just a handle or hashtag.",
     what: "A metric that flags malicious bots and botnets from a Twitter handle or hashtag.",
     why: "Sandvine 2021 internal hackathon.",
     how: "Java and Python with SQL, Redis and Vertica behind the Twitter API.",

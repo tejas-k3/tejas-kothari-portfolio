@@ -17,7 +17,11 @@ const minor = projects.filter((p) => !p.page);
             <h3><a href={p.page}>{p.name}</a></h3>
             <span class="chip">{p.tag}</span><span class="chip">{p.status}</span><span class="dates mono">{p.dates}</span>
           </div>
-          <p class="what">{p.what}</p>
+          <div class="what diff" data-diff>
+            <p class="old mono" aria-hidden="true"><span class="sg">-</span>{p.brief}</p>
+            <p class="new"><span class="sg mono" aria-hidden="true">+</span><span>{p.what}</span></p>
+            <button type="button" class="dtoggle mono" data-dtoggle aria-pressed="false" title="Show the brief to build diff">⇄ diff</button>
+          </div>
           <dl>
             <div><dt>Why</dt><dd>{p.why}</dd></div>
             <div><dt>How</dt><dd>{p.how}</dd></div>
@@ -57,6 +61,15 @@ const minor = projects.filter((p) => !p.page);
     </div>
   </div>
 </section>
+<script>
+  const reduceM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll<HTMLElement>("[data-diff]").forEach((d) => {
+    const toggle = d.querySelector<HTMLButtonElement>("[data-dtoggle]")!;
+    toggle.addEventListener("click", () => { const on = d.classList.toggle("show"); toggle.setAttribute("aria-pressed", String(on)); });
+    if (reduceM) return;
+    new IntersectionObserver((es, o) => { if (!es[0].isIntersecting) return; o.disconnect(); d.classList.add("play"); setTimeout(() => d.classList.add("strike"), 1100); setTimeout(() => { d.classList.remove("play", "strike"); d.classList.add("done"); }, 2900); }, { threshold: 0.6 }).observe(d);
+  });
+</script>
 <style>
   .list { display: grid; gap: 20px; margin-top: 40px; }
   .proj { padding: clamp(20px, 3vw, 36px); }
@@ -65,6 +78,17 @@ const minor = projects.filter((p) => !p.page);
   .top h3 a { text-decoration: none; } .top h3 a:hover { color: var(--accent); }
   .dates { margin-left: auto; color: var(--muted); font-size: 12px; }
   .what { font-size: clamp(17px, 1.8vw, 20px); margin: 16px 0 20px; max-width: 70ch; }
+  .diff { position: relative; display: grid; gap: 2px; }
+  .diff .old { display: none; color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); font-size: .78em; padding: 4px 10px; border-radius: 6px; }
+  .diff .sg { display: none; margin-right: 10px; font-weight: 700; }
+  .diff .new { border-radius: 6px; padding: 0; }
+  .diff.play .old, .diff.show .old { display: block; } .diff.play .sg, .diff.show .sg { display: inline; }
+  .diff.play:not(.strike) .new { display: none; }
+  .diff.strike .old { text-decoration: line-through; opacity: .7; transition: opacity .5s; }
+  .diff.strike .new, .diff.show .new { background: color-mix(in srgb, var(--success) 12%, transparent); color: var(--text); padding: 4px 10px; animation: wipe .8s var(--ease) both; } .diff.show .new .sg, .diff.strike .new .sg { color: var(--success); }
+  .diff.show .old { text-decoration: line-through; opacity: .7; }
+  @keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  .dtoggle { position: absolute; right: 0; top: -22px; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 11px; padding: 2px 8px; cursor: pointer; min-height: 24px; } .dtoggle:hover, .dtoggle[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
   dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 0; padding: 20px 0; border-block: 1px solid var(--border); }
   dt { font: 500 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
   dd { margin: 0; color: var(--muted); font-size: 15px; }
