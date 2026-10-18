@@ -26,3 +26,7 @@ Phase 7 untested in browser yet: verify palette (Cmd/Ctrl+K), terminal (backtick
 
 Phase 8 done: sitemap, 404, OG cards (scripts/make_og.py), per-page meta, mobile overflow fixed, palette verified in Chrome, no console errors.
 OPEN ITEMS for Tejas: (1) site domain in astro.config.mjs is a PLACEHOLDER (tejaskothari.dev) -> canonical/OG/sitemap/robots use it; (2) "What I would change" for Rupee Engine; (3) interest specifics; (4) tone TODO(tone) tags; (5) ASCII portrait quality.
+
+Round 2 (user feedback): logos for tech stack (public/logos, simple-icons via CSS mask, light/dark brand tints), even grids + marquee; "More projects" heading;
+effects (scroll progress, cursor spotlight, card tilt, magnetic buttons, counters, portrait row reveal + scan, heatmap wave, packet arrows, typed "code that writes code" demo);
+accent switched to electric blue (+ cool neutrals); portrait replaced by simple pixel-art sunglasses character (scripts/make_portrait.py; image_to_ascii.py kept as braille converter).

@@ -1,0 +1,49 @@
+---
+import SectionHead from "./SectionHead.astro";
+// Illustrative sketch of the idea "code that writes code". Not production code and not tied to any employer or project.
+const gen = `# generator: one spec in, typed client + tests out
+for op in spec.operations:
+    emit(client_method(op))
+    emit(contract_test(op))
+run(tests)`;
+const out = `def get_account(self, account_id: str) -> Account:
+    return self._get(f"/accounts/{account_id}")
+
+def test_get_account_contract():
+    acct = client.get_account(FIXTURE_ID)
+    assert acct.id == FIXTURE_ID
+
+# 2 methods generated · 2 tests passed`;
+---
+<section id="demo" aria-label="Code that writes code">
+  <div class="wrap">
+    <SectionHead eyebrow="The idea" title="Code that writes code." lede="If I did something twice by hand, the third time is a generator. A tiny illustration of the habit:" />
+    <div class="stage reveal" data-demo data-gen={gen} data-out={out}>
+      <div class="pane">
+        <div class="bar mono"><i></i><i></i><i></i><span>generator.py</span></div>
+        <pre class="code mono" data-target="gen">{gen}</pre>
+      </div>
+      <div class="arrow" aria-hidden="true"><span></span></div>
+      <div class="pane">
+        <div class="bar mono"><i></i><i></i><i></i><span>client.py <em>generated</em></span></div>
+        <pre class="code mono" data-target="out">{out}</pre>
+      </div>
+    </div>
+    <p class="cap mono"><span>Illustrative sketch, not production code.</span> <button type="button" class="replay mono" data-replay>↻ replay</button></p>
+  </div>
+</section>
+<style>
+  .stage { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch; margin-top: 36px; }
+  .pane { border: 1px solid var(--border); border-radius: 16px; background: #0a0e14; color: #d8dde6; overflow: hidden; min-width: 0; box-shadow: 0 24px 60px -30px rgba(0,0,0,.5); }
+  .bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid #222c3b; font-size: 12px; color: #8b93a1; }
+  .bar i { width: 10px; height: 10px; border-radius: 50%; background: #2a303a; } .bar i:nth-child(1) { background: #ff5f57; } .bar i:nth-child(2) { background: #febc2e; } .bar i:nth-child(3) { background: #28c840; }
+  .bar span { margin-left: 10px; } .bar em { color: #4cc2ff; font-style: normal; margin-left: 6px; }
+  .code { margin: 0; padding: 16px 18px; font-size: 13px; line-height: 1.65; min-height: 220px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .code.typing::after { content: "▍"; color: #4cc2ff; animation: blink 1s steps(2) infinite; }
+  .arrow { display: grid; place-items: center; width: 56px; } .arrow span { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); background-size: 200% 100%; animation: flow 1.6s linear infinite; position: relative; }
+  .arrow span::after { content: "▸"; position: absolute; right: -4px; top: -9px; color: var(--accent); }
+  @keyframes flow { to { background-position: -200% 0; } } @keyframes blink { 50% { opacity: 0; } }
+  .cap { color: var(--muted); font-size: 12px; margin-top: 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .replay { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; min-height: 32px; padding: 0 12px; cursor: pointer; } .replay:hover { color: var(--accent); border-color: var(--accent); }
+  @media (max-width: 820px) { .stage { grid-template-columns: 1fr; } .arrow { width: 100%; height: 28px; transform: rotate(90deg); } .code { min-height: 0; } }
+</style>

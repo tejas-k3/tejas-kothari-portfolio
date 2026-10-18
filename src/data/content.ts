@@ -120,45 +120,55 @@ export const projects: Project[] = [
 ];
 
 // Tech stack. `used` links every technology to real evidence only (resume skills + project stacks).
-export const stack: { group: string; items: { name: string; used: string[] }[] }[] = [
+// `logo`: file in /public/logos (simple-icons, tinted via CSS mask) or `glyph:<name>` for concepts without a brand logo.
+// `c` = brand colour on light theme, `cd` = on dark theme (dark brands get a lighter variant so they stay visible).
+export type Tech = { name: string; logo: string; c: string; cd?: string; used: string[] };
+export const stack: { group: string; items: Tech[] }[] = [
   {
     group: "Languages & frameworks",
     items: [
-      { name: "Python", used: ["Rupee Engine", "1mg (Sanic services)", "ObserveAI (async services)", "Bot detection"] },
-      { name: "FastAPI", used: ["Rupee Engine"] },
-      { name: "Django", used: ["Listed skill"] },
-      { name: "Flask", used: ["Listed skill"] },
-      { name: "Java", used: ["Bot detection", "Spring Boot (listed skill)"] },
-      { name: "SQL", used: ["Rupee Engine", "Sandvine", "Bot detection"] },
-      { name: "Go", used: ["System Design Playground"] },
-      { name: "TypeScript / React", used: ["Rupee Engine UI", "System Design Playground", "AOV Studios"] },
+      { name: "Python", logo: "python", c: "#3776AB", cd: "#5B9BD5", used: ["Rupee Engine", "1mg (Sanic services)", "ObserveAI (async services)", "Bot detection"] },
+      { name: "FastAPI", logo: "fastapi", c: "#009688", used: ["Rupee Engine"] },
+      { name: "Django", logo: "django", c: "#0C4B33", cd: "#44B78B", used: ["Listed skill"] },
+      { name: "Flask", logo: "flask", c: "#222222", cd: "#E6E6E6", used: ["Listed skill"] },
+      { name: "Sanic", logo: "sanic", c: "#FF0068", used: ["1mg (microservices)"] },
+      { name: "Java", logo: "openjdk", c: "#D97706", cd: "#F89820", used: ["Bot detection", "Sandvine"] },
+      { name: "Spring Boot", logo: "springboot", c: "#4C9A2A", cd: "#6DB33F", used: ["Listed skill"] },
+      { name: "Go", logo: "go", c: "#00ADD8", used: ["System Design Playground"] },
+      { name: "TypeScript", logo: "typescript", c: "#3178C6", used: ["System Design Playground", "Rupee Engine UI"] },
+      { name: "React", logo: "react", c: "#0891B2", cd: "#61DAFB", used: ["Rupee Engine UI", "System Design Playground", "AOV Studios"] },
+      { name: "JavaScript", logo: "javascript", c: "#B58900", cd: "#F7DF1E", used: ["AOV Studios"] },
+      { name: "SQL", logo: "glyph:db", c: "#6366F1", cd: "#A5B4FC", used: ["Rupee Engine", "Sandvine", "Bot detection"] },
     ],
   },
   {
     group: "Systems & data",
     items: [
-      { name: "Distributed systems", used: ["System Design Playground", "Experience"] },
-      { name: "Microservices", used: ["1mg", "ObserveAI"] },
-      { name: "System design (LLD/HLD)", used: ["System Design Playground"] },
-      { name: "PostgreSQL", used: ["Rupee Engine"] },
-      { name: "Redis", used: ["Bot detection"] },
+      { name: "Distributed systems", logo: "glyph:nodes", c: "#0a66d9", cd: "#4cc2ff", used: ["System Design Playground", "Experience"] },
+      { name: "Microservices", logo: "glyph:blocks", c: "#0a66d9", cd: "#4cc2ff", used: ["1mg", "ObserveAI"] },
+      { name: "System design", logo: "glyph:blueprint", c: "#0a66d9", cd: "#4cc2ff", used: ["LLD / HLD", "System Design Playground"] },
+      { name: "PostgreSQL", logo: "postgresql", c: "#336791", cd: "#6B9BD1", used: ["Rupee Engine"] },
+      { name: "Redis", logo: "redis", c: "#DC382D", used: ["Bot detection"] },
     ],
   },
   {
     group: "Infra & observability",
     items: [
-      { name: "AWS", used: ["Listed skill"] },
-      { name: "Kubernetes", used: ["ObserveAI"] },
-      { name: "Docker", used: ["Rupee Engine", "System Design Playground"] },
-      { name: "Prometheus / Grafana / Loki", used: ["ObserveAI"] },
-      { name: "Datadog", used: ["ObserveAI"] },
+      { name: "AWS", logo: "amazonwebservices", c: "#E68A00", cd: "#FF9900", used: ["Listed skill"] },
+      { name: "Kubernetes", logo: "kubernetes", c: "#326CE5", cd: "#5B8DEF", used: ["ObserveAI"] },
+      { name: "Docker", logo: "docker", c: "#1D63ED", cd: "#2496ED", used: ["Rupee Engine", "System Design Playground"] },
+      { name: "Helm", logo: "helm", c: "#0F1689", cd: "#6F7BFF", used: ["ObserveAI (alerting charts)"] },
+      { name: "Prometheus", logo: "prometheus", c: "#E6522C", used: ["ObserveAI"] },
+      { name: "Grafana", logo: "grafana", c: "#F46800", used: ["ObserveAI"] },
+      { name: "Loki", logo: "glyph:logs", c: "#F5A300", used: ["ObserveAI (log aggregation)"] },
+      { name: "Datadog", logo: "datadog", c: "#632CA6", cd: "#A076E0", used: ["ObserveAI"] },
     ],
   },
   {
     group: "Foundations",
     items: [
-      { name: "Data structures & algorithms", used: ["Rupee Engine", "System Design Playground (event heap)"] },
-      { name: "Multiprocessing / multithreading", used: ["Listed skill"] },
+      { name: "Data structures & algorithms", logo: "glyph:tree", c: "#0a66d9", cd: "#4cc2ff", used: ["Rupee Engine", "System Design Playground (event heap)"] },
+      { name: "Concurrency", logo: "glyph:cores", c: "#0a66d9", cd: "#4cc2ff", used: ["Multiprocessing / multithreading (listed skill)"] },
     ],
   },
 ];
