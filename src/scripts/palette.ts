@@ -20,6 +20,7 @@ const cmds: Cmd[] = [
   { label: "How I work", hint: "page", run: go("/about#how") },
   { label: "GitHub activity", hint: "page", run: go("/activity") },
   { label: "Tech stack", hint: "page", run: go("/experience#stack") },
+  { label: "Interests", hint: "page", run: go("/interests") },
   { label: "About", hint: "page", run: go("/about") },
   { label: "Contact", hint: "page", run: go("/#contact") },
   { label: "Rupee Engine", hint: "case study", run: go("/projects/rupee-engine") },
@@ -32,6 +33,7 @@ const cmds: Cmd[] = [
   { label: "Story view", hint: "mode", run: () => { palette.close(); setMode("story"); } },
   { label: "Engineering view", hint: "mode: architecture, decisions, implementation", run: () => { palette.close(); setMode("engineering"); } },
   { label: "Recruiter view", hint: "mode: compact, no motion", run: () => { palette.close(); setMode("recruiter"); } },
+  { label: "Travel map", hint: "globe", run: go("/interests#travel") },
   // Easter eggs: only appear when typed. TODO(tone): tone these up or down.
   { label: "terminal", hidden: true, run: () => { palette.close(); openTerm(); } },
   { label: "sudo hire-me", hidden: true, run: smoke("[sudo] password for recruiter: ********\nAccess granted. Opening mail client. Good call.\n") },

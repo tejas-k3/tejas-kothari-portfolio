@@ -1,0 +1,67 @@
+---
+---
+<section id="gaming" data-chapter="Gaming" aria-label="Gaming">
+  <div class="wrap">
+    <div class="copy reveal">
+      <p class="eyebrow">Gaming</p>
+      <h2 class="h2">8,000+ hours in CS2.</h2>
+      <p class="lede">Turns out thousands of hours of counting spray patterns is a decent way to learn feedback loops. Take a few shots (click, or hold to spray).</p> <!-- TODO(tone) -->
+    </div>
+    <div class="arena reveal" data-arena tabindex="0" aria-label="Crosshair practice area. Click or press space to shoot. Decorative.">
+      <div class="floor" aria-hidden="true"></div>
+      <div class="hud mono" aria-hidden="true"><span>Headshots <b data-hs>0</b></span><span data-ammo>30 / 90</span></div>
+      <div class="gun" aria-hidden="true"></div>
+      <div class="xh" data-xh aria-hidden="true"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i><i class="c"></i></div>
+      <div class="layer" data-layer aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+<script>
+  const arena = document.querySelector<HTMLElement>("[data-arena]");
+  if (arena) {
+    const xh = arena.querySelector<HTMLElement>("[data-xh]")!, layer = arena.querySelector<HTMLElement>("[data-layer]")!, hsEl = arena.querySelector<HTMLElement>("[data-hs]")!, ammoEl = arena.querySelector<HTMLElement>("[data-ammo]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // AK-style spray: climbs, then wanders (dx, dy in px for each bullet).
+    const spray: [number, number][] = [[0,0],[0,-4],[1,-9],[-1,-15],[2,-22],[-3,-30],[-6,-37],[4,-42],[9,-46],[12,-48],[6,-50],[-4,-51],[-14,-52],[-20,-53],[-12,-54],[3,-55],[16,-55],[22,-56],[14,-57],[2,-58]];
+    let mx = 0, my = 0, shot = 0, mag = 30, reserve = 90, timer = 0, lastShot = 0, reloading = false, score = 0, inside = false;
+    const pos = (e: PointerEvent) => { const r = arena.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; xh.style.transform = `translate(${mx}px, ${my}px)`; };
+    const hole = (x: number, y: number) => { const d = document.createElement("i"); d.className = "hole"; d.style.left = x + "px"; d.style.top = y + "px"; layer.append(d); setTimeout(() => d.remove(), 5000); };
+    const tracer = (x: number, y: number) => { if (reduce) return; const r = arena.getBoundingClientRect(), x0 = r.width - 30, y0 = r.height - 24, dx = x - x0, dy = y - y0; const t = document.createElement("i"); t.className = "tracer"; t.style.left = x0 + "px"; t.style.top = y0 + "px"; t.style.width = Math.hypot(dx, dy) + "px"; t.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`; layer.append(t); setTimeout(() => t.remove(), 110); };
+    const hitTest = (x: number, y: number) => { const t = layer.querySelector<HTMLElement>(".target"); if (!t) return; const b = t.getBoundingClientRect(), r = arena.getBoundingClientRect(), cx = b.left - r.left + b.width / 2, cy = b.top - r.top + b.height / 2; if (Math.hypot(x - cx, y - cy) < b.width / 2) { score++; hsEl.textContent = String(score); t.classList.add("dead"); const f = document.createElement("span"); f.className = "pop mono"; f.textContent = "HEADSHOT"; f.style.left = cx + "px"; f.style.top = cy - 24 + "px"; layer.append(f); setTimeout(() => f.remove(), 700); setTimeout(() => t.remove(), 160); } };
+    const fire = () => {
+      if (reloading) return;
+      if (mag <= 0) { if (reserve <= 0) reserve = 90; reloading = true; ammoEl.textContent = "RELOADING…"; setTimeout(() => { mag = 30; reserve -= 30; if (reserve < 0) reserve = 90; reloading = false; ammoEl.textContent = `${mag} / ${reserve}`; }, 1100); return; }
+      const now = performance.now(); if (now - lastShot > 320) shot = 0; lastShot = now;
+      const [ox, oy] = spray[Math.min(shot, spray.length - 1)]; shot++; mag--; ammoEl.textContent = `${mag} / ${reserve}`;
+      const x = mx + ox * 0.6, y = my + oy * 0.35; hole(x, y); tracer(x, y); hitTest(x, y);
+      if (!reduce) { xh.classList.add("kick"); setTimeout(() => xh.classList.remove("kick"), 70); }
+    };
+    arena.addEventListener("pointerenter", (e) => { inside = true; pos(e); });
+    arena.addEventListener("pointermove", pos);
+    arena.addEventListener("pointerleave", () => { inside = false; clearInterval(timer); });
+    arena.addEventListener("pointerdown", (e) => { pos(e); fire(); clearInterval(timer); timer = window.setInterval(fire, 95); });
+    addEventListener("pointerup", () => clearInterval(timer));
+    arena.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); if (!inside) { const r = arena.getBoundingClientRect(); mx = r.width / 2; my = r.height / 2; xh.style.transform = `translate(${mx}px, ${my}px)`; } fire(); } });
+    // pop-up target
+    const spawn = () => { const r = arena.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight || layer.querySelector(".target")) return; const t = document.createElement("i"); t.className = "target"; t.style.left = 60 + Math.random() * (r.width - 140) + "px"; t.style.top = 70 + Math.random() * (r.height - 190) + "px"; layer.append(t); setTimeout(() => t.remove(), 1500); };
+    setInterval(spawn, 1900); setTimeout(spawn, 600);
+  }
+</script>
+<style>
+  .arena { position: relative; margin-top: 32px; height: clamp(260px, 36vw, 360px); border-radius: 18px; overflow: hidden; cursor: none; touch-action: manipulation; background: radial-gradient(120% 90% at 50% 0%, #26303f, #0c1017 70%); border: 1px solid var(--border); user-select: none; outline-offset: 4px; }
+  .floor { position: absolute; inset: 55% -10% -30% -10%; background-image: linear-gradient(rgba(120,170,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(120,170,255,.18) 1px, transparent 1px); background-size: 48px 48px; transform: perspective(300px) rotateX(58deg); transform-origin: top; mask-image: linear-gradient(transparent, #000 40%); -webkit-mask-image: linear-gradient(transparent, #000 40%); }
+  .hud { position: absolute; left: 14px; right: 14px; bottom: 10px; display: flex; justify-content: space-between; color: #9fb3cc; font-size: 12px; } .hud b { color: #fff; }
+  .gun { position: absolute; right: 8px; bottom: 6px; width: 46px; height: 14px; border-radius: 3px 8px 3px 3px; background: linear-gradient(#58606c, #2a2f38); transform: rotate(-8deg); box-shadow: 0 0 0 1px rgba(255,255,255,.06); }
+  .xh { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; --gap: 5px; }
+  .xh i { position: absolute; background: #3dff7a; box-shadow: 0 0 0 1px rgba(0,0,0,.65); transition: transform .07s; } .xh .c { width: 2px; height: 2px; left: -1px; top: -1px; }
+  .xh .u, .xh .d { width: 2px; height: 8px; left: -1px; } .xh .u { top: calc(-8px - var(--gap)); } .xh .d { top: var(--gap); } .xh .l, .xh .r { height: 2px; width: 8px; top: -1px; } .xh .l { left: calc(-8px - var(--gap)); } .xh .r { left: var(--gap); }
+  .xh.kick { --gap: 11px; }
+  .layer { position: absolute; inset: 0; pointer-events: none; }
+  .layer :global(.hole) { position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: radial-gradient(#000 40%, rgba(255,255,255,.35) 41%, transparent 70%); animation: fade 5s linear forwards; } @keyframes fade { 70% { opacity: 1; } to { opacity: 0; } }
+  .layer :global(.tracer) { position: absolute; height: 1.5px; background: linear-gradient(90deg, transparent, #ffe08a); transform-origin: 0 50%; opacity: .9; }
+  .layer :global(.target) { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: radial-gradient(#ff8a7a, #c8352a); box-shadow: 0 0 0 3px rgba(255,255,255,.12); animation: pop .18s var(--ease) both; } .layer :global(.target.dead) { background: #fff; transform: scale(1.4); opacity: 0; transition: .15s; }
+  @keyframes pop { from { transform: scale(.2); } }
+  .layer :global(.pop) { position: absolute; transform: translateX(-50%); color: #ffe08a; font-size: 12px; letter-spacing: .1em; animation: up .7s ease-out forwards; } @keyframes up { to { opacity: 0; transform: translate(-50%, -22px); } }
+  @media (hover: none) { .arena { cursor: auto; } }
+  @media (prefers-reduced-motion: reduce) { .layer :global(.target) { animation: none; } }
+</style>

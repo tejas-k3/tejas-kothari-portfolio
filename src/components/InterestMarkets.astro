@@ -1,0 +1,65 @@
+---
+// A goal chart, not a forecast: compounding curve from ₹10L to ₹40L over 5 years (≈32% a year).
+const years = [0, 1, 2, 3, 4, 5], v = (y: number) => 10 * Math.pow(4, y / 5);
+const X0 = 64, X1 = 660, Y0 = 280, Y1 = 28, maxV = 45;
+const x = (y: number) => X0 + ((X1 - X0) * y) / 5, yy = (val: number) => Y0 - ((Y0 - Y1) * val) / maxV;
+const pts = Array.from({ length: 101 }, (_, i) => { const y = (i / 100) * 5; return [x(y), yy(v(y))] as const; });
+const line = pts.map(([a, b], i) => `${i ? "L" : "M"}${a.toFixed(1)} ${b.toFixed(1)}`).join(" ");
+const area = `${line} L${X1} ${Y0} L${X0} ${Y0} Z`;
+const marks = years.map((y) => ({ y, val: v(y), px: x(y), py: yy(v(y)) }));
+---
+<section id="markets" data-chapter="Markets" aria-label="Markets">
+  <div class="wrap">
+    <div class="copy reveal">
+      <p class="eyebrow">Markets</p>
+      <h2 class="h2">Investing in Indian equities, as <a href="/projects/rupee-engine">Rupee Engine</a> predicts.</h2>
+      <p class="lede">I put my money where my model is. This is the portfolio I dream of: ₹10L becoming ₹40L in five years.</p>
+    </div>
+    <figure class="chart card reveal" data-chart>
+      <figcaption class="top"><span class="mono tag">Portfolio I dream of</span><span class="mono read"><b data-val>₹10.0L</b> <em data-yr>today</em></span></figcaption>
+      <svg viewBox="0 0 700 330" role="img" aria-label="Line chart of an aspirational portfolio growing from 10 lakh rupees to 40 lakh rupees over five years, about 32 percent a year.">
+        <defs>
+          <linearGradient id="ar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".32" /><stop offset="1" stop-color="var(--accent)" stop-opacity="0" /></linearGradient>
+          <clipPath id="reveal"><rect class="clip" x="0" y="0" width="0" height="330" /></clipPath>
+        </defs>
+        <g class="axes">
+          {[0, 10, 20, 30, 40].map((t) => <g><line x1={X0} x2={X1} y1={yy(t)} y2={yy(t)} /><text x={X0 - 10} y={yy(t) + 4} class="yl">{t === 0 ? "" : `₹${t}L`}</text></g>)}
+          {years.map((y) => <text x={x(y)} y={Y0 + 24} class="xl">{y === 0 ? "Today" : `Y${y}`}</text>)}
+        </g>
+        <g clip-path="url(#reveal)"><path d={area} fill="url(#ar)" /><path d={line} class="ln" data-line /></g>
+        <g class="marks">{marks.map((m) => <circle cx={m.px} cy={m.py} r="4" data-mark={m.y} />)}</g>
+        <circle class="runner" r="6" data-runner cx={X0} cy={Y0} />
+        <rect class="hit" x={X0} y="0" width={X1 - X0} height="300" fill="transparent" data-hit />
+      </svg>
+      <div class="foot"><p class="mono">≈ 32% a year, compounded. A goal, not a forecast or advice: markets can and do go down.</p><button type="button" class="btn" data-replay>↻ Replay</button></div>
+      <script type="application/json" data-pts set:html={JSON.stringify({ marks: marks.map((m) => ({ y: m.y, v: m.val, x: m.px, py: m.py })), X0, X1 })} />
+    </figure>
+  </div>
+</section>
+<script>
+  const fig = document.querySelector<HTMLElement>("[data-chart]");
+  if (fig) {
+    const d = JSON.parse(fig.querySelector("[data-pts]")!.textContent!) as { marks: { y: number; v: number; x: number; py: number }[]; X0: number; X1: number };
+    const line = fig.querySelector<SVGPathElement>("[data-line]")!, clip = fig.querySelector<SVGRectElement>(".clip")!, runner = fig.querySelector<SVGCircleElement>("[data-runner]")!;
+    const val = fig.querySelector<HTMLElement>("[data-val]")!, yr = fig.querySelector<HTMLElement>("[data-yr]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, len = line.getTotalLength();
+    const at = (k: number) => { const p = line.getPointAtLength(len * k); clip.setAttribute("width", String(p.x + 2)); runner.setAttribute("cx", String(p.x)); runner.setAttribute("cy", String(p.y)); const years = ((p.x - d.X0) / (d.X1 - d.X0)) * 5; val.textContent = `₹${(10 * Math.pow(4, years / 5)).toFixed(1)}L`; yr.textContent = years < 0.05 ? "today" : `year ${years.toFixed(1)}`; };
+    let raf = 0;
+    const play = () => { cancelAnimationFrame(raf); if (reduce) { at(1); return; } const t0 = performance.now(), D = 3200; const step = (t: number) => { const k = Math.min(1, (t - t0) / D), e = 1 - Math.pow(1 - k, 3); at(e); if (k < 1) raf = requestAnimationFrame(step); }; raf = requestAnimationFrame(step); };
+    at(0); new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { o.disconnect(); play(); } }, { threshold: 0.4 }).observe(fig);
+    fig.querySelector("[data-replay]")!.addEventListener("click", play);
+    const svg = fig.querySelector("svg")!;
+    const probe = (e: PointerEvent) => { const b = svg.getBoundingClientRect(), px = ((e.clientX - b.left) / b.width) * 700; const k = Math.min(1, Math.max(0, (px - d.X0) / (d.X1 - d.X0))); cancelAnimationFrame(raf); at(k); };
+    fig.querySelector("[data-hit]")!.addEventListener("pointermove", probe as EventListener);
+  }
+</script>
+<style>
+  .chart { margin: 32px 0 0; padding: clamp(16px, 3vw, 28px); } .top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; }
+  .tag { color: var(--accent); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; } .read { font-size: 13px; color: var(--muted); } .read b { font: 700 28px var(--font-display); color: var(--text); letter-spacing: -.02em; } .read em { font-style: normal; margin-left: 6px; }
+  svg { width: 100%; height: auto; display: block; margin-top: 8px; touch-action: pan-y; }
+  .axes line { stroke: var(--border); stroke-width: 1; } .yl { fill: var(--muted); font: 500 11px var(--font-mono); text-anchor: end; } .xl { fill: var(--muted); font: 500 11px var(--font-mono); text-anchor: middle; }
+  .ln { fill: none; stroke: var(--accent); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent)); }
+  .marks circle { fill: var(--bg); stroke: var(--accent); stroke-width: 2; } .runner { fill: var(--accent); stroke: var(--bg); stroke-width: 3; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; } .foot p { color: var(--muted); font-size: 12px; max-width: 64ch; }
+  .copy a { color: var(--accent); }
+</style>
