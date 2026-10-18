@@ -142,33 +142,33 @@ export const stack: { group: string; items: Tech[] }[] = [
     ],
   },
   {
-    group: "Systems & data",
+    group: "Systems & fundamentals",
     items: [
       { name: "Distributed systems", logo: "glyph:nodes", c: "#0a66d9", cd: "#4cc2ff", used: ["System Design Playground", "Experience"] },
       { name: "Microservices", logo: "glyph:blocks", c: "#0a66d9", cd: "#4cc2ff", used: ["1mg", "ObserveAI"] },
       { name: "System design", logo: "glyph:blueprint", c: "#0a66d9", cd: "#4cc2ff", used: ["LLD / HLD", "System Design Playground"] },
+      { name: "Data structures & algorithms", logo: "glyph:tree", c: "#0a66d9", cd: "#4cc2ff", used: ["Rupee Engine", "System Design Playground (event heap)"] },
+      { name: "Concurrency", logo: "glyph:cores", c: "#0a66d9", cd: "#4cc2ff", used: ["Multiprocessing / multithreading (listed skill)"] },
       { name: "PostgreSQL", logo: "postgresql", c: "#336791", cd: "#6B9BD1", used: ["Rupee Engine"] },
-      { name: "Redis", logo: "redis", c: "#DC382D", used: ["Bot detection"] },
     ],
   },
   {
-    group: "Infra & observability",
+    group: "Data & cloud",
     items: [
+      { name: "Redis", logo: "redis", c: "#DC382D", used: ["Bot detection"] },
       { name: "AWS", logo: "amazonwebservices", c: "#E68A00", cd: "#FF9900", used: ["Listed skill"] },
       { name: "Kubernetes", logo: "kubernetes", c: "#326CE5", cd: "#5B8DEF", used: ["ObserveAI"] },
       { name: "Docker", logo: "docker", c: "#1D63ED", cd: "#2496ED", used: ["Rupee Engine", "System Design Playground"] },
       { name: "Helm", logo: "helm", c: "#0F1689", cd: "#6F7BFF", used: ["ObserveAI (alerting charts)"] },
+    ],
+  },
+  {
+    group: "Observability",
+    items: [
       { name: "Prometheus", logo: "prometheus", c: "#E6522C", used: ["ObserveAI"] },
       { name: "Grafana", logo: "grafana", c: "#F46800", used: ["ObserveAI"] },
       { name: "Loki", logo: "glyph:logs", c: "#F5A300", used: ["ObserveAI (log aggregation)"] },
       { name: "Datadog", logo: "datadog", c: "#632CA6", cd: "#A076E0", used: ["ObserveAI"] },
-    ],
-  },
-  {
-    group: "Foundations",
-    items: [
-      { name: "Data structures & algorithms", logo: "glyph:tree", c: "#0a66d9", cd: "#4cc2ff", used: ["Rupee Engine", "System Design Playground (event heap)"] },
-      { name: "Concurrency", logo: "glyph:cores", c: "#0a66d9", cd: "#4cc2ff", used: ["Multiprocessing / multithreading (listed skill)"] },
     ],
   },
 ];
