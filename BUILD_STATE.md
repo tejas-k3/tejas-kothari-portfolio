@@ -46,3 +46,7 @@ heatmap "Replay the year" (GithubActivity); cursor-lit two-layer ASCII portrait 
 Round 7: /interests page (watch dial with live time + beat-rate sweep, CS2 crosshair arena, "Portfolio I dream of" 10L->40L chart, 3D travel globe from src/data/travel.ts [from,to] pairs; land = public/data/land.json from Natural Earth via world-atlas).
 Every click now shows an HTTP status chip (alive.ts). Interests removed from /about cards -> link cards to /interests.
 To add a trip: append [from, to] in src/data/travel.ts; unknown names need [lat, lon] in `places` (build fails with a message otherwise).
+
+Round 8: travel redesign (TravelMap.astro): adaptive projection (flat regional map when trips span <55deg, globe otherwise, toggle), scoreboard derived from data (trips/places/countries/km/farthest),
+trip log side panel with hover-highlight + click-to-focus, cluster pins with collision-free labels, "Play my trips" chronological tour with counters. Data: trips are [from,to,{when,mode,note}?] in src/data/travel.ts; places are [lat,lon,country].
+Dates are approximate (from Tejas). Jaipur / Guwahati / Umngot River have no dates (shown as "date unknown").

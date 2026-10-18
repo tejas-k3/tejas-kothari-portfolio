@@ -1,0 +1,264 @@
+---
+import { trips, places, home, lastTrip, nextTrip } from "../data/travel";
+import type { TripMeta } from "../data/travel";
+
+// Build-time validation: every name used in `trips` must exist in `places`.
+const names = [...new Set(trips.flatMap((t) => [t[0], t[1]]).concat([home, lastTrip]))];
+const missing = names.filter((n) => !places[n]);
+if (missing.length) throw new Error(`travel.ts: add [lat, lon, country] in \`places\` for: ${missing.join(", ")}`);
+const used = Object.fromEntries(names.map((n) => [n, places[n]]));
+
+const RAD = Math.PI / 180;
+const km = (a: string, b: string) => { const [la1, lo1] = places[a], [la2, lo2] = places[b]; const h = Math.sin(((la2 - la1) * RAD) / 2) ** 2 + Math.cos(la1 * RAD) * Math.cos(la2 * RAD) * Math.sin(((lo2 - lo1) * RAD) / 2) ** 2; return 2 * 6371 * Math.asin(Math.sqrt(h)); };
+const list = trips.map(([a, b, m], i) => ({ i, a, b, meta: (m ?? {}) as TripMeta, km: km(a, b) }));
+const fmt = (w?: string) => { if (!w) return "date unknown"; const [y, mo, d] = w.split("-").map(Number); return new Date(Date.UTC(y, (mo || 1) - 1, d || 1)).toLocaleDateString("en-US", { month: "short", year: "numeric", ...(d ? { day: "numeric" } : {}), timeZone: "UTC" }); };
+const icon: Record<string, string> = { flight: "✈", cruise: "⛴", trek: "⛰", road: "🚗", train: "🚆" };
+const dated = list.filter((t) => t.meta.when).sort((x, y) => y.meta.when!.localeCompare(x.meta.when!));
+const log = [...dated, ...list.filter((t) => !t.meta.when)];
+const dest = new Set(list.map((t) => t.b));
+const countries = new Set(names.map((n) => places[n][2]));
+const total = Math.round(list.reduce((s, t) => s + t.km, 0));
+const far = list.reduce((m, t) => (km(home, t.b) > m.d ? { n: t.b, d: km(home, t.b) } : m), { n: home, d: 0 });
+const payload = {
+  trips: list.map((t) => ({ i: t.i, a: t.a, b: t.b, when: t.meta.when ?? null, mode: t.meta.mode ?? null, km: t.km })),
+  places: used, home, lastTrip,
+};
+const stats = [
+  { k: "trips", v: trips.length, label: "trips" },
+  { k: "places", v: dest.size, label: "places" },
+  { k: "countries", v: countries.size, label: [...countries].join(" · ") },
+  { k: "km", v: total, label: "km as the crow flies" },
+];
+---
+<section id="travel" data-chapter="Travel" aria-label="Travel map">
+  <div class="wrap">
+    <header class="reveal">
+      <p class="eyebrow">Travel</p>
+      <h2 class="h2">Where the weekends went.</h2>
+      <p class="lede">Last destination: <b>{lastTrip}</b>. Upcoming destination: <b>{nextTrip}</b>.</p>
+    </header>
+
+    <div class="stats reveal" data-stats>
+      {stats.map((s) => <div><b data-stat={s.k} data-final={s.v}>{s.v.toLocaleString("en-US")}</b><span>{s.label}</span></div>)}
+      <div class="far"><b>{Math.round(far.d).toLocaleString("en-US")}<small> km</small></b><span>farthest from {home}: {far.n}</span></div>
+    </div>
+
+    <div class="layout">
+      <div class="globe card reveal" data-globe data-payload={JSON.stringify(payload)}>
+        <canvas aria-hidden="true" data-canvas></canvas>
+        <div class="hud mono">
+          <button type="button" data-play aria-pressed="false">▶ Play my trips</button>
+          <button type="button" data-mode aria-label="Switch between flat map and globe">Globe</button>
+          <button type="button" data-zoom="1" aria-label="Zoom in">+</button><button type="button" data-zoom="-1" aria-label="Zoom out">−</button><button type="button" data-fit aria-label="Fit all trips">⤢</button>
+        </div>
+        <p class="legend mono"><span><i class="k a"></i>trips from {home}</span><span><i class="k b"></i>last: {lastTrip}</span><span><i class="k c"></i>next: ?</span></p>
+      </div>
+      <aside class="log reveal" aria-label="Trip log">
+        <div class="next mono"><b>?</b><span>Next: {nextTrip.toLowerCase()}</span></div>
+        <ol>
+          {log.map((t) => (
+            <li>
+              <button type="button" class="row" data-trip={t.i}>
+                <span class="r1"><b>{t.a} → {t.b}</b></span>
+                <span class="r2 mono"><span>{fmt(t.meta.when)}</span><span>{t.meta.mode ? icon[t.meta.mode] + " " : ""}{Math.round(t.km).toLocaleString("en-US")} km</span></span>
+                {t.meta.note && <span class="r3">{t.meta.note}</span>}
+                {t.b === lastTrip && <span class="badge mono">last</span>}
+              </button>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    </div>
+  </div>
+</section>
+<script>
+  const box = document.querySelector<HTMLElement>("[data-globe]");
+  if (box) {
+    type T = { i: number; a: string; b: string; when: string | null; mode: string | null; km: number };
+    type Payload = { trips: T[]; places: Record<string, [number, number, string]>; home: string; lastTrip: string };
+    const P: Payload = JSON.parse(box.dataset.payload!);
+    const cv = box.querySelector<HTMLCanvasElement>("[data-canvas]")!, ctx = cv.getContext("2d")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, RAD = Math.PI / 180;
+    let land: number[][][] = [], W = 0, H = 0, dpr = 1;
+
+    // ---------- data helpers ----------
+    const ll = (n: string) => P.places[n];
+    const gcd = (a: [number, number, string], b: [number, number, string]) => { const h = Math.sin(((b[0] - a[0]) * RAD) / 2) ** 2 + Math.cos(a[0] * RAD) * Math.cos(b[0] * RAD) * Math.sin(((b[1] - a[1]) * RAD) / 2) ** 2; return 2 * Math.asin(Math.sqrt(h)); };
+    const usedNames = [...new Set(P.trips.flatMap((t) => [t.a, t.b]).concat([P.home]))];
+    const spread = Math.max(...usedNames.map((n) => gcd(ll(P.home), ll(n)))) / RAD; // degrees from home
+    let mode: "map" | "globe" = spread > 55 ? "globe" : "map";
+
+    // ---------- cameras ----------
+    const cam = { lon: 80, lat: 15, k: 8 };               // flat map: k = px per degree of latitude
+    const gl = { lam: 88, phi: 15, zoom: 1 };              // globe
+    const fitBox = (ns: string[], pad = 1.35) => {
+      const la = ns.map((n) => ll(n)[0]), lo = ns.map((n) => ll(n)[1]);
+      const lat = (Math.min(...la) + Math.max(...la)) / 2, lon = (Math.min(...lo) + Math.max(...lo)) / 2;
+      const dlat = Math.max(7, (Math.max(...la) - Math.min(...la)) * pad), dlon = Math.max(10, (Math.max(...lo) - Math.min(...lo)) * pad);
+      return { lon, lat, k: Math.min(H / dlat, W / (dlon * Math.cos(lat * RAD))) * 0.82 };
+    };
+    const fitAll = () => fitBox(usedNames);
+    let anim: { from: typeof cam & typeof gl; to: Partial<typeof cam & typeof gl>; t0: number; ms: number } | null = null;
+    const tweenTo = (to: Partial<typeof cam & typeof gl>, ms = 800) => { anim = { from: { ...cam, ...gl } as never, to, t0: performance.now(), ms: reduce ? 1 : ms }; };
+    const stepAnim = (t: number) => {
+      if (!anim) return; const k = Math.min(1, (t - anim.t0) / anim.ms), e = 1 - Math.pow(1 - k, 3);
+      for (const key of ["lon", "lat", "k"] as const) if (anim.to[key] !== undefined) cam[key] = anim.from[key] + (anim.to[key]! - anim.from[key]) * e;
+      for (const key of ["lam", "phi", "zoom"] as const) if (anim.to[key] !== undefined) gl[key] = anim.from[key] + (anim.to[key]! - anim.from[key]) * e;
+      if (k >= 1) anim = null;
+    };
+    // ---------- projection ----------
+    const GR = () => (Math.min(W, H) / 2) * 0.92 * gl.zoom * 0.5;
+    type Pt = { x: number; y: number; z: number; vis: boolean };
+    const proj = (lon: number, lat: number, hN = 0): Pt => {
+      if (mode === "map") { const x = W / 2 + (lon - cam.lon) * cam.k * Math.cos(cam.lat * RAD), y = H / 2 - (lat - cam.lat) * cam.k - hN * 110; return { x, y, z: 1, vis: true }; }
+      const l = lon * RAD, p = lat * RAD, d = l - gl.lam * RAD, c0 = Math.cos(gl.phi * RAD), s0 = Math.sin(gl.phi * RAD), r = 1 + hN * 0.2;
+      const x = r * Math.cos(p) * Math.sin(d), y = r * (c0 * Math.sin(p) - s0 * Math.cos(p) * Math.cos(d)), z = r * (s0 * Math.sin(p) + c0 * Math.cos(p) * Math.cos(d)), k = GR();
+      return { x: W / 2 + x * k, y: H / 2 - y * k, z, vis: z > 0 || x * x + y * y > 1 };
+    };
+    const arcAt = (a: string, b: string, t: number, hMax = 1): Pt => {
+      const A = ll(a), B = ll(b), v = (q: [number, number, string]) => [Math.cos(q[0] * RAD) * Math.cos(q[1] * RAD), Math.cos(q[0] * RAD) * Math.sin(q[1] * RAD), Math.sin(q[0] * RAD)];
+      const V1 = v(A), V2 = v(B), d = gcd(A, B) || 1e-6, s1 = Math.sin((1 - t) * d) / Math.sin(d), s2 = Math.sin(t * d) / Math.sin(d);
+      const q = [s1 * V1[0] + s2 * V2[0], s1 * V1[1] + s2 * V2[1], s1 * V1[2] + s2 * V2[2]];
+      const hN = Math.sin(Math.PI * t) * (0.18 + 0.82 * Math.min(1, d / 0.7)) * hMax;
+      return proj(Math.atan2(q[1], q[0]) / RAD, Math.atan2(q[2], Math.hypot(q[0], q[1])) / RAD, hN);
+    };
+
+    // ---------- colours ----------
+    let colors = { accent: "#4cc2ff", text: "#111", muted: "#888", border: "#ccc", surface: "#eee", bg: "#fff" }, cn = 0;
+    const readColors = () => { const s = getComputedStyle(document.documentElement), g = (k: string) => s.getPropertyValue(k).trim(); colors = { accent: g("--accent"), text: g("--text"), muted: g("--muted"), border: g("--border"), surface: g("--surface-2"), bg: g("--bg") }; };
+
+    // ---------- scoreboard ----------
+    const statEls = Object.fromEntries([...document.querySelectorAll<HTMLElement>("[data-stat]")].map((e) => [e.dataset.stat!, e]));
+    const shown: Record<string, number> = { trips: 0, places: 0, countries: 0, km: 0 }; let target = { ...shown }, statRaf = 0;
+    const statsFor = (idx: number[]) => { const ts = idx.map((i) => P.trips[i]), ns = new Set(ts.flatMap((t) => [t.a, t.b]).concat(ts.length ? [P.home] : [])), dest = new Set(ts.map((t) => t.b)); return { trips: ts.length, places: dest.size, countries: new Set([...ns].map((n) => ll(n)[2])).size, km: Math.round(ts.reduce((s, t) => s + t.km, 0)) }; };
+    const allIdx = P.trips.map((t) => t.i);
+    const setStats = (idx: number[], ms = 900) => {
+      target = statsFor(idx); const from = { ...shown }, t0 = performance.now(); cancelAnimationFrame(statRaf);
+      const step = (t: number) => { const k = reduce ? 1 : Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 3); for (const key in target) { shown[key] = from[key] + ((target as never)[key] - from[key]) * e; statEls[key].textContent = Math.round(shown[key]).toLocaleString("en-US"); } if (k < 1) statRaf = requestAnimationFrame(step); };
+      statRaf = requestAnimationFrame(step);
+    };
+
+    // ---------- tour ----------
+    const order = [...P.trips.filter((t) => t.when).sort((x, y) => x.when!.localeCompare(y.when!)), ...P.trips.filter((t) => !t.when)].map((t) => t.i);
+    let tour: { n: number; phase: "move" | "draw" | "hold"; t0: number } | null = null; const playBtn = box.querySelector<HTMLButtonElement>("[data-play]")!;
+    const reachedSet = () => new Set(tour ? order.slice(0, tour.n + (tour.phase === "move" ? 0 : 1)) : allIdx);
+    const progress = (i: number) => { if (!tour) return 1; const pos = order.indexOf(i); if (pos < tour.n) return 1; if (pos > tour.n) return 0; if (tour.phase === "move") return 0; return tour.phase === "draw" ? Math.min(1, (performance.now() - tour.t0) / 1300) : 1; };
+    const focusTrip = (i: number, ms = 900) => { const t = P.trips[i]; if (mode === "map") tweenTo(fitBox([t.a, t.b], 1.9), ms); else { const A = ll(t.a), B = ll(t.b); tweenTo({ lam: (A[1] + B[1]) / 2, phi: (A[0] + B[0]) / 2, zoom: 1.6 }, ms); } };
+    function startTour() { tour = { n: 0, phase: "move", t0: performance.now() }; playBtn.setAttribute("aria-pressed", "true"); playBtn.textContent = "■ Stop"; setStats([], 300); focusTrip(order[0], 700); }
+    function endTour() { tour = null; playBtn.setAttribute("aria-pressed", "false"); playBtn.textContent = "▶ Play my trips"; setStats(allIdx); tweenTo(mode === "map" ? fitAll() : { lam: 88, phi: 15, zoom: 1 }, 900); }
+    function stepTour(t: number) {
+      if (!tour) return; const el = t - tour.t0;
+      if (tour.phase === "move" && el > 750) { tour = { ...tour, phase: "draw", t0: t }; }
+      else if (tour.phase === "draw" && el > 1350) { tour = { ...tour, phase: "hold", t0: t }; setStats(order.slice(0, tour.n + 1), 500); }
+      else if (tour.phase === "hold" && el > 350) { if (tour.n + 1 >= order.length) { endTour(); return; } tour = { n: tour.n + 1, phase: "move", t0: t }; focusTrip(order[tour.n], 700); }
+    }
+    playBtn.addEventListener("click", () => (tour ? endTour() : startTour()));
+
+    // ---------- interaction ----------
+    let hover = -1, drag: { x: number; y: number; cam: typeof cam; gl: typeof gl } | null = null, visible = false, raf = 0, lastTouch = -1e9;
+    document.querySelectorAll<HTMLButtonElement>("[data-trip]").forEach((b) => { const i = Number(b.dataset.trip); b.addEventListener("pointerenter", () => (hover = i)); b.addEventListener("pointerleave", () => (hover = -1)); b.addEventListener("focus", () => (hover = i)); b.addEventListener("blur", () => (hover = -1)); b.addEventListener("click", () => { if (tour) endTour(); focusTrip(i); cv.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" }); }); });
+    const modeBtn = box.querySelector<HTMLButtonElement>("[data-mode]")!;
+    const syncMode = () => { modeBtn.textContent = mode === "map" ? "Globe" : "Map"; };
+    modeBtn.addEventListener("click", () => { mode = mode === "map" ? "globe" : "map"; syncMode(); if (mode === "globe") { gl.lam = cam.lon; gl.phi = cam.lat; gl.zoom = 1; } else Object.assign(cam, fitAll()); });
+    box.querySelector("[data-fit]")!.addEventListener("click", () => tweenTo(mode === "map" ? fitAll() : { lam: 88, phi: 15, zoom: 1 }));
+    box.querySelectorAll<HTMLButtonElement>("[data-zoom]").forEach((b) => b.addEventListener("click", () => { const f = Number(b.dataset.zoom) > 0 ? 1.4 : 1 / 1.4; if (mode === "map") tweenTo({ k: cam.k * f }, 300); else tweenTo({ zoom: Math.max(0.7, Math.min(5, gl.zoom * f)) }, 300); }));
+    cv.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, cam: { ...cam }, gl: { ...gl } }; cv.setPointerCapture(e.pointerId); lastTouch = performance.now(); anim = null; });
+    cv.addEventListener("pointermove", (e) => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (mode === "map") { cam.lon = drag.cam.lon - dx / (cam.k * Math.cos(cam.lat * RAD)); cam.lat = drag.cam.lat + dy / cam.k; } else { const k = 90 / GR(); gl.lam = drag.gl.lam - dx * k * 0.6; gl.phi = Math.max(-80, Math.min(80, drag.gl.phi + dy * k * 0.6)); } lastTouch = performance.now(); });
+    cv.addEventListener("pointerup", () => { drag = null; });
+
+    // ---------- drawing ----------
+    function drawLand() {
+      ctx.beginPath();
+      if (mode === "map") {
+        for (const ring of land) {
+          // unwrap longitudes so rings crossing the antimeridian stay continuous, then shift the ring next to the camera
+          const u: number[] = []; let prev = ring[0][0], off = 0; for (const [lon] of ring) { if (lon - prev > 180) off -= 360; else if (lon - prev < -180) off += 360; u.push(lon + off); prev = lon; }
+          if (Math.abs(u[u.length - 1] - u[0]) > 180) continue; // Antarctica-style rings that wrap the whole globe
+          const mean = u.reduce((x, y) => x + y, 0) / u.length, shift = 360 * Math.round((cam.lon - mean) / 360);
+          ring.forEach(([, lat], j) => { const p = proj(u[j] + shift, lat); j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.closePath();
+        }
+      } else {
+        const cx = W / 2, cy = H / 2, r = GR(), c0 = Math.cos(gl.phi * RAD), s0 = Math.sin(gl.phi * RAD);
+        ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip(); ctx.beginPath();
+        for (const ring of land) { const pts: [number, number][] = []; let any = false; for (const [lon, lat] of ring) { const p = lat * RAD, d = lon * RAD - gl.lam * RAD; let x = Math.cos(p) * Math.sin(d), y = c0 * Math.sin(p) - s0 * Math.cos(p) * Math.cos(d); const z = s0 * Math.sin(p) + c0 * Math.cos(p) * Math.cos(d); if (z > 0) any = true; else { const m = Math.hypot(x, y) || 1; x /= m; y /= m; } pts.push([cx + x * r, cy - y * r]); } if (!any) continue; pts.forEach(([sx, sy], j) => (j ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy))); ctx.closePath(); }
+        ctx.fillStyle = colors.accent; ctx.globalAlpha = 0.22; ctx.fill(); ctx.globalAlpha = 0.7; ctx.lineWidth = 0.8; ctx.strokeStyle = colors.accent; ctx.stroke(); ctx.globalAlpha = 1; ctx.restore(); return;
+      }
+      ctx.fillStyle = colors.accent; ctx.globalAlpha = 0.2; ctx.fill(); ctx.globalAlpha = 0.65; ctx.lineWidth = 0.8; ctx.strokeStyle = colors.accent; ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    function drawGrid() {
+      ctx.lineWidth = 0.6; ctx.strokeStyle = colors.border; ctx.globalAlpha = 0.6; ctx.fillStyle = colors.muted; ctx.font = "500 10px ui-monospace, Menlo, monospace";
+      if (mode === "map") {
+        const step = cam.k > 22 ? 2 : cam.k > 10 ? 5 : cam.k > 5 ? 10 : 20, lat0 = cam.lat - H / 2 / cam.k, lat1 = cam.lat + H / 2 / cam.k, hw = W / 2 / (cam.k * Math.cos(cam.lat * RAD)), lon0 = cam.lon - hw, lon1 = cam.lon + hw;
+        for (let la = Math.ceil(lat0 / step) * step; la <= lat1; la += step) { const y = proj(0, la).y; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); ctx.fillText(`${la}°`, 6, y - 3); }
+        for (let lo = Math.ceil(lon0 / step) * step; lo <= lon1; lo += step) { const x = proj(lo, 0).x; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); ctx.fillText(`${lo}°`, x + 3, H - 6); }
+      } else {
+        for (let lon = -180; lon < 180; lon += 30) { ctx.beginPath(); let pen = false; for (let lat = -90; lat <= 90; lat += 6) { const p = proj(lon, lat); if (p.z > 0) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; } ctx.stroke(); }
+        for (let lat = -60; lat <= 60; lat += 30) { ctx.beginPath(); let pen = false; for (let lon = -180; lon <= 180; lon += 6) { const p = proj(lon, lat); if (p.z > 0) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; } ctx.stroke(); }
+      }
+      ctx.globalAlpha = 1;
+    }
+    function draw(t: number) {
+      if (++cn % 40 === 1) readColors();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      if (mode === "globe") { const cx = W / 2, cy = H / 2, r = GR(), g = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, r * 0.1, cx, cy, r); g.addColorStop(0, colors.surface); g.addColorStop(1, colors.bg); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = colors.border; ctx.stroke(); }
+      drawGrid(); drawLand();
+      const N = 48, reached = reachedSet();
+      P.trips.forEach((tr) => {
+        const pg = progress(tr.i); if (pg <= 0) return; const isLast = tr.b === P.lastTrip && tr.a === P.home, hot = hover === tr.i, dim = hover >= 0 && !hot;
+        const path = (hMax: number) => { ctx.beginPath(); let pen = false; for (let k = 0; k <= N; k++) { const tt = (k / N) * pg, p = arcAt(tr.a, tr.b, tt, hMax); if (p.vis) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; } };
+        if (mode === "map") { path(0); ctx.setLineDash([2, 4]); ctx.lineWidth = 1; ctx.strokeStyle = colors.muted; ctx.globalAlpha = dim ? 0.15 : 0.5; ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; }
+        path(1); ctx.globalAlpha = dim ? 0.3 : 1; ctx.lineWidth = hot ? 3.4 : isLast ? 2.6 : 1.8; ctx.strokeStyle = hot || isLast ? colors.text : colors.accent; ctx.shadowColor = colors.accent; ctx.shadowBlur = hot ? 14 : 8; ctx.stroke(); ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+        const head = arcAt(tr.a, tr.b, tour ? pg : (t / 2600 + tr.i * 0.137) % 1); if ((tour ? pg < 1 : !reduce) && head.vis) { ctx.beginPath(); ctx.arc(head.x, head.y, 3, 0, 7); ctx.fillStyle = colors.text; ctx.fill(); }
+      });
+      // places: cluster close pins so labels stay readable
+      const prio = [P.lastTrip, P.home, ...usedNames].filter((n, i, a) => a.indexOf(n) === i).filter((n) => n === P.home || [...reached].some((i) => P.trips[i].a === n || P.trips[i].b === n));
+      const clusters: { x: number; y: number; members: string[] }[] = [];
+      for (const n of prio) { const p = proj(ll(n)[1], ll(n)[0]); if (!p.vis || p.z <= 0.02) continue; const c = clusters.find((q) => Math.hypot(q.x - p.x, q.y - p.y) < 22); if (c) c.members.push(n); else clusters.push({ x: p.x, y: p.y, members: [n] }); }
+      ctx.font = "500 11px ui-monospace, Menlo, monospace"; ctx.textBaseline = "middle"; const placed: { x: number; y: number; w: number; h: number }[] = [];
+      clusters.forEach((c) => {
+        const lead = c.members[0], isHome = c.members.includes(P.home), isLast = c.members.includes(P.lastTrip), n = c.members.length;
+        ctx.beginPath(); ctx.arc(c.x, c.y, n > 1 ? 9 : isHome ? 5 : 3.8, 0, 7); ctx.fillStyle = isLast ? colors.text : colors.accent; ctx.fill();
+        if (n > 1) { ctx.fillStyle = colors.bg; ctx.font = "700 10px ui-monospace, Menlo, monospace"; ctx.textAlign = "center"; ctx.fillText(String(n), c.x, c.y + 0.5); ctx.textAlign = "left"; ctx.font = "500 11px ui-monospace, Menlo, monospace"; }
+        if (isHome && !reduce) { const k = (t / 1400) % 1; ctx.beginPath(); ctx.arc(c.x, c.y, 8 + k * 16, 0, 7); ctx.strokeStyle = colors.accent; ctx.globalAlpha = 1 - k; ctx.lineWidth = 1.5; ctx.stroke(); ctx.globalAlpha = 1; }
+        const label = (isLast && n === 1 ? `${lead} · last` : lead) + (n > 1 ? ` +${n - 1}` : ""), w = ctx.measureText(label).width + 10;
+        const cands = [{ x: c.x + 12, y: c.y - 9 }, { x: c.x - 12 - w, y: c.y - 9 }, { x: c.x - w / 2, y: c.y - 30 }, { x: c.x - w / 2, y: c.y + 14 }, { x: c.x + 12, y: c.y + 8 }, { x: c.x - 12 - w, y: c.y + 8 }];
+        const r = cands.map((q) => ({ ...q, w, h: 18 })).find((q) => !placed.some((o) => q.x < o.x + o.w && q.x + q.w > o.x && q.y < o.y + o.h && q.y + q.h > o.y));
+        if (!r) return; placed.push(r); ctx.fillStyle = colors.bg; ctx.globalAlpha = 0.88; ctx.fillRect(r.x, r.y, r.w, r.h); ctx.globalAlpha = 1; ctx.fillStyle = colors.text; ctx.fillText(label, r.x + 5, r.y + 9.5);
+      });
+      const hp = proj(ll(P.home)[1], ll(P.home)[0], 0.9); if (hp.vis && !tour) { const bob = reduce ? 0 : Math.sin(t / 500) * 3; ctx.beginPath(); ctx.arc(hp.x - 30, hp.y - 14 + bob, 11, 0, 7); ctx.fillStyle = colors.bg; ctx.fill(); ctx.setLineDash([3, 3]); ctx.strokeStyle = colors.accent; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = colors.accent; ctx.font = "700 13px ui-monospace, Menlo, monospace"; ctx.textAlign = "center"; ctx.fillText("?", hp.x - 30, hp.y - 13 + bob); ctx.textAlign = "left"; }
+    }
+    function frame(t: number) {
+      if (!visible) return; stepAnim(t); stepTour(t);
+      if (mode === "globe" && !drag && !tour && !anim && !reduce && t - lastTouch > 3000) { gl.lam += Math.sin(t / 4200) * 0.03; }
+      draw(t); raf = requestAnimationFrame(frame);
+    }
+    const resize = () => { const r = box.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = Math.round(Math.max(320, Math.min(560, r.width * (r.width < 640 ? 0.95 : 0.72)))); cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px"; if (mode === "map" && !anim && !drag) Object.assign(cam, fitAll()); };
+    new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!visible) { visible = true; raf = requestAnimationFrame(frame); setStats(allIdx, 1400); } } else { visible = false; cancelAnimationFrame(raf); } }, { threshold: 0.15 }).observe(box);
+    addEventListener("resize", () => { resize(); if (!visible) draw(performance.now()); });
+    resize(); readColors(); syncMode(); Object.assign(cam, fitAll());
+    Object.keys(shown).forEach((k) => (statEls[k].textContent = "0"));
+    fetch("/data/land.json").then((r) => r.json()).then((d) => { land = d; draw(performance.now()); }).catch(() => {});
+    draw(performance.now());
+  }
+</script>
+<style>
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 28px; }
+  .stats div { border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; background: var(--surface); display: grid; gap: 4px; align-content: start; }
+  .stats b { font: 700 clamp(24px, 3vw, 34px) var(--font-display); letter-spacing: -.02em; line-height: 1; } .stats small { font-size: .5em; color: var(--muted); }
+  .stats span { color: var(--muted); font-size: 12px; line-height: 1.3; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(260px, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
+  .globe { position: relative; padding: 0; overflow: hidden; } .globe::before { display: none; }
+  canvas { display: block; width: 100%; touch-action: pan-y; cursor: grab; } canvas:active { cursor: grabbing; }
+  .hud { position: absolute; right: 12px; top: 12px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 24px); }
+  .hud button { min-width: 36px; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 12px; } .hud button:hover, .hud button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .legend { position: absolute; left: 14px; bottom: 12px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--bg) 70%, transparent); padding: 4px 8px; border-radius: 8px; } .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .k { width: 14px; height: 3px; border-radius: 2px; display: inline-block; } .k.a { background: var(--accent); } .k.b { background: var(--text); } .k.c { background: none; border: 1.5px dashed var(--accent); height: 8px; width: 8px; border-radius: 50%; }
+  .log { display: grid; gap: 10px; max-height: 640px; overflow: auto; padding-right: 2px; }
+  .next { display: flex; align-items: center; gap: 12px; border: 1.5px dashed var(--accent); border-radius: 14px; padding: 12px 14px; color: var(--muted); font-size: 13px; } .next b { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+  .log ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .row { width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); padding: 12px 14px; cursor: pointer; display: grid; gap: 4px; position: relative; transition: border-color var(--dur), transform var(--dur) var(--ease); font: inherit; }
+  .row:hover, .row:focus-visible { border-color: var(--accent); transform: translateX(3px); }
+  .r1 b { font-size: 15px; } .r2 { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); } .r3 { font-size: 12px; color: var(--muted); }
+  .badge { position: absolute; right: 12px; top: 10px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } .log { max-height: none; } }
+</style>
