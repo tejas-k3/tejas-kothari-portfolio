@@ -33,3 +33,6 @@ accent switched to electric blue (+ cool neutrals); portrait replaced by simple 
 
 Round 3: portrait = hand-authored 8-bit side-view sprite (scripts/make_portrait.py, 3 tones); tech stack = static always-coloured logo tiles in even 6-col rows (no marquee, no selection);
 "Code that writes code" gained site.sh: sitemap tree + `echo <section>` navigation (src/scripts/shell.ts, fixed route table).
+
+Round 4: portrait now via structure-based glyph matching (scripts/make_portrait.py, needs numpy+Pillow); view modes made explicit:
+header segmented control + banner. Engineering = per-project "Under the hood" (architecture stages, decisions, trade-offs) + "used in" under each stack tile; Recruiter = compact summary card, hides portrait/demo/how-i-work/activity/interests, no motion.

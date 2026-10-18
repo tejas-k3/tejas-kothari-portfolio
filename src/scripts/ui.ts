@@ -6,18 +6,24 @@ const store = {
 };
 
 const modes = ["story", "engineering", "recruiter"] as const;
-const modeBtn = document.getElementById("mode-btn");
-export function setMode(m: (typeof modes)[number]) {
+type Mode = (typeof modes)[number];
+const blurb: Record<Mode, string> = {
+  story: "",
+  engineering: "Engineering view: project cards expand with architecture, key decisions and trade-offs, and the stack shows where each tool was used.",
+  recruiter: "Recruiter view: a compact summary with motion and extras hidden. Resume, email and LinkedIn are one click away.",
+};
+export function setMode(m: Mode) {
   root.setAttribute("data-mode", m);
   store.set("mode", m);
-  if (modeBtn) modeBtn.textContent = m;
+  document.querySelectorAll<HTMLButtonElement>(".seg button[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
+  const t = document.getElementById("modebar-text"); if (t) t.textContent = blurb[m];
   window.dispatchEvent(new CustomEvent("modechange", { detail: m }));
 }
-modeBtn?.addEventListener("click", () => {
-  const cur = (root.getAttribute("data-mode") || "story") as (typeof modes)[number];
-  setMode(modes[(modes.indexOf(cur) + 1) % modes.length]);
+document.addEventListener("click", (e) => {
+  const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-mode]");
+  if (b && (modes as readonly string[]).includes(b.dataset.mode || "")) setMode(b.dataset.mode as Mode);
 });
-if (modeBtn) modeBtn.textContent = root.getAttribute("data-mode") || "story";
+setMode((root.getAttribute("data-mode") as Mode) || "story");
 
 export function toggleTheme() {
   const dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
