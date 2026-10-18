@@ -191,7 +191,7 @@ export const interests = [
   { icon: "◷", t: "Watch", d: "Currently rocking a Tissot PRX Powermatic 80.", href: "/interests#watch" },
   { icon: "⌖", t: "Gaming", d: "8,000+ hours in CS2.", href: "/interests#gaming" },
   { icon: "↗", t: "Markets", d: "Investing in Indian equities, guided by Rupee Engine's predictions.", href: "/interests#markets" },
-  { icon: "✈", t: "Travel", d: "Last destination: Coorg. Upcoming: unknown.", href: "/interests#travel" },
+  { icon: "✈", t: "Travel", d: "Last destination: Coorg.", href: "/interests#travel" },
 ];
 
 export const currently = [

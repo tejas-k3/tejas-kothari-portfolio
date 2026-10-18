@@ -19,7 +19,6 @@ export const trips: Trip[] = [
 ];
 
 export const lastTrip = "Coorg";
-export const nextTrip = "Unknown"; // shown as a "?" marker near home
 
 // [lat, lon, country]
 export const places: Record<string, [number, number, string]> = {

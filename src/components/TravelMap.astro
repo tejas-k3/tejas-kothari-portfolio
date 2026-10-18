@@ -1,5 +1,5 @@
 ---
-import { trips, places, home, lastTrip, nextTrip } from "../data/travel";
+import { trips, places, home, lastTrip } from "../data/travel";
 import type { TripMeta } from "../data/travel";
 
 // Build-time validation: every name used in `trips` must exist in `places`.
@@ -35,7 +35,7 @@ const stats = [
     <header class="reveal">
       <p class="eyebrow">Travel</p>
       <h2 class="h2">Where the weekends went.</h2>
-      <p class="lede">Last destination: <b>{lastTrip}</b>. Upcoming destination: <b>{nextTrip}</b>.</p>
+      <p class="lede">Last destination: <b>{lastTrip}</b>.</p>
     </header>
 
     <div class="stats reveal" data-stats>
@@ -51,10 +51,9 @@ const stats = [
           <button type="button" data-mode aria-label="Switch between flat map and globe">Globe</button>
           <button type="button" data-zoom="1" aria-label="Zoom in">+</button><button type="button" data-zoom="-1" aria-label="Zoom out">−</button><button type="button" data-fit aria-label="Fit all trips">⤢</button>
         </div>
-        <p class="legend mono"><span><i class="k a"></i>trips from {home}</span><span><i class="k b"></i>last: {lastTrip}</span><span><i class="k c"></i>next: ?</span></p>
+        <p class="legend mono"><span><i class="k a"></i>trips from {home}</span><span><i class="k b"></i>last: {lastTrip}</span></p>
       </div>
       <aside class="log reveal" aria-label="Trip log">
-        <div class="next mono"><b>?</b><span>Next: {nextTrip.toLowerCase()}</span></div>
         <ol>
           {log.map((t) => (
             <li>
@@ -225,7 +224,6 @@ const stats = [
         const r = cands.map((q) => ({ ...q, w, h: 18 })).find((q) => !placed.some((o) => q.x < o.x + o.w && q.x + q.w > o.x && q.y < o.y + o.h && q.y + q.h > o.y));
         if (!r) return; placed.push(r); ctx.fillStyle = colors.bg; ctx.globalAlpha = 0.88; ctx.fillRect(r.x, r.y, r.w, r.h); ctx.globalAlpha = 1; ctx.fillStyle = colors.text; ctx.fillText(label, r.x + 5, r.y + 9.5);
       });
-      const hp = proj(ll(P.home)[1], ll(P.home)[0], 0.9); if (hp.vis && !tour) { const bob = reduce ? 0 : Math.sin(t / 500) * 3; ctx.beginPath(); ctx.arc(hp.x - 30, hp.y - 14 + bob, 11, 0, 7); ctx.fillStyle = colors.bg; ctx.fill(); ctx.setLineDash([3, 3]); ctx.strokeStyle = colors.accent; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = colors.accent; ctx.font = "700 13px ui-monospace, Menlo, monospace"; ctx.textAlign = "center"; ctx.fillText("?", hp.x - 30, hp.y - 13 + bob); ctx.textAlign = "left"; }
     }
     function frame(t: number) {
       if (!visible) return; stepAnim(t); stepTour(t);
@@ -252,9 +250,8 @@ const stats = [
   .hud { position: absolute; right: 12px; top: 12px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 24px); }
   .hud button { min-width: 36px; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 12px; } .hud button:hover, .hud button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
   .legend { position: absolute; left: 14px; bottom: 12px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--bg) 70%, transparent); padding: 4px 8px; border-radius: 8px; } .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .k { width: 14px; height: 3px; border-radius: 2px; display: inline-block; } .k.a { background: var(--accent); } .k.b { background: var(--text); } .k.c { background: none; border: 1.5px dashed var(--accent); height: 8px; width: 8px; border-radius: 50%; }
+  .k { width: 14px; height: 3px; border-radius: 2px; display: inline-block; } .k.a { background: var(--accent); } .k.b { background: var(--text); }
   .log { display: grid; gap: 10px; max-height: 640px; overflow: auto; padding-right: 2px; }
-  .next { display: flex; align-items: center; gap: 12px; border: 1.5px dashed var(--accent); border-radius: 14px; padding: 12px 14px; color: var(--muted); font-size: 13px; } .next b { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
   .log ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .row { width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); padding: 12px 14px; cursor: pointer; display: grid; gap: 4px; position: relative; transition: border-color var(--dur), transform var(--dur) var(--ease); font: inherit; }
   .row:hover, .row:focus-visible { border-color: var(--accent); transform: translateX(3px); }
