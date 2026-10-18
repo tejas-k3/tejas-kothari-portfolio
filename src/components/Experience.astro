@@ -2,12 +2,12 @@
 import SectionHead from "./SectionHead.astro";
 import { experience, education } from "../data/content";
 ---
-<section id="experience" aria-label="Experience">
+<section id="experience" data-chapter="Experience" aria-label="Experience">
   <div class="wrap">
     <SectionHead eyebrow="Experience" title="Where I've done the work." lede="Backend, platforms and observability across crypto, health-tech, conversation intelligence and network analytics." />
-    <ol class="tl">
+    <ol class="tl" data-draw>
       {experience.map((e) => (
-        <li class="reveal">
+        <li class="reveal" style={`--n:${experience.indexOf(e)}`}>
           <span class="when mono">{e.from} – {e.to}</span>
           <div><h3>{e.company}</h3><p class="role">{e.title}</p><p class="theme">{e.theme}</p></div>
         </li>
@@ -17,7 +17,11 @@ import { experience, education } from "../data/content";
   </div>
 </section>
 <style>
-  .tl { list-style: none; margin: 40px 0 0; padding: 0; border-left: 1px solid var(--border); }
+  .tl { list-style: none; margin: 40px 0 0; padding: 0; position: relative; }
+  .tl::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--border); }
+  .tl::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; margin-left: -.5px; background: linear-gradient(var(--accent), transparent); transform-origin: top; transform: scaleY(0); transition: transform 1.6s var(--ease); }
+  :global(.tl.in)::after { transform: scaleY(1); }
+  :global(.js) .tl li::before { transform: scale(0); transition: transform .5s var(--ease) calc(var(--n, 0) * 220ms + 200ms); } :global(.tl.in) li::before { transform: scale(1); }
   li { display: grid; grid-template-columns: 190px 1fr; gap: 20px; padding: 22px 0 22px 28px; position: relative; }
   li::before { content: ""; position: absolute; left: -5px; top: 32px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
   .edu::before { background: var(--border); }

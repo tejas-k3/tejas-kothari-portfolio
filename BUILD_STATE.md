@@ -36,3 +36,6 @@ Round 3: portrait = hand-authored 8-bit side-view sprite (scripts/make_portrait.
 
 Round 4: portrait now via structure-based glyph matching (scripts/make_portrait.py, needs numpy+Pillow); view modes made explicit:
 header segmented control + banner. Engineering = per-project "Under the hood" (architecture stages, decisions, trade-offs) + "used in" under each stack tile; Recruiter = compact summary card, hides portrait/demo/how-i-work/activity/interests, no motion.
+
+Round 5 (UX restructure): multi-page (/, /work, /experience, /activity, /about) + case studies; home = hero, Netflix-style ProjectRow (hover previews), MiniSim ("Break the system" toy queueing model), CodeDemo + site.sh, contact.
+Native cross-page View Transitions (CSS @view-transition) + Astro hover prefetch; chapter rail, sticky "Let's talk" pill, 30-second dialog, headline decode, timeline draw.

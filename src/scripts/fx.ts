@@ -60,3 +60,33 @@ if (fine) {
     const p = hero.querySelector<HTMLElement>(".portrait"); if (p && !reduce()) p.style.transform = `translate(${((e.clientX / innerWidth - 0.5) * -14).toFixed(1)}px, ${((e.clientY / innerHeight - 0.5) * -10).toFixed(1)}px)`;
   });
 }
+
+// ---- Chapter rail, sticky CTA, 30-second dialog, headline decode, timeline draw ----
+const chapters = [...document.querySelectorAll<HTMLElement>("[data-chapter]")];
+if (chapters.length > 2) {
+  const rail = document.createElement("nav"); rail.className = "rail"; rail.setAttribute("aria-label", "Page chapters");
+  const links = chapters.map((c) => { const a = document.createElement("a"); a.href = "#" + (c.id || ""); a.dataset.for = c.id; const s = document.createElement("span"); s.textContent = c.dataset.chapter!; a.append(s); a.addEventListener("click", (e) => { e.preventDefault(); c.scrollIntoView({ behavior: reduce() ? "auto" : "smooth" }); }); rail.append(a); return a; });
+  document.body.append(rail);
+  const rio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((l) => l.classList.toggle("on", l.dataset.for === (e.target as HTMLElement).id)); }), { rootMargin: "-45% 0px -50% 0px" });
+  chapters.forEach((c) => rio.observe(c));
+}
+const contactEl = document.getElementById("contact");
+if (contactEl) {
+  const pill = document.createElement("a"); pill.className = "pill"; pill.href = "#contact"; pill.textContent = "Let's talk →"; document.body.append(pill);
+  let past = false, near = false; const upd = () => pill.classList.toggle("show", past && !near);
+  addEventListener("scroll", () => { past = scrollY > 700; upd(); }, { passive: true });
+  new IntersectionObserver((es) => { near = es[0].isIntersecting; upd(); }).observe(contactEl);
+}
+const tl = document.getElementById("tldr") as HTMLDialogElement | null;
+document.querySelectorAll("[data-open='tldr']").forEach((b) => b.addEventListener("click", () => tl?.showModal()));
+tl?.querySelector("[data-close]")?.addEventListener("click", () => tl.close());
+tl?.addEventListener("click", (e) => { if (e.target === tl) tl.close(); });
+document.querySelectorAll<HTMLElement>("[data-draw]").forEach((n) => new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { n.classList.add("in"); o.disconnect(); } }, { threshold: 0.2 }).observe(n));
+if (!reduce()) {
+  const glyphs = "01<>/{}#=+*";
+  document.querySelectorAll<HTMLElement>(".hero h1 .line").forEach((ln, idx) => {
+    const text = ln.textContent!; const t0 = performance.now() + idx * 140; ln.setAttribute("aria-label", text);
+    const tick = (t: number) => { const p = clamp((t - t0) / 650, 0, 1); ln.textContent = text.split("").map((c, i) => (c === " " || i < p * text.length ? c : glyphs[Math.floor(Math.random() * glyphs.length)])).join(""); if (p < 1) requestAnimationFrame(tick); else ln.textContent = text; };
+    requestAnimationFrame(tick);
+  });
+}

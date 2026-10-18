@@ -29,7 +29,7 @@ const routes = [
   ...(person.resumeUrl ? [{ name: "resume.pdf", path: person.resumeUrl, depth: 1, aliases: ["resume", "cv"] }] : []),
 ];
 ---
-<section id="demo" aria-label="Code that writes code">
+<section id="demo" data-chapter="The idea" aria-label="Code that writes code">
   <div class="wrap">
     <SectionHead eyebrow="The idea" title="Code that writes code." lede="If I did something twice by hand, the third time is a generator. A tiny illustration of the habit:" />
     <div class="stage reveal" data-demo data-gen={gen} data-out={out}>
