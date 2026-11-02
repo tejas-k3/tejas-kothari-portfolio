@@ -41,7 +41,9 @@ export const proof = [
 
 export type Role = { company: string; title: string; from?: string; to: string; current?: boolean; points: { t: string; m?: string }[] };
 export const experience: Role[] = [
-  { company: "Credibly", title: "Senior Software Engineer", to: "Present", current: true, points: [] },
+  { company: "Credibly", title: "Senior Software Engineer", to: "Present", current: true, points: [
+    { t: "Work across the whole stack: backend, frontend and database. I pick up whatever comes my way." },
+  ] },
   {
     company: "CoinTracker", title: "Software Engineer 2", from: "Dec 2025", to: "Apr 2026",
     points: [
