@@ -16,6 +16,7 @@ const hue: Record<string, string> = { "rupee-engine": "#4cc2ff", "system-design-
       return (
         <Tag class={`poster${p.proof ? " flag" : ""}`} href={p.page ?? p.href} target={!p.page && p.href ? "_blank" : undefined} rel={!p.page && p.href ? "noopener" : undefined} style={`--h:${hue[p.slug] ?? "#4cc2ff"}`} data-event="project_opened">
           <div class="art" aria-hidden="true">
+            {p.live && <span class="livebadge mono">● live</span>}
             {p.slug === "rupee-engine" && (
               <svg viewBox="0 0 240 150"><g class="bars">{[34, 58, 44, 82, 66, 104, 90].map((h, i) => <rect x={16 + i * 31} y={140 - h} width="20" height={h} rx="4" style={`--d:${i * 70}ms`} />)}</g><path class="line" d="M20 110 L52 88 L83 98 L114 62 L145 76 L176 38 L207 48" /><text x="190" y="30" class="rs">₹</text></svg>
             )}
@@ -62,6 +63,7 @@ const hue: Record<string, string> = { "rupee-engine": "#4cc2ff", "system-design-
   .proof { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; } .proof li { font-size: 11px; border: 1px solid color-mix(in srgb, var(--h) 40%, var(--border)); border-radius: 999px; padding: 3px 10px; background: color-mix(in srgb, var(--h) 8%, var(--surface)); color: var(--text); }
   .poster:hover, .poster:focus-visible { transform: translateY(-8px) scale(1.03); border-color: color-mix(in srgb, var(--h) 60%, var(--border)); box-shadow: 0 26px 50px -24px color-mix(in srgb, var(--h) 55%, transparent); z-index: 2; }
   .art { aspect-ratio: 16 / 10; background: radial-gradient(120% 100% at 30% 0%, color-mix(in srgb, var(--h) 24%, var(--surface-2)), var(--surface-2)); display: grid; place-items: center; border-bottom: 1px solid var(--border); }
+  .art { position: relative; } .livebadge { position: absolute; top: 12px; left: 12px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--success); background: color-mix(in srgb, var(--bg) 75%, transparent); border: 1px solid color-mix(in srgb, var(--success) 50%, var(--border)); border-radius: 999px; padding: 2px 10px; }
   .art svg { width: 88%; height: auto; overflow: visible; }
   .body { padding: 18px 20px 22px; display: grid; gap: 8px; }
   .meta { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }

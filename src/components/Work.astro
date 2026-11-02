@@ -39,7 +39,8 @@ const minor = projects.filter((p) => !p.page);
           <div class="foot">
             <p class="stack">{p.stack.map((s) => <span class="chip">{s}</span>)}</p>
             <p class="act">
-              <a class="btn primary" href={p.page} data-event="project_opened">Case study →</a>
+              {p.live && <a class="btn primary" href={p.live} target="_blank" rel="noopener" data-event="live_opened">Try it live ↗</a>}
+              <a class={p.live ? "btn" : "btn primary"} href={p.page} data-event="project_opened">Case study →</a>
               {p.repo && <a class="btn" href={p.repo} target="_blank" rel="noopener">GitHub ↗</a>}
             </p>
           </div>
