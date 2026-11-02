@@ -132,6 +132,6 @@ export const caseStudies: CaseStudy[] = [
       "From the project's own gap analysis: it models request flow and capacity well, but not data-flow questions such as feeds, chat or video pipelines. Those need new building blocks (fan-out, pub/sub, blob storage).",
       
     ],
-    links: [{ t: "Source on GitHub", h: "https://github.com/tejas-k3/system_design_playground" }],
+    links: [{ t: "Try it live", h: "https://systemdesign.tejask.dev/" }, { t: "Source on GitHub", h: "https://github.com/tejas-k3/system_design_playground" }],
   },
 ];

@@ -33,6 +33,7 @@ const cmds: Cmd[] = [
   { label: "Engineering view", hint: "mode: architecture, decisions, implementation", run: () => { palette.close(); setMode("engineering"); } },
   { label: "Recruiter view", hint: "mode: compact, no motion", run: () => { palette.close(); setMode("recruiter"); } },
   { label: "Travel map", hint: "globe", run: go("/interests#travel") },
+  { label: "System Design Playground (live)", hint: "open app", run: go("https://systemdesign.tejask.dev/", true) },
   { label: "Rupee Engine impact", hint: "case study", run: go("/projects/rupee-engine#impact") },
   { label: "Playground impact", hint: "case study", run: go("/projects/system-design-playground#impact") },
   { label: "Article: Logs Reimagined", hint: "writing", run: go("https://www.observe.ai/blog/logs-reimagined-elevating-observability-debugging-in-asynchronous-systems", true) },

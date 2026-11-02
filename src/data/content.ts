@@ -104,6 +104,7 @@ export type Project = {
   proof?: string[];
   stack: string[];
   href?: string;
+  live?: string;
   repo?: string;
   page?: string;
 };
@@ -128,7 +129,7 @@ export const projects: Project[] = [
     slug: "system-design-playground",
     name: "System Design Playground",
     tag: "Open source",
-    status: "Active",
+    status: "Live",
     dates: "Oct 2026 – present",
     brief: "Let people watch systems break instead of reading about them.",
     what: "A browser simulator: sketch a system, send traffic, watch it break, then fix it.",
@@ -138,6 +139,7 @@ export const projects: Project[] = [
     proof: ["108 challenges", "~330x faster than real time", "matches queueing theory within 6-8%", "retry-storm lesson"],
     stack: ["Go", "WebSocket", "React", "TypeScript", "Vite", "Docker"],
     repo: "https://github.com/tejas-k3/system_design_playground",
+    live: "https://systemdesign.tejask.dev/",
     page: "/projects/system-design-playground",
   },
   {
