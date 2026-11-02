@@ -39,7 +39,12 @@ export const proof = [
   { k: "2,600+", v: "NSE stocks scored in one full run" },
 ];
 
-export type Role = { company: string; title: string; from?: string; to: string; current?: boolean; points: { t: string; m?: string }[] };
+// Published writing. Title taken from the post URL; TODO(tejas): confirm the exact title and add a one-line summary if you want one.
+export const writing = [
+  { title: "Logs Reimagined: Elevating Observability & Debugging in Asynchronous Systems", venue: "Observe.AI blog", url: "https://www.observe.ai/blog/logs-reimagined-elevating-observability-debugging-in-asynchronous-systems" },
+];
+
+export type Role = { company: string; title: string; from?: string; to: string; current?: boolean; points: { t: string; m?: string }[]; link?: { t: string; h: string } };
 export const experience: Role[] = [
   { company: "Credibly", title: "Senior Software Engineer", to: "Present", current: true, points: [
     { t: "Work across the whole stack: backend, frontend and database. I pick up whatever comes my way." },
@@ -62,6 +67,7 @@ export const experience: Role[] = [
       { t: "Engineered a load-testing framework for text-to-speech, speech-to-text and LLM vendor APIs, tuning configuration for accuracy, response time and cost." },
       { t: "Defined Kubernetes service labels and log-aggregation standards for accurate scraping and unified collection across microservices." },
     ],
+    link: { t: "Read my write-up: Logs Reimagined", h: writing[0].url },
   },
   {
     company: "1mg", title: "Software Development Engineer II", from: "Mar 2024", to: "Nov 2024",

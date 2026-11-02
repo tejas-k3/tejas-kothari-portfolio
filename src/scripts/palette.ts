@@ -35,6 +35,7 @@ const cmds: Cmd[] = [
   { label: "Travel map", hint: "globe", run: go("/interests#travel") },
   { label: "Rupee Engine impact", hint: "case study", run: go("/projects/rupee-engine#impact") },
   { label: "Playground impact", hint: "case study", run: go("/projects/system-design-playground#impact") },
+  { label: "Article: Logs Reimagined", hint: "writing", run: go("https://www.observe.ai/blog/logs-reimagined-elevating-observability-debugging-in-asynchronous-systems", true) },
   { label: "Resume (web page)", hint: "page", run: go("/resume") },
   // Easter eggs: only appear when typed. TODO(tone): tone these up or down.
   { label: "terminal", hidden: true, run: () => { palette.close(); openTerm(); } },

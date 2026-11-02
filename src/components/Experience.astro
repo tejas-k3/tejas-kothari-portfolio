@@ -15,6 +15,7 @@ import { experience, education, person } from "../data/content";
                 {e.points.map((p) => <li>{p.m && <b class="m mono">{p.m}</b>}<span>{p.t}</span></li>)}
               </ul>
             )}
+            {e.link && <p class="wlink"><a href={e.link.h} target="_blank" rel="noopener">{e.link.t} ↗</a></p>}
           </div>
         </li>
       ))}
@@ -37,6 +38,7 @@ import { experience, education, person } from "../data/content";
   .title { margin-top: 4px; font-weight: 500; }
   .pts { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
   .pts li { display: grid; gap: 4px; color: var(--muted); font-size: 15px; max-width: 74ch; padding-left: 14px; border-left: 2px solid var(--border); transition: border-color var(--dur); } .pts li:hover { border-color: var(--accent); }
+  .wlink { margin-top: 14px; } .wlink a { color: var(--accent); font: 500 14px var(--font-mono); text-decoration: none; display: inline-flex; align-items: center; min-height: 36px; border-bottom: 1px solid var(--accent); } .wlink a:hover { background: var(--accent-soft); }
   .m { color: var(--accent); font-size: 12px; letter-spacing: .02em; }
   .cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
   @media (max-width: 700px) { .tl > li { grid-template-columns: 1fr; gap: 4px; } }
