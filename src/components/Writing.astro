@@ -1,0 +1,23 @@
+---
+import { writing } from "../data/content";
+---
+<section id="writing" data-chapter="Writing" aria-label="Writing">
+  <div class="wrap">
+    <p class="eyebrow reveal">Writing</p>
+    {writing.map((w) => (
+      <a class="post card reveal" href={w.url} target="_blank" rel="noopener" data-event="writing_clicked">
+        <span class="venue mono">{w.venue}</span>
+        <h2>{w.title}</h2>
+        <span class="go mono">Read the article ↗</span>
+      </a>
+    ))}
+  </div>
+</section>
+<style>
+  section { padding: clamp(24px, 4vw, 48px) 0; }
+  .post { display: grid; gap: 8px; text-decoration: none; margin-top: 16px; padding: clamp(20px, 3vw, 32px); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+  .venue { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  h2 { font-size: clamp(22px, 3.2vw, 34px); max-width: 28ch; line-height: 1.12; }
+  .go { color: var(--accent); font-size: 13px; }
+  .post:hover h2 { color: var(--accent); }
+</style>
