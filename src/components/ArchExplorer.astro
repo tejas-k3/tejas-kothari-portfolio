@@ -1,10 +1,10 @@
 ---
 import type { ArchNode } from "../data/caseStudies";
-interface Props { nodes: ArchNode[]; intro: string }
+interface Props { nodes: ArchNode[]; intro?: string }
 const { nodes, intro } = Astro.props;
 ---
 <div class="arch" data-arch>
-  <p class="intro">{intro}</p>
+  {intro && <p class="intro">{intro}</p>}
   <ol class="flow" aria-label="Architecture stages">
     {nodes.map((n, i) => (
       <li>

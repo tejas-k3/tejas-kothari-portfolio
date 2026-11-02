@@ -7,6 +7,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Overlays from "../components/Overlays.astro";
 import { person, seo } from "../data/content";
+// Analytics: none by design (privacy). TODO(tejas): if wanted later, add Cloudflare Web Analytics (cookie-free) beacon in <head>.
 interface Props { title?: string; description?: string; path?: string; type?: string; image?: string }
 const { title = seo.title, description = seo.description, path = Astro.url.pathname, type = "website", image } = Astro.props;
 const slug = path.startsWith("/projects/") ? path.split("/").pop() : "home";
@@ -39,7 +40,6 @@ const ld = {
   </script>
   <slot name="head" />
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
-  <!-- Analytics: none by design (privacy). TODO(tejas): if wanted later, enable Cloudflare Web Analytics (cookie-free) by adding its single beacon <script> here. -->
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>

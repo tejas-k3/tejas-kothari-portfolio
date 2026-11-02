@@ -10,7 +10,6 @@ const { c } = Astro.props;
 // TODO(tejas) placeholders are visible in dev only; never shown on the deployed site.
 const change = c.change.filter((x) => import.meta.env.DEV || !x.startsWith("TODO(tejas)"));
 const ev = evidence[c.slug];
-const glance = ev ? ev.benchmarks.slice(0, 3) : [];
 ---
 <Base title={`${c.ogTitle} | Tejas Kothari`} description={c.blurb} path={`/projects/${c.slug}`} type="article">
   <article class="wrap cs">
@@ -22,71 +21,49 @@ const glance = ev ? ev.benchmarks.slice(0, 3) : [];
       <dl class="facts">{c.facts.map((f) => <div><dt class="mono">{f.k}</dt><dd>{f.v}</dd></div>)}</dl>
       {c.links.length > 0 && <p class="ls">{c.links.map((l) => <a class="btn" href={l.h} target="_blank" rel="noopener">{l.t} ↗</a>)}</p>}
       {ev && (
-        <ul class="glance" aria-label="Results at a glance">
-          {glance.map((m) => <li><b>{m.delta ?? m.value}</b><span>{m.label}</span>{m.before && <em class="mono">{m.before} → {m.after}</em>}</li>)}
+        <ul class="glance" id="impact" aria-label="Impact">
+          {ev.impact.map((m) => <li><b>{m.big}</b><span>{m.label}</span><em>{m.note}</em></li>)}
         </ul>
       )}
-      {ev && <p class="jump mono"><a href="#benchmarks">Benchmarks</a><a href="#method">Methodology</a><a href="#tests">Tests</a><a href="#failures">Failure scenarios</a><a href="#limits">Limitations</a></p>}
     </header>
 
-    <section><h2>Problem</h2><p>{c.problem}</p></section>
-    <section><h2>Context</h2><p>{c.context}</p></section>
-    <section><h2>Constraints</h2><ul>{c.constraints.map((x) => <li>{x}</li>)}</ul></section>
+    <section>
+      <h2>The problem</h2>
+      <p>{c.problem}</p>
+      <p>{c.context}</p>
+    </section>
     <section id="architecture">
       <h2>Architecture</h2>
       {ev && <ArchDiagram d={ev.diagram} />}
       <h3 class="sub">Explore the stages</h3>
-      <ArchExplorer nodes={c.arch} intro={c.archIntro} />
+      <ArchExplorer nodes={c.arch} />
     </section>
-    <section>
-      <h2>Architecture decisions</h2>
-      <div class="dec">{c.decisions.map((d) => <details class="card"><summary>{d.q}</summary><p>{d.a}</p></details>)}</div>
-    </section>
-    <section><h2>Trade-offs</h2><ul>{c.tradeoffs.map((x) => <li>{x}</li>)}</ul></section>
 
     {ev && (
       <>
-        <section id="benchmarks">
-          <h2>Benchmarks</h2>
-          <p>{ev.intro}</p>
-          <div class="metrics">
-            {ev.benchmarks.map((m) => (
-              <article class="metric card">
-                <h3>{m.label}</h3>
-                <p class="num">{m.before ? <><s class="mono">{m.before}</s> <span aria-hidden="true">→</span><span class="sr-only"> to </span> <b>{m.after}</b> <em class="mono">{m.delta}</em></> : <b>{m.value}</b>}</p>
-                <p class="note">{m.note}</p>
-                <p class="src mono">Source: {m.source}</p>
+        <section id="decisions">
+          <h2>Decisions that mattered</h2>
+          <div class="stories">
+            {ev.stories.map((st) => (
+              <article class="story card">
+                <h3>{st.title}</h3>
+                <dl><dt class="mono">Situation</dt><dd>{st.situation}</dd><dt class="mono">What I decided</dt><dd>{st.decision}</dd><dt class="mono">Result</dt><dd>{st.result}</dd></dl>
               </article>
             ))}
           </div>
         </section>
-        <section id="method">
-          <h2>Methodology</h2>
-          <dl class="method">{ev.method.map((r) => <><dt class="mono">{r.k}</dt><dd>{r.v}</dd></>)}</dl>
+        <section id="principles">
+          <h2>What I optimise for</h2>
+          <ul class="chips">{ev.principles.map((x) => <li>{x}</li>)}</ul>
+          {ev.practice && <p class="practice">{ev.practice}</p>}
         </section>
-        <section id="tests">
-          <h2>Test strategy and evidence</h2>
-          <p>{ev.testsIntro}</p>
-          <ul class="tests">{ev.tests.map((t) => <li class="card"><b>{t.k}</b><span class="mono">{t.v}</span><p>{t.note}</p></li>)}</ul>
+        <section id="gaps">
+          <h2>Known gaps and what is next</h2>
+          <ul class="gaps">{ev.gaps.map((g) => <li class="card"><p>{g.gap}</p><p class="next"><span class="mono">Next</span> {g.next}</p></li>)}</ul>
         </section>
-        <section id="failures">
-          <h2>Failure scenarios</h2>
-          <div class="fails">
-            {ev.failures.map((f) => (
-              <article class="fail card">
-                <h3>{f.scenario}</h3>
-                <dl><dt class="mono">Trigger</dt><dd>{f.trigger}</dd><dt class="mono">Behaviour</dt><dd>{f.behaviour}</dd><dt class="mono">Outcome</dt><dd>{f.outcome}</dd></dl>
-              </article>
-            ))}
-          </div>
-        </section>
-        <section id="limits"><h2>Limitations</h2><ul>{ev.limitations.map((x) => <li>{x}</li>)}</ul></section>
       </>
     )}
 
-    <section class="eng-only"><h2>Implementation</h2><ul>{c.implementation.map((x) => <li>{x}</li>)}</ul></section>
-    <section><h2>Outcome</h2><ul>{c.outcome.map((x) => <li>{x}</li>)}</ul></section>
-    <section><h2>Lessons</h2><ul>{c.lessons.map((x) => <li>{x}</li>)}</ul></section>
     {change.length > 0 && <section><h2>What I would change today</h2><ul>{change.map((x) => <li>{x}</li>)}</ul></section>}
     <p class="back"><a class="btn" href="/work">← All work</a> <a class="btn primary" href={person.linkedin} target="_blank" rel="noopener">Let's talk →</a></p>
   </article>
@@ -98,19 +75,15 @@ const glance = ev ? ev.benchmarks.slice(0, 3) : [];
   .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin: 32px 0 0; padding: 20px 0; border-block: 1px solid var(--border); }
   dt { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); } dd { margin: 4px 0 0; font-weight: 500; }
   .ls { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .glance { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-  .glance li { border: 1px solid var(--accent); border-radius: 14px; padding: 16px; background: color-mix(in srgb, var(--accent) 7%, var(--surface)); display: grid; gap: 4px; align-content: start; }
-  .glance b { font: 800 clamp(26px, 4vw, 34px) var(--font-display); letter-spacing: -.02em; color: var(--accent); } .glance span { font-size: 14px; } .glance em { font-style: normal; color: var(--muted); font-size: 12px; }
-  .jump { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 20px; font-size: 12px; } .jump a { color: var(--muted); border-bottom: 1px solid var(--border); text-decoration: none; } .jump a:hover { color: var(--accent); border-color: var(--accent); }
-  .cs section { padding: 40px 0 0; } h2 { font-size: clamp(24px, 3.4vw, 34px); margin-bottom: 14px; } h3.sub { font-size: 18px; margin: 28px 0 10px; }
-  .cs p, .cs li { color: var(--muted); font-size: 17px; max-width: 72ch; } ul { padding-left: 20px; display: grid; gap: 8px; }
-  .dec { display: grid; gap: 10px; } details { padding: 16px 20px; } summary { cursor: pointer; font-weight: 600; font-size: 17px; min-height: 28px; } details p { margin-top: 10px; }
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 14px; margin-top: 18px; }
-  .metric h3 { font-size: 16px; color: var(--text); } .num { margin: 10px 0 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; } .num s { color: var(--muted); font-size: 15px; } .num b { font: 800 26px var(--font-display); color: var(--text); letter-spacing: -.02em; } .num em { font-style: normal; color: var(--success); font-size: 13px; }
-  .note { font-size: 14px !important; } .src { font-size: 11px !important; color: var(--muted); margin-top: 10px; opacity: .8; }
-  .method { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 10px 20px; margin: 16px 0 0; } .method dd { margin: 0; color: var(--muted); font-weight: 400; font-size: 16px; }
-  .tests { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 12px; margin-top: 16px; } .tests li { display: grid; gap: 2px; align-content: start; } .tests b { font: 800 28px var(--font-display); color: var(--accent); letter-spacing: -.02em; } .tests .mono { color: var(--text); font-size: 13px; } .tests p { font-size: 14px; margin-top: 6px; }
-  .fails { display: grid; gap: 12px; margin-top: 16px; } .fail h3 { font-size: 18px; margin-bottom: 10px; } .fail dl { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 6px 16px; margin: 0; } .fail dd { font-weight: 400; color: var(--muted); font-size: 15px; margin: 0; }
+  .glance { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .glance li { border: 1px solid var(--accent); border-radius: 14px; padding: 18px; background: color-mix(in srgb, var(--accent) 7%, var(--surface)); display: grid; gap: 6px; align-content: start; }
+  .glance b { font: 800 clamp(30px, 5vw, 40px) var(--font-display); letter-spacing: -.02em; color: var(--accent); line-height: 1; } .glance span { font-weight: 600; } .glance em { font-style: normal; color: var(--muted); font-size: 14px; }
+  .cs section { padding: 44px 0 0; } h2 { font-size: clamp(24px, 3.4vw, 34px); margin-bottom: 14px; } h3.sub { font-size: 18px; margin: 28px 0 10px; }
+  .cs p, .cs li { color: var(--muted); font-size: 17px; max-width: 72ch; } .cs section > p + p { margin-top: 12px; } ul { padding-left: 20px; display: grid; gap: 8px; }
+  .stories { display: grid; gap: 14px; margin-top: 16px; } .story h3 { font-size: 20px; margin-bottom: 12px; } .story dl { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 8px 20px; margin: 0; } .story dd { font-weight: 400; color: var(--muted); font-size: 16px; margin: 0; }
+  .chips { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 10px; margin-top: 12px; } .chips li { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; background: var(--surface); color: var(--text); font-size: 15px; }
+  .practice { margin-top: 14px; font-size: 15px !important; }
+  .gaps { list-style: none; padding: 0; display: grid; gap: 10px; margin-top: 12px; } .gaps li { display: grid; gap: 6px; } .gaps p { font-size: 16px; } .gaps .next { color: var(--text); font-size: 15px; } .gaps .next span { color: var(--accent); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin-right: 6px; }
   .back { margin-top: 56px; display: flex; gap: 10px; flex-wrap: wrap; }
-  @media (max-width: 640px) { .method, .fail dl { grid-template-columns: 1fr; gap: 2px; } .fail dd, .method dd { margin-bottom: 8px; } }
+  @media (max-width: 640px) { .story dl { grid-template-columns: 1fr; gap: 2px; } .story dd { margin-bottom: 8px; } }
 </style>

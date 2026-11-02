@@ -6,7 +6,7 @@
     <header class="reveal">
       <p class="eyebrow">Try it</p>
       <h2 class="h2">Break the system.</h2>
-      <p class="lede">A tiny toy model of load balancing. Push the traffic, crash a server, then fix it with the switches. <span class="mono goal">Goal: stay above 99% success at 140 req/s with a server down.</span></p>
+      <p class="lede">A toy model of load balancing. <span class="mono goal">Goal: stay above 99% success at 140 req/s with a server down.</span></p>
     </header>
     <div class="sim card reveal" data-sim>
       <div class="viz">
@@ -34,7 +34,7 @@
           <label><input type="checkbox" data-opt="shed" /><span>Load shedding<small>reject early when a queue is deep</small></span></label>
           <label><input type="checkbox" data-opt="scale" /><span>Autoscaling<small>add servers (up to 6) under load</small></span></label>
         </fieldset>
-        <p class="msg" data-msg role="status">Everything is healthy. Try 140 req/s, then crash a server.</p>
+        <p class="msg" data-msg role="status">Everything is healthy.</p>
         <p class="note mono">Toy model. The real thing: <a href="/projects/system-design-playground">System Design Playground</a>.</p>
       </div>
     </div>
@@ -141,7 +141,7 @@
         v.box.setAttribute("class", "srv" + (!sv.up ? " dead" : booting ? " boot" : "")); v.txt.textContent = !sv.up ? `app-${i + 1}  ✕ down` : booting ? `app-${i + 1}  booting…` : `app-${i + 1}  q=${sv.q.length}`;
       });
       const cnt = (k: string) => log.filter((e) => e.k === k).length, deadNow = srv.some((x) => !x.up);
-      if (tot < 20) say("Everything is healthy. Try 140 req/s, then crash a server.");
+      if (tot < 20) say("Everything is healthy.");
       else if (succ >= 99) say(deadNow ? "Holding up even with a server down. Nice." : "Healthy. Now crash a server, or push the traffic higher.");
       else if (cnt("to") > tot * 0.25) say("Queues are longer than the 2 s client timeout, so servers burn effort on requests nobody is waiting for. Try load shedding or autoscaling.");
       else if (cnt("ref") > tot * 0.1) say("Traffic is still being sent to a dead server. Try health checks.");

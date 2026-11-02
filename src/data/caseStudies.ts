@@ -61,7 +61,7 @@ export const caseStudies: CaseStudy[] = [
       "React dashboard with typed data-fetching, charts, portfolio builder and backtest views.",
     ],
     outcome: [
-      "One pipeline scores 2,600+ NSE stocks in a full run with 13 registered algorithms, backed by 3,853 automated tests.",
+      "One pipeline scores 2,600+ NSE stocks in a full run with 13 registered algorithms.",
       "Backtest and walk-forward calibration make algorithm changes measurable.",
       "CLI, API and dashboard share a single engine.",
     ],
