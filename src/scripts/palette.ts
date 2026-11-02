@@ -2,7 +2,7 @@
 // Security: only a fixed command table is ever executed. Typed text is matched, never evaluated. Output uses textContent.
 import { setMode, toggleTheme } from "./ui";
 
-type Site = { person: { name: string; title: string; focus: string; location: string; email: string; github: string; linkedin: string; resume: string | null }; experience: string[]; projects: { name: string; line: string; page: string | null }[]; stack: string[]; currently: string[] };
+type Site = { person: { name: string; title: string; focus: string; location: string; github: string; linkedin: string; resume: string | null }; experience: string[]; projects: { name: string; line: string; page: string | null }[]; stack: string[]; currently: string[] };
 const site: Site = JSON.parse(document.getElementById("site-data")!.textContent!);
 const palette = document.getElementById("palette") as HTMLDialogElement;
 const term = document.getElementById("term") as HTMLDialogElement;
@@ -28,19 +28,21 @@ const cmds: Cmd[] = [
   ...(site.person.resume ? [{ label: "Download resume", hint: "pdf", run: go(site.person.resume, true) }] : []),
   { label: "GitHub profile", hint: "external", run: go(site.person.github, true) },
   { label: "LinkedIn", hint: "external", run: go(site.person.linkedin, true) },
-  { label: "Email Tejas", hint: site.person.email, run: () => { location.href = `mailto:${site.person.email}`; } },
   { label: "Toggle light / dark", hint: "theme", run: () => { palette.close(); toggleTheme(); } },
   { label: "Story view", hint: "mode", run: () => { palette.close(); setMode("story"); } },
   { label: "Engineering view", hint: "mode: architecture, decisions, implementation", run: () => { palette.close(); setMode("engineering"); } },
   { label: "Recruiter view", hint: "mode: compact, no motion", run: () => { palette.close(); setMode("recruiter"); } },
   { label: "Travel map", hint: "globe", run: go("/interests#travel") },
+  { label: "Rupee Engine benchmarks", hint: "evidence", run: go("/projects/rupee-engine#benchmarks") },
+  { label: "Playground benchmarks", hint: "evidence", run: go("/projects/system-design-playground#benchmarks") },
+  { label: "Resume (web page)", hint: "page", run: go("/resume") },
   // Easter eggs: only appear when typed. TODO(tone): tone these up or down.
   { label: "terminal", hidden: true, run: () => { palette.close(); openTerm(); } },
   { label: "sudo hire-me", hidden: true, run: smoke("[sudo] password for recruiter: ********\nAccess granted. Opening mail client. Good call.\n") },
   { label: "coffee", hidden: true, run: smoke("Brewing...\nERROR 418: I'm a teapot. Retrying with coffee. Done.\n") },
   { label: "watch", hidden: true, run: smoke("Mechanical movement detected. No CPU involved. Respect.\n") },
 ];
-cmds.find((c) => c.label === "sudo hire-me")!.run = () => { palette.close(); openTerm("[sudo] password for recruiter: ********\nAccess granted. Opening mail client. Good call.\n"); setTimeout(() => { location.href = `mailto:${site.person.email}?subject=Let's talk`; }, 1200); };
+cmds.find((c) => c.label === "sudo hire-me")!.run = () => { palette.close(); openTerm("[sudo] password for recruiter: ********\nAccess granted. Opening LinkedIn. Good call.\n"); setTimeout(() => { window.open(site.person.linkedin, "_blank", "noopener"); }, 1200); };
 
 let sel = 0, shown: Cmd[] = [];
 function render() {
@@ -84,14 +86,14 @@ const table: Record<string, () => void> = {
   experience: () => site.experience.forEach((e) => print(e)),
   stack: () => site.stack.forEach((e) => print(e)),
   currently: () => site.currently.forEach((e) => print(e)),
-  contact: () => { link(site.person.email, `mailto:${site.person.email}`); link(site.person.linkedin, site.person.linkedin); },
+  contact: () => { link("LinkedIn: " + site.person.linkedin, site.person.linkedin); },
   resume: () => site.person.resume ? link("download resume (pdf)", site.person.resume) : print("Resume available on request."),
   theme: () => { toggleTheme(); print("Theme toggled."); },
   whoami: () => print("a curious visitor. Welcome."),
   ls: () => print("about  projects  experience  stack  contact"),
   coffee: () => print("ERROR 418: I'm a teapot."), // TODO(tone)
   watch: () => print("tick. tick. tick. (no CPU involved)"), // TODO(tone)
-  "sudo hire-me": () => { print("[sudo] password for recruiter: ********"); print("Access granted."); link(`mailto:${site.person.email}`, `mailto:${site.person.email}`); },
+  "sudo hire-me": () => { print("[sudo] password for recruiter: ********"); print("Access granted."); link("LinkedIn", site.person.linkedin); },
   clear: () => out.replaceChildren(),
   exit: () => term.close(),
 };

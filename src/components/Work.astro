@@ -12,11 +12,12 @@ const minor = projects.filter((p) => !p.page);
     <SectionHead eyebrow="Selected work" title="Things I actually built." lede="Each one answers four questions: what, why, how, and what came out of it." />
     <div class="list">
       {major.map((p) => (
-        <article class="card proj reveal">
+        <article class="card proj reveal flagship">
           <div class="top">
             <h3><a href={p.page}>{p.name}</a></h3>
             <span class="chip">{p.tag}</span><span class="chip">{p.status}</span><span class="dates mono">{p.dates}</span>
           </div>
+          {p.proof && <ul class="pf mono">{p.proof.map((x) => <li>{x}</li>)}</ul>}
           <div class="what diff" data-diff>
             <p class="old mono" aria-hidden="true"><span class="sg">-</span>{p.brief}</p>
             <p class="new"><span class="sg mono" aria-hidden="true">+</span><span>{p.what}</span></p>
@@ -77,6 +78,8 @@ const minor = projects.filter((p) => !p.page);
   .top h3 { font-size: clamp(22px, 3vw, 32px); margin-right: 6px; }
   .top h3 a { text-decoration: none; } .top h3 a:hover { color: var(--accent); }
   .dates { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .pf { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; } .pf li { font-size: 12px; border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 4px 12px; background: var(--accent-soft); }
+  .flagship { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
   .what { font-size: clamp(17px, 1.8vw, 20px); margin: 16px 0 20px; max-width: 70ch; }
   .diff { position: relative; display: grid; gap: 2px; }
   .diff .old { display: none; color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); font-size: .78em; padding: 4px 10px; border-radius: 6px; }

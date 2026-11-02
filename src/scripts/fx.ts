@@ -87,7 +87,7 @@ document.querySelectorAll<HTMLElement>("[data-draw]").forEach((n) => new Interse
 if (!reduce()) {
   const glyphs = "01<>/{}#=+*";
   document.querySelectorAll<HTMLElement>(".hero h1 .line").forEach((ln, idx) => {
-    const text = ln.textContent!; const t0 = performance.now() + idx * 140; ln.setAttribute("aria-label", text);
+    const text = ln.textContent!; const t0 = performance.now() + idx * 140; if (idx === 0) ln.parentElement?.setAttribute("aria-label", [...ln.parentElement.querySelectorAll(".line")].map((l) => l.textContent).join(" "));
     const tick = (t: number) => { const p = clamp((t - t0) / 650, 0, 1); ln.textContent = text.split("").map((c, i) => (c === " " || i < p * text.length ? c : glyphs[Math.floor(Math.random() * glyphs.length)])).join(""); if (p < 1) requestAnimationFrame(tick); else ln.textContent = text; };
     requestAnimationFrame(tick);
   });

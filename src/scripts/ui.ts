@@ -44,4 +44,6 @@ nav?.addEventListener("click", (e) => {
 });
 
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12 });
-document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+// Content already on screen is shown immediately (good LCP); only below-the-fold blocks get the reveal animation.
+document.querySelectorAll(".reveal").forEach((el) => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add("in"); else io.observe(el); });
+root.classList.add("rv");
