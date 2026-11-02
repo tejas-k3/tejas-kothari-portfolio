@@ -1,48 +1,116 @@
 ---
 import Base from "../../layouts/Base.astro";
 import ArchExplorer from "../../components/ArchExplorer.astro";
+import ArchDiagram from "../../components/ArchDiagram.astro";
 import { caseStudies } from "../../data/caseStudies";
+import { evidence } from "../../data/evidence";
+import { person } from "../../data/content";
 export function getStaticPaths() { return caseStudies.map((c) => ({ params: { slug: c.slug }, props: { c } })); }
 const { c } = Astro.props;
 // TODO(tejas) placeholders are visible in dev only; never shown on the deployed site.
 const change = c.change.filter((x) => import.meta.env.DEV || !x.startsWith("TODO(tejas)"));
+const ev = evidence[c.slug];
+const glance = ev ? ev.benchmarks.slice(0, 3) : [];
 ---
 <Base title={`${c.ogTitle} | Tejas Kothari`} description={c.blurb} path={`/projects/${c.slug}`} type="article">
   <article class="wrap cs">
-    <nav aria-label="Breadcrumb" class="crumb mono"><a href="/">Home</a> / <a href="/#work">Work</a> / {c.name}</nav>
+    <nav aria-label="Breadcrumb" class="crumb mono"><a href="/">Home</a> / <a href="/work">Work</a> / {c.name}</nav>
     <header>
       <p class="eyebrow">Case study</p>
       <h1>{c.name}</h1>
       <p class="lede">{c.blurb}</p>
       <dl class="facts">{c.facts.map((f) => <div><dt class="mono">{f.k}</dt><dd>{f.v}</dd></div>)}</dl>
       {c.links.length > 0 && <p class="ls">{c.links.map((l) => <a class="btn" href={l.h} target="_blank" rel="noopener">{l.t} ↗</a>)}</p>}
+      {ev && (
+        <ul class="glance" aria-label="Results at a glance">
+          {glance.map((m) => <li><b>{m.delta ?? m.value}</b><span>{m.label}</span>{m.before && <em class="mono">{m.before} → {m.after}</em>}</li>)}
+        </ul>
+      )}
+      {ev && <p class="jump mono"><a href="#benchmarks">Benchmarks</a><a href="#method">Methodology</a><a href="#tests">Tests</a><a href="#failures">Failure scenarios</a><a href="#limits">Limitations</a></p>}
     </header>
 
     <section><h2>Problem</h2><p>{c.problem}</p></section>
     <section><h2>Context</h2><p>{c.context}</p></section>
     <section><h2>Constraints</h2><ul>{c.constraints.map((x) => <li>{x}</li>)}</ul></section>
-    <section><h2>Architecture</h2><ArchExplorer nodes={c.arch} intro={c.archIntro} /></section>
+    <section id="architecture">
+      <h2>Architecture</h2>
+      {ev && <ArchDiagram d={ev.diagram} />}
+      <h3 class="sub">Explore the stages</h3>
+      <ArchExplorer nodes={c.arch} intro={c.archIntro} />
+    </section>
     <section>
-      <h2>Decisions</h2>
+      <h2>Architecture decisions</h2>
       <div class="dec">{c.decisions.map((d) => <details class="card"><summary>{d.q}</summary><p>{d.a}</p></details>)}</div>
     </section>
     <section><h2>Trade-offs</h2><ul>{c.tradeoffs.map((x) => <li>{x}</li>)}</ul></section>
+
+    {ev && (
+      <>
+        <section id="benchmarks">
+          <h2>Benchmarks</h2>
+          <p>{ev.intro}</p>
+          <div class="metrics">
+            {ev.benchmarks.map((m) => (
+              <article class="metric card">
+                <h3>{m.label}</h3>
+                <p class="num">{m.before ? <><s class="mono">{m.before}</s> <span aria-hidden="true">→</span><span class="sr-only"> to </span> <b>{m.after}</b> <em class="mono">{m.delta}</em></> : <b>{m.value}</b>}</p>
+                <p class="note">{m.note}</p>
+                <p class="src mono">Source: {m.source}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section id="method">
+          <h2>Methodology</h2>
+          <dl class="method">{ev.method.map((r) => <><dt class="mono">{r.k}</dt><dd>{r.v}</dd></>)}</dl>
+        </section>
+        <section id="tests">
+          <h2>Test strategy and evidence</h2>
+          <p>{ev.testsIntro}</p>
+          <ul class="tests">{ev.tests.map((t) => <li class="card"><b>{t.k}</b><span class="mono">{t.v}</span><p>{t.note}</p></li>)}</ul>
+        </section>
+        <section id="failures">
+          <h2>Failure scenarios</h2>
+          <div class="fails">
+            {ev.failures.map((f) => (
+              <article class="fail card">
+                <h3>{f.scenario}</h3>
+                <dl><dt class="mono">Trigger</dt><dd>{f.trigger}</dd><dt class="mono">Behaviour</dt><dd>{f.behaviour}</dd><dt class="mono">Outcome</dt><dd>{f.outcome}</dd></dl>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section id="limits"><h2>Limitations</h2><ul>{ev.limitations.map((x) => <li>{x}</li>)}</ul></section>
+      </>
+    )}
+
     <section class="eng-only"><h2>Implementation</h2><ul>{c.implementation.map((x) => <li>{x}</li>)}</ul></section>
     <section><h2>Outcome</h2><ul>{c.outcome.map((x) => <li>{x}</li>)}</ul></section>
     <section><h2>Lessons</h2><ul>{c.lessons.map((x) => <li>{x}</li>)}</ul></section>
     {change.length > 0 && <section><h2>What I would change today</h2><ul>{change.map((x) => <li>{x}</li>)}</ul></section>}
-    <p class="back"><a class="btn" href="/#work">← All work</a> <a class="btn primary" href="/#contact">Let's talk →</a></p>
+    <p class="back"><a class="btn" href="/work">← All work</a> <a class="btn primary" href={person.linkedin} target="_blank" rel="noopener">Let's talk →</a></p>
   </article>
 </Base>
 <style>
-  .cs { padding-top: 32px; padding-bottom: 64px; max-width: 880px; }
+  .cs { padding-top: 32px; padding-bottom: 64px; max-width: 920px; }
   .crumb { font-size: 12px; color: var(--muted); margin-bottom: 32px; } .crumb a { color: var(--muted); }
   h1 { font-size: clamp(38px, 7vw, 72px); font-weight: 800; margin-top: 14px; letter-spacing: -.035em; }
   .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin: 32px 0 0; padding: 20px 0; border-block: 1px solid var(--border); }
   dt { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); } dd { margin: 4px 0 0; font-weight: 500; }
   .ls { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .cs section { padding: 40px 0 0; } h2 { font-size: clamp(24px, 3.4vw, 34px); margin-bottom: 14px; }
-  .cs p, .cs li { color: var(--muted); font-size: 17px; max-width: 70ch; } ul { padding-left: 20px; display: grid; gap: 8px; }
+  .glance { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .glance li { border: 1px solid var(--accent); border-radius: 14px; padding: 16px; background: color-mix(in srgb, var(--accent) 7%, var(--surface)); display: grid; gap: 4px; align-content: start; }
+  .glance b { font: 800 clamp(26px, 4vw, 34px) var(--font-display); letter-spacing: -.02em; color: var(--accent); } .glance span { font-size: 14px; } .glance em { font-style: normal; color: var(--muted); font-size: 12px; }
+  .jump { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 20px; font-size: 12px; } .jump a { color: var(--muted); border-bottom: 1px solid var(--border); text-decoration: none; } .jump a:hover { color: var(--accent); border-color: var(--accent); }
+  .cs section { padding: 40px 0 0; } h2 { font-size: clamp(24px, 3.4vw, 34px); margin-bottom: 14px; } h3.sub { font-size: 18px; margin: 28px 0 10px; }
+  .cs p, .cs li { color: var(--muted); font-size: 17px; max-width: 72ch; } ul { padding-left: 20px; display: grid; gap: 8px; }
   .dec { display: grid; gap: 10px; } details { padding: 16px 20px; } summary { cursor: pointer; font-weight: 600; font-size: 17px; min-height: 28px; } details p { margin-top: 10px; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 14px; margin-top: 18px; }
+  .metric h3 { font-size: 16px; color: var(--text); } .num { margin: 10px 0 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; } .num s { color: var(--muted); font-size: 15px; } .num b { font: 800 26px var(--font-display); color: var(--text); letter-spacing: -.02em; } .num em { font-style: normal; color: var(--success); font-size: 13px; }
+  .note { font-size: 14px !important; } .src { font-size: 11px !important; color: var(--muted); margin-top: 10px; opacity: .8; }
+  .method { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 10px 20px; margin: 16px 0 0; } .method dd { margin: 0; color: var(--muted); font-weight: 400; font-size: 16px; }
+  .tests { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 12px; margin-top: 16px; } .tests li { display: grid; gap: 2px; align-content: start; } .tests b { font: 800 28px var(--font-display); color: var(--accent); letter-spacing: -.02em; } .tests .mono { color: var(--text); font-size: 13px; } .tests p { font-size: 14px; margin-top: 6px; }
+  .fails { display: grid; gap: 12px; margin-top: 16px; } .fail h3 { font-size: 18px; margin-bottom: 10px; } .fail dl { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 6px 16px; margin: 0; } .fail dd { font-weight: 400; color: var(--muted); font-size: 15px; margin: 0; }
   .back { margin-top: 56px; display: flex; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 640px) { .method, .fail dl { grid-template-columns: 1fr; gap: 2px; } .fail dd, .method dd { margin-bottom: 8px; } }
 </style>

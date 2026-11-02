@@ -2,8 +2,8 @@
 import { person, experience, projects, stack, currently } from "../data/content";
 // Data for the palette + terminal. Static, public-safe only. No command here executes arbitrary input.
 const data = {
-  person: { name: person.name, title: person.title, focus: person.focus, location: person.location, email: person.email, github: person.github, linkedin: person.linkedin, resume: person.resumeUrl },
-  experience: experience.map((e) => `${e.from} – ${e.to}  ${e.company}, ${e.title}`),
+  person: { name: person.name, title: person.title, focus: person.focus, location: person.location, github: person.github, linkedin: person.linkedin, resume: person.resumeUrl },
+  experience: experience.map((e) => `${e.from ?? "Current"} – ${e.to}  ${e.company}, ${e.title}`),
   projects: projects.map((p) => ({ name: p.name, line: p.what, page: p.page ?? p.href ?? p.repo ?? null })),
   stack: stack.map((g) => `${g.group}: ${g.items.map((i) => i.name).join(", ")}`),
   currently: currently.map((c) => `${c.k}: ${c.v}`),
@@ -29,12 +29,12 @@ const data = {
     <h2>{person.name}</h2>
     <ul>
       <li><b>Who:</b> {person.title}, {person.focus.toLowerCase()}, {person.location}. Shipping backend systems since 2021.</li>
-      <li><b>Where:</b> {experience.map((e) => e.company).join(", ")}.</li>
-      <li><b>Flagship:</b> Rupee Engine: 13 pluggable algorithms scoring 1,300+ NSE stocks, with a CLI, API and dashboard.</li>
-      <li><b>Open source:</b> System Design Playground: a deterministic Go simulator you can break and fix in the browser.</li>
+      <li><b>Now:</b> {person.current.title} at {person.current.company}. <b>Before:</b> {experience.filter((e) => !e.current).map((e) => e.company).join(", ")}.</li>
+      <li><b>Flagship:</b> Rupee Engine: 13 pluggable algorithms scoring 2,600+ NSE stocks in a full run, with a CLI, API, dashboard and 3,853 automated tests.</li>
+      <li><b>Open source:</b> System Design Playground: a deterministic Go simulator (108 challenges) you can break and fix in the browser.</li>
       <li><b>Style:</b> learns fast, ships with AI-assisted development and keeps tests and judgment in the loop.</li>
     </ul>
-    <p class="act"><a class="btn primary" href={`mailto:${person.email}`}>Email me</a><a class="btn" href="/work">See the work</a><a class="btn" href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a><button type="button" class="btn" data-close>Close</button></p>
+    <p class="act"><a class="btn primary" href={person.linkedin} target="_blank" rel="noopener">Message on LinkedIn</a><a class="btn" href="/work">See the work</a><a class="btn" href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a><button type="button" class="btn" data-close>Close</button></p>
   </div>
 </dialog>
 <script type="application/json" id="site-data" set:html={JSON.stringify(data)} />

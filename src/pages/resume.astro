@@ -1,0 +1,59 @@
+---
+import Base from "../layouts/Base.astro";
+import { person, experience, education, stack } from "../data/content";
+// Print-friendly resume. The PDF is generated from this page (scripts/make_resume_pdf.sh). No email, no phone.
+const skills = [
+  ["Languages & frameworks", "Python, FastAPI, Django, Flask, Sanic, Java, Spring Boot, Go, TypeScript, React, SQL, LogQL"],
+  ["Systems & databases", "Distributed systems, LLD, HLD, system design, microservices, PostgreSQL, Redis"],
+  ["Tools & others", "AWS, Kubernetes, Docker, Helm, Prometheus, Grafana, Loki, Datadog, data structures, algorithms, multiprocessing, multithreading"],
+];
+---
+<Base title="Resume | Tejas Kothari" description="Resume of Tejas Kothari, Senior Software Engineer." path="/resume">
+  <meta name="robots" content="noindex" slot="head" />
+  <article class="wrap res">
+    <header>
+      <h1>{person.name}</h1>
+      <p class="sub">{person.title}, {person.current.company} · {person.location}</p>
+      <p class="links mono"><a href={person.linkedin}>linkedin.com/in/tejaskothari03</a> · <a href={person.github}>github.com/tejas-k3</a></p>
+      <p class="noprint"><button type="button" class="btn" onclick="window.print()">Print / save as PDF</button> {person.resumeUrl && <a class="btn" href={person.resumeUrl}>Download PDF ↓</a>}</p>
+    </header>
+    <section><h2>Skills</h2><dl>{skills.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></section>
+    <section>
+      <h2>Work experience</h2>
+      {experience.map((e) => (
+        <div class="role">
+          <h3><span>{e.title} | {e.company}</span><span class="d">{e.current ? "Present" : `${e.from} – ${e.to}`}</span></h3>
+          {e.points.length > 0 && <ul>{e.points.map((p) => <li>{p.t}{p.m && <b> ({p.m})</b>}</li>)}</ul>}
+        </div>
+      ))}
+    </section>
+    <section>
+      <h2>Projects</h2>
+      <div class="role"><h3><span>Rupee Engine</span><span class="d">Feb 2026 – Present</span></h3><ul>
+        <li>Built a CLI-based equity analysis system that scores the NSE universe (2,600+ stocks in a full run), combining fundamentals, technicals and sentiment in one pipeline.</li>
+        <li>Designed a modular scoring engine with 13 pluggable algorithms and a risk/return-aware portfolio optimizer.</li>
+        <li>Implemented async data pipelines with TTL caching and incremental refresh; 3,853 automated tests. Python, FastAPI, PostgreSQL, httpx, asyncio, React.</li></ul></div>
+      <div class="role"><h3><span>System Design Playground</span><span class="d">Oct 2026 – Present</span></h3><ul>
+        <li>Built a deterministic discrete-event system-design simulator in Go (engine validated against queueing theory within 6-8%) with a React canvas UI, 108 guided challenges and shareable designs.</li></ul></div>
+      <div class="role"><h3><span>AOV Studios Website</span><span class="d">Jun 2023 – Aug 2023</span></h3><ul><li>Led and built a React single-page app for the studio's official website (aovstudios.co.in).</li></ul></div>
+      <div class="role"><h3><span>Twitter Malicious Bot Detection</span><span class="d">Oct 2021</span></h3><ul><li>Built a metric to identify malicious bots and botnets from a handle or hashtag; won "Most Radical Idea" among 40+ teams at Sandvine's 2021 hackathon, presented to a C-level panel.</li></ul></div>
+    </section>
+    <section><h2>Education</h2><div class="role"><h3><span>{education.school}</span><span class="d">Aug 2017 – Jun 2021</span></h3><p>{education.degree} (CGPA 8.24)</p></div></section>
+  </article>
+</Base>
+<style is:global>
+  .res { max-width: 860px; padding-top: 40px; padding-bottom: 64px; }
+  .res h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 800; letter-spacing: -.03em; }
+  .res .sub { margin-top: 6px; font-size: 18px; } .res .links { margin-top: 6px; color: var(--muted); font-size: 13px; } .res .links a { color: inherit; }
+  .res section { padding: 22px 0 0; } .res h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 12px; }
+  .res dl { display: grid; gap: 6px; margin: 0; } .res dt { font-weight: 600; } .res dd { margin: 0 0 6px; color: var(--muted); }
+  .res .role { margin-bottom: 18px; } .res h3 { font-size: 17px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; letter-spacing: 0; } .res .d { font: 500 13px var(--font-mono); color: var(--muted); }
+  .res ul { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 4px; color: var(--muted); font-size: 15px; } .res .noprint { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    :root, :root[data-theme="dark"] { --bg: #fff; --text: #111; --muted: #333; --border: #bbb; --accent: #0a4fb4; }
+    body { background: #fff !important; font-size: 10px; line-height: 1.35; }
+    .hdr, .ftr, .noprint, .rail, .pill, .sys, .modebar, .progress, #palette, #term, #tldr, .skip { display: none !important; }
+    .res { padding: 0; max-width: none; } .res h1 { font-size: 24px; } .res .sub { font-size: 13px; margin-top: 2px; } .res section { padding-top: 6px; } .res h2 { font-size: 10px; margin-bottom: 6px; break-after: avoid; } .res dl { gap: 1px; } .res dd { margin-bottom: 2px; } .res h3 { font-size: 11.5px; } .res ul { font-size: 10px; gap: 1px; margin-top: 2px; } .res .role { margin-bottom: 6px; break-inside: avoid; } .res .d { font-size: 10px; }
+  }
+</style>

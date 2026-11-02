@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-18T08:01:59.500Z",
+  "fetchedAt": "2026-11-02T00:16:44.290Z",
   "profile": {
     "repos": 20,
     "followers": 12,
@@ -11,7 +11,7 @@
       "description": "Sketch a system, send traffic, watch it break, then fix it. A browser-based system-design simulator: deterministic Go discrete-event engine, React canvas UI, guided challenges.",
       "language": "Go",
       "stars": 0,
-      "pushedAt": "2026-10-18T07:40:36Z",
+      "pushedAt": "2026-11-01T21:49:26Z",
       "url": "https://github.com/tejas-k3/system_design_playground"
     },
     {
@@ -19,7 +19,7 @@
       "description": null,
       "language": "TypeScript",
       "stars": 0,
-      "pushedAt": "2026-10-18T07:04:51Z",
+      "pushedAt": "2026-10-18T08:02:06Z",
       "url": "https://github.com/tejas-k3/tejas-kothari-portfolio"
     },
     {
@@ -90,23 +90,9 @@
     }
   ],
   "calendar": {
-    "total": 3216,
+    "total": 4462,
     "source": "github-contributions-api (public profile)",
     "days": {
-      "2025-10-19": 0,
-      "2025-10-20": 0,
-      "2025-10-21": 5,
-      "2025-10-22": 4,
-      "2025-10-23": 0,
-      "2025-10-24": 0,
-      "2025-10-25": 0,
-      "2025-10-26": 0,
-      "2025-10-27": 0,
-      "2025-10-28": 0,
-      "2025-10-29": 17,
-      "2025-10-30": 2,
-      "2025-10-31": 1,
-      "2025-11-01": 0,
       "2025-11-02": 0,
       "2025-11-03": 0,
       "2025-11-04": 0,
@@ -456,8 +442,23 @@
       "2026-10-14": 7,
       "2026-10-15": 1,
       "2026-10-16": 18,
-      "2026-10-17": 185,
-      "2026-10-18": 191
+      "2026-10-17": 206,
+      "2026-10-18": 390,
+      "2026-10-19": 120,
+      "2026-10-20": 70,
+      "2026-10-21": 74,
+      "2026-10-22": 0,
+      "2026-10-23": 124,
+      "2026-10-24": 266,
+      "2026-10-25": 108,
+      "2026-10-26": 2,
+      "2026-10-27": 1,
+      "2026-10-28": 0,
+      "2026-10-29": 1,
+      "2026-10-30": 6,
+      "2026-10-31": 173,
+      "2026-11-01": 132,
+      "2026-11-02": 2
     }
   }
 }

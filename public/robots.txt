@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 Sitemap: https://tejaskothari.dev/sitemap.xml
 Disallow: /Tejas_Kothari_Resume.pdf
+Disallow: /resume

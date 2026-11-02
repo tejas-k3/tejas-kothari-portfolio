@@ -21,7 +21,7 @@ export const caseStudies: CaseStudy[] = [
     blurb: "A modular equity-analysis and portfolio engine for Indian markets: CLI, API and dashboard.",
     facts: [
       { k: "Status", v: "Active, since Feb 2026" },
-      { k: "Coverage", v: "1,300+ NSE stocks" },
+      { k: "Coverage", v: "2,600+ NSE stocks per full run" },
       { k: "Algorithms", v: "13 pluggable, registered" },
       { k: "Interfaces", v: "CLI · REST API · React dashboard" },
     ],
@@ -61,7 +61,7 @@ export const caseStudies: CaseStudy[] = [
       "React dashboard with typed data-fetching, charts, portfolio builder and backtest views.",
     ],
     outcome: [
-      "One pipeline scores 1,300+ NSE stocks with 13 registered algorithms.",
+      "One pipeline scores 2,600+ NSE stocks in a full run with 13 registered algorithms, backed by 3,853 automated tests.",
       "Backtest and walk-forward calibration make algorithm changes measurable.",
       "CLI, API and dashboard share a single engine.",
     ],
@@ -83,8 +83,8 @@ export const caseStudies: CaseStudy[] = [
     facts: [
       { k: "Status", v: "Open source, MIT" },
       { k: "Engine", v: "Go, deterministic discrete-event" },
-      { k: "Components", v: "13 building blocks" },
-      { k: "Challenges", v: "22 guided scenarios" },
+      { k: "Components", v: "23 component types" },
+      { k: "Challenges", v: "108 guided scenarios" },
     ],
     problem: "System design is usually taught with static boxes and arrows. You never see a queue fill, a connection pool run dry or a retry storm build, which is exactly what interviews and production incidents are about.",
     context: "I wanted a place to build a design and then stress it: send traffic, crash a node, and learn from the failure instead of memorising a diagram.",
@@ -121,8 +121,8 @@ export const caseStudies: CaseStudy[] = [
       "Docker image and Makefile for one-command runs.",
     ],
     outcome: [
-      "Components cover load balancers, caches, replicas, queues, workers, CDN, rate limiters, shards and more.",
-      "22 challenges, request-trace waterfalls, chaos injection and shareable designs.",
+      "Components cover load balancers, caches, replicas, queues, workers, CDN, rate limiters, shards and more. The engine runs 30 simulated seconds of a 1,000 req/s, 20-node design in about 90 ms.",
+      "108 challenges, 23 component types, request-trace waterfalls, chaos injection and shareable designs.",
     ],
     lessons: [
       "Determinism is a feature: it makes simulation testable.",

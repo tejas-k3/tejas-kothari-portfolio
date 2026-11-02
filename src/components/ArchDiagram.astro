@@ -1,0 +1,46 @@
+---
+import type { Diagram, Node } from "../data/evidence";
+interface Props { d: Diagram }
+const { d } = Astro.props;
+const byId = Object.fromEntries(d.nodes.map((n) => [n.id, n])) as Record<string, Node>;
+const center = (n: Node) => ({ x: n.x + n.w / 2, y: n.y + n.h / 2 });
+// Edge endpoints on the box borders, along the line between the two centres.
+const edge = (a: Node, b: Node) => {
+  const ca = center(a), cb = center(b), dx = cb.x - ca.x, dy = cb.y - ca.y;
+  const clip = (n: Node, c: { x: number; y: number }, sx: number, sy: number) => { const k = Math.min((n.w / 2 + 3) / Math.abs(sx || 1e-9), (n.h / 2 + 3) / Math.abs(sy || 1e-9)); return { x: c.x + sx * k, y: c.y + sy * k }; };
+  return { p1: clip(a, ca, dx, dy), p2: clip(b, cb, -dx, -dy), mid: { x: (ca.x + cb.x) / 2, y: (ca.y + cb.y) / 2 } };
+};
+const edges = d.edges.map((e) => ({ ...e, ...edge(byId[e.from], byId[e.to]) }));
+const uid = "ad" + Math.abs([...d.title].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7));
+---
+<figure class="diag" tabindex="0" role="group" aria-label={`${d.title} (scrollable diagram)`}>
+  <svg viewBox={`0 0 ${d.w} ${d.h}`} role="img" aria-labelledby={`${uid}t ${uid}d`}>
+    <title id={`${uid}t`}>{d.title}</title><desc id={`${uid}d`}>{d.caption}</desc>
+    <defs><marker id={`${uid}m`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ah" /></marker></defs>
+    {edges.map((e) => (
+      <g>
+        <line x1={e.p1.x} y1={e.p1.y} x2={e.p2.x} y2={e.p2.y} class="ed" marker-end={`url(#${uid}m)`} marker-start={e.both ? `url(#${uid}m)` : undefined} />
+        {e.label && <text x={e.mid.x} y={e.mid.y - 6} class="el">{e.label}</text>}
+      </g>
+    ))}
+    {d.nodes.map((n) => (
+      <g class={`nd ${n.kind ?? ""}`}>
+        <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="12" />
+        <text x={n.x + n.w / 2} y={n.y + n.h / 2 - (n.sub ? 6 : -4)} class="nl">{n.label}</text>
+        {n.sub && <text x={n.x + n.w / 2} y={n.y + n.h / 2 + 14} class="ns">{n.sub}</text>}
+      </g>
+    ))}
+  </svg>
+  <figcaption>{d.caption}</figcaption>
+  <ol class="sr-only">{d.nodes.map((n) => <li>{n.label}{n.sub ? `: ${n.sub}` : ""}</li>)}</ol>
+</figure>
+<style>
+  .diag { margin: 0; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 14px; overflow-x: auto; }
+  svg { width: 100%; min-width: 640px; height: auto; display: block; }
+  .ed { stroke: var(--muted); stroke-width: 1.6; } .ah { fill: var(--muted); }
+  .el { fill: var(--muted); font: 500 11px var(--font-mono); text-anchor: middle; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+  .nd rect { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.4; }
+  .nd.core rect { stroke: var(--accent); fill: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); } .nd.store rect { stroke-dasharray: 5 4; stroke: var(--text); } .nd.edge rect { fill: var(--surface); }
+  .nl { fill: var(--text); font: 600 14px var(--font-body); text-anchor: middle; } .ns { fill: var(--muted); font: 400 11px var(--font-mono); text-anchor: middle; }
+  figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; max-width: 80ch; }
+</style>

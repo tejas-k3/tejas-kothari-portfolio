@@ -5,9 +5,10 @@ const here = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 <header class="hdr">
   <div class="wrap">
-    <a class="brand" href="/" aria-label={`${person.name}, home`}>tejas<span>.</span>k</a>
+    <a class="brand" href="/" aria-label="tejas.k, home">tejas<span>.</span>k</a>
     <nav class="nav" id="nav" aria-label="Primary">
       {links.map(([t, h]) => <a href={h} aria-current={h === here ? "page" : undefined}>{t}</a>)}
+      {person.resumeUrl && <a class="navresume" href={person.resumeUrl} target="_blank" rel="noopener" data-resume>Resume ↓</a>}
       <span class="seg-wrap seg-mobile"><div class="seg" role="group" aria-label="View mode">
         <button type="button" data-mode="story" title="Story: the narrative version">Story</button>
         <button type="button" data-mode="engineering" title="Engineering: architecture, decisions, trade-offs">Engineering</button>
