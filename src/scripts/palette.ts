@@ -33,8 +33,8 @@ const cmds: Cmd[] = [
   { label: "Engineering view", hint: "mode: architecture, decisions, implementation", run: () => { palette.close(); setMode("engineering"); } },
   { label: "Recruiter view", hint: "mode: compact, no motion", run: () => { palette.close(); setMode("recruiter"); } },
   { label: "Travel map", hint: "globe", run: go("/interests#travel") },
-  { label: "Rupee Engine benchmarks", hint: "evidence", run: go("/projects/rupee-engine#benchmarks") },
-  { label: "Playground benchmarks", hint: "evidence", run: go("/projects/system-design-playground#benchmarks") },
+  { label: "Rupee Engine impact", hint: "case study", run: go("/projects/rupee-engine#impact") },
+  { label: "Playground impact", hint: "case study", run: go("/projects/system-design-playground#impact") },
   { label: "Resume (web page)", hint: "page", run: go("/resume") },
   // Easter eggs: only appear when typed. TODO(tone): tone these up or down.
   { label: "terminal", hidden: true, run: () => { palette.close(); openTerm(); } },
@@ -108,7 +108,7 @@ function run(raw: string) {
 export function openTerm(first?: string) {
   if (palette.open) palette.close();
   if (!term.open) term.showModal();
-  if (!out.childElementCount) { print("Terminal is optional; everything here is also on the page. Type 'help'."); }
+  if (!out.childElementCount) { print("Type 'help'."); }
   if (first) first.trim().split("\n").forEach((l) => print(l));
   tin.focus();
 }
@@ -122,4 +122,3 @@ document.addEventListener("keydown", (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); palette.open ? palette.close() : openPalette(); }
   else if (e.key === "`" && !typing(e.target) && !e.metaKey && !e.ctrlKey) { e.preventDefault(); term.open ? term.close() : openTerm(); }
 });
-if (!reduce) console.log("%cHello, curious one. Press ` to open a terminal, or Cmd/Ctrl+K.", "color:#4cc2ff"); // TODO(tone)

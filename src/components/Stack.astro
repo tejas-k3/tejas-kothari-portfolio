@@ -27,7 +27,7 @@ const glyphs: Record<string, string> = {
                   ? <svg class="gl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={glyphs[t.logo.slice(6)]} />
                   : <i class="logo" aria-hidden="true" style={`--src:url(/logos/${t.logo}.svg)`}></i>}
                 <span>{t.name}</span>
-                <small class="eng-only">{t.used.join(" · ")}</small>
+                {t.used.length > 0 && <small class="eng-only">{t.used.join(" · ")}</small>}
               </li>
             ))}
           </ul>

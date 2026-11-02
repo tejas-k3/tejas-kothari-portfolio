@@ -55,3 +55,7 @@ Round 9 (credibility pass): real accomplishments per role (from Tejas_Kothari.pd
 case-study evidence (src/data/evidence.ts: diagrams, benchmarks, methodology, tests, failure scenarios, limitations); hero facts row + recruiter chip; flagship cards dominant; mobile hero order (words, numbers, then ASCII);
 self-hosted fonts (@fontsource-variable), reveal-on-scroll no longer delays above-the-fold content; Lighthouse mobile 100/100/100/100 on /, /work, /experience, /activity, /interests, case studies (resume is noindex by design).
 Numbers refreshed from repos on 2026-11-02: Playground = 108 challenges, 23 component types; Rupee = 3,853 tests, 2,600+ stocks in a full run (resume still says 1,300+: update it).
+
+Round 10 (lead-engineer pass): case studies = impact (3 merged headline points), decisions that mattered (3 short stories, plain English), what I optimise for, known gaps and next (src/data/evidence.ts). Removed: test counts, CI status,
+methodology/commands, the run-from-another-directory incident, benchmark tables, failure-scenario tables, Outcome/Lessons/Implementation/Trade-offs lists. Removed site filler (footer "Built on Astro...", duplicate section headings and ledes,
+UI instruction copy, "Listed skill" labels, rendered HTML comments). "Next" lines under gaps are proposals for Tejas to confirm. Lighthouse accessibility 100 on all pages.

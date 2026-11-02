@@ -1,16 +1,14 @@
 ---
-import SectionHead from "./SectionHead.astro";
 import { experience, education, person } from "../data/content";
 ---
 <section id="experience" data-chapter="Experience" aria-label="Experience">
   <div class="wrap">
-    <SectionHead eyebrow="Experience" title="What I owned, and what changed." lede="Backend, platforms and observability across network analytics, health-tech, conversation intelligence and crypto. Numbers are from my resume." />
     <ol class="tl" data-draw>
       {experience.map((e, n) => (
         <li class="reveal" style={`--n:${n}`}>
           <span class="when mono">{e.current ? "Current role" : `${e.from} – ${e.to}`}</span>
           <div class="role">
-            <h3>{e.company}{e.current && <span class="now mono">now</span>}</h3>
+            <h2>{e.company}{e.current && <span class="now mono">now</span>}</h2>
             <p class="title">{e.title}</p>
             {e.points.length > 0 && (
               <ul class="pts">
@@ -20,7 +18,7 @@ import { experience, education, person } from "../data/content";
           </div>
         </li>
       ))}
-      <li class="reveal edu" style={`--n:${experience.length}`}><span class="when mono">{education.from} – {education.to}</span><div class="role"><h3>{education.school}</h3><p class="title">{education.degree}</p></div></li>
+      <li class="reveal edu" style={`--n:${experience.length}`}><span class="when mono">{education.from} – {education.to}</span><div class="role"><h2>{education.school}</h2><p class="title">{education.degree}</p></div></li>
     </ol>
     <p class="cta-row">{person.resumeUrl && <a class="btn" href={person.resumeUrl} target="_blank" rel="noopener" data-resume>Download resume (PDF) ↓</a>} <a class="btn" href="/resume">View as a web page</a> <a class="btn" href={person.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></p>
   </div>
@@ -35,7 +33,7 @@ import { experience, education, person } from "../data/content";
   :global(.js) .tl > li::before { transform: scale(0); transition: transform .5s var(--ease) calc(var(--n, 0) * 220ms + 200ms); } :global(.tl.in) > li::before { transform: scale(1); }
   .edu::before { background: var(--border) !important; }
   .when { color: var(--muted); font-size: 13px; padding-top: 6px; }
-  h3 { font-size: 26px; display: flex; align-items: center; gap: 10px; } .now { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 2px 10px; }
+  h2 { font-size: 26px; display: flex; align-items: center; gap: 10px; } .now { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 2px 10px; }
   .title { margin-top: 4px; font-weight: 500; }
   .pts { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
   .pts li { display: grid; gap: 4px; color: var(--muted); font-size: 15px; max-width: 74ch; padding-left: 14px; border-left: 2px solid var(--border); transition: border-color var(--dur); } .pts li:hover { border-color: var(--accent); }

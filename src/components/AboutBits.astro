@@ -4,7 +4,7 @@ import { currently, interests, philosophy } from "../data/content";
 ---
 <section id="beyond" data-chapter="Now & beyond" aria-label="Currently and interests">
   <div class="wrap">
-    <SectionHead eyebrow="Currently" title="Right now, and off the clock." lede="The full versions, with toys, live on the Interests page." />
+    <SectionHead eyebrow="Currently" title="Right now, and off the clock." />
     <div class="cols">
       <dl class="card now reveal">
         {currently.map((c) => <div><dt class="mono">{c.k}</dt><dd>{c.v}</dd></div>)}

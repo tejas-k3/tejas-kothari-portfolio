@@ -1,5 +1,4 @@
 ---
-import SectionHead from "./SectionHead.astro";
 import { person } from "../data/content";
 // Snapshot is written at build time by scripts/sync-github.mjs and committed; if missing, a static fallback renders (never "0 commits").
 const mods = import.meta.glob("../data/github.generated.json", { eager: true, import: "default" }) as Record<string, any>;
@@ -22,7 +21,6 @@ const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count))
 ---
 <section id="activity" data-chapter="Activity" aria-label="GitHub activity">
   <div class="wrap">
-    <SectionHead eyebrow="Engineering activity" title="Still building." lede="Public GitHub activity from the last year, synced automatically." />
     {snap ? (
       <div class="panel card reveal" id="gh" data-fetched={snap.fetchedAt} data-user={person.handle}>
         <div class="status" role="status" aria-live="polite"><span class="dot" id="gh-dot"></span><span id="gh-status" class="mono">Snapshot</span></div>
@@ -43,7 +41,7 @@ const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count))
         ) : <p class="empty">Contribution calendar unavailable right now. See the live profile on GitHub.</p>}
         <div class="cols">
           <div>
-            <h3 class="mono">Recently active repositories</h3>
+            <h2 class="mono">Recently active repositories</h2>
             <ul class="repos">
               {snap.repos.map((r: any) => (
                 <li><a href={r.url} target="_blank" rel="noopener">{r.name}</a>{r.language && <span class="chip">{r.language}</span>}<time class="mono ago" datetime={r.pushedAt}>{r.pushedAt.slice(0, 10)}</time></li>
@@ -51,7 +49,7 @@ const maxLang = Math.max(1, ...(snap?.languages ?? []).map((l: any) => l.count))
             </ul>
           </div>
           <div>
-            <h3 class="mono">Languages across repos</h3>
+            <h2 class="mono">Languages across repos</h2>
             <ul class="langs">
               {snap.languages.slice(0, 6).map((l: any) => <li><span>{l.name}</span><i style={`--w:${(l.count / maxLang) * 100}%`}></i><span class="mono">{l.count}</span></li>)}
             </ul>

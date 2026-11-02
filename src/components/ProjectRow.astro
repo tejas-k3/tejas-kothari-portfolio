@@ -34,8 +34,8 @@ const hue: Record<string, string> = { "rupee-engine": "#4cc2ff", "system-design-
             <h3>{p.name}</h3>
             <p class="what">{p.what}</p>
             {p.proof && <ul class="proof mono">{p.proof.map((x) => <li>{x}</li>)}</ul>}
-            {evidence[p.slug] && <div class="eng-only eng"><p class="mono">Engineering view</p><ul>{evidence[p.slug].benchmarks.slice(0, 3).map((m) => <li><b>{m.delta ?? m.value}</b> {m.label}</li>)}</ul><span class="mono go">Benchmarks, methodology, tests, failure scenarios →</span></div>}
-            <div class="more"><p>{p.how}</p><p class="go mono">{p.page ? "Open case study →" : p.href ? "Visit site ↗" : p.result}</p></div>
+            {evidence[p.slug] && <div class="eng-only eng"><p class="mono">Engineering view</p><ul>{evidence[p.slug].impact.map((m) => <li><b>{m.big}</b> {m.label}</li>)}</ul><span class="mono go">Impact, decisions, gaps →</span></div>}
+            <div class="more">{p.page && <p>{p.how}</p>}<p class="go mono">{p.page ? "Open case study →" : p.href ? "Visit site ↗" : p.result}</p></div>
           </div>
         </Tag>
       );
