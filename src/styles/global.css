@@ -151,9 +151,12 @@ html[data-mode="recruiter"] .sys { display: none; }
 .ck { position: fixed; z-index: 300; pointer-events: none; font: 600 11px var(--font-mono); padding: 2px 8px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); animation: ck .9s ease-out forwards; white-space: nowrap; }
 .ck.g { color: var(--success); border-color: color-mix(in srgb, var(--success) 50%, var(--border)); } .ck.r { color: var(--danger); border-color: var(--danger); }
 @keyframes ck { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-22px); } }
-.nav a.navresume { color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 6px 12px; margin-left: 4px; }
+.nav { align-items: center; }
+.nav a { white-space: nowrap; }
+.nav a.navresume { color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 6px 14px; margin-left: 8px; line-height: 1.2; }
+.nav a.navresume::after { display: none; }
 .nav a.navresume:hover { background: var(--accent-soft); }
-@media (max-width: 860px) { .nav a.navresume { margin: 8px 0 0; text-align: center; padding: 12px; } }
+@media (max-width: 860px) { .nav { align-items: stretch; } .nav a.navresume { margin: 8px 0 0; text-align: center; padding: 12px; } }
 
 /* Comfortable touch targets for inline links */
 .crumb a, .ext, .res .links a, .jump a { display: inline-flex; align-items: center; min-height: 32px; padding-inline: 4px; }
