@@ -4,8 +4,15 @@ import { fmtDate, type Post } from "../lib/blog";
 interface Props { posts: Post[]; showSeries?: boolean }
 const { posts, showSeries = true } = Astro.props;
 ---
-{posts.length === 0 ? <p class="empty mono">Nothing here yet.</p> : (
-  <ul class="list">
+{posts.length === 0 ? <p class="empty mono">Nothing here yet.</p> : (<>
+  {posts.length > 1 && (
+    <div class="sort mono" role="group" aria-label="Sort posts by date">
+      <span>Sort by date</span>
+      <button type="button" class="chip" data-sort="desc" aria-pressed="true">Newest first</button>
+      <button type="button" class="chip" data-sort="asc" aria-pressed="false">Oldest first</button>
+    </div>
+  )}
+  <ul class="list" data-sortable>
     {posts.map((p) => (
       <li class="reveal">
         <a class="card post" href={`/blog/${p.slug}`}>
@@ -22,8 +29,26 @@ const { posts, showSeries = true } = Astro.props;
       </li>
     ))}
   </ul>
-)}
+</>)}
+<script>
+  document.querySelectorAll<HTMLElement>(".sort").forEach((bar) => {
+    const list = bar.nextElementSibling as HTMLElement | null;
+    if (!list) return;
+    const original = Array.from(list.children);
+    bar.querySelectorAll<HTMLButtonElement>("button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const asc = btn.dataset.sort === "asc";
+        bar.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        list.replaceChildren(...(asc ? [...original].reverse() : original));
+      });
+    });
+  });
+</script>
 <style>
+  .sort { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .sort .chip { padding: 6px 12px; font-size: 12px; cursor: pointer; letter-spacing: 0; text-transform: none; }
+  .sort .chip:hover { border-color: var(--accent); color: var(--text); }
+  .sort .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .list { list-style: none; padding: 0; display: grid; gap: 14px; }
   .post { display: grid; gap: 8px; text-decoration: none; padding: clamp(18px, 2.6vw, 28px); }
   .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }

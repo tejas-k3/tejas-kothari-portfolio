@@ -9,8 +9,6 @@ draft: false
 
 *Originally published on the [Observe.AI engineering blog](https://www.observe.ai/blog/logs-reimagined-elevating-observability-debugging-in-asynchronous-systems).*
 
-![Logs Reimagined: Elevating Observability & Debugging in Asynchronous Systems](/blog/logs-reimagined-cover.jpg)
-
 In Python's asynchronous systems, debugging can feel like navigating uncharted waters. Asynchronous Python applications introduce unique challenges to logging. Traditional logging modules like `logging` work well for sequential applications, offering traceback and context. However, asynchronous systems and third-party libraries such as pydantic exposed several shortcomings:
 
 - **Loss of context in asynchronous workflows:** Standard logs didn't provide continuity across asynchronous calls. Developers couldn't tie logs back to user interactions, API calls, or related workflows, complicating debugging for multi-step operations.
