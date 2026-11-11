@@ -10,6 +10,10 @@ draft: false
 
 ## Things I want to do next! (2027 no pressure)
 
+* **MORE TRAVELLING**, world is too beautiful to not visit
+* 1000+ kms bike ride across states
+* Swimming
+* Marathon & Half Run!
 * Learn about watch dimensioning and modelling
 * Buy and dissect watches with toolkit get comfy
 * Write poems, short stories, perhaps a novel
@@ -17,7 +21,7 @@ draft: false
 * Digging deeper into brain related articles, philosophical books
 * More reading 
 * More financial awareness and educating
-* More knowledge of Indian places, history, travels
+* MORE In person knowledge of Indian places, historical context
 * Try to sing better
 * Make my own watch
 * Make my own light lamp
