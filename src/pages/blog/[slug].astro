@@ -1,0 +1,96 @@
+---
+import Base from "../../layouts/Base.astro";
+import Lock from "../../components/Lock.astro";
+import "../../styles/blog.css";
+import { fmtDate, getPosts, renderPost, seriesPosts } from "../../lib/blog";
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post, posts } }));
+}
+const { post, posts } = Astro.props;
+const Content = post.locked ? null : (await renderPost(post)).Content;
+const series = post.seriesSlug ? seriesPosts(posts, post.seriesSlug) : [];
+const at = series.findIndex((p) => p.slug === post.slug);
+const prev = at > 0 ? series[at - 1] : undefined;
+const next = at >= 0 && at < series.length - 1 ? series[at + 1] : undefined;
+const hidden = post.locked && post.secretTitle;
+---
+<Base title={`${post.title} | Tejas Kothari`} description={post.summary || "A post on Tejas Kothari's blog."} path={`/blog/${post.slug}`} type={post.locked ? "website" : "article"}>
+  {post.locked && <meta slot="head" name="robots" content="noindex" />}
+  <article class="wrap art">
+    <p class="crumbs mono"><a href="/blog">Blog</a> / <a href={`/blog/category/${post.categorySlug}`}>{post.category}</a></p>
+    <h1>{hidden && <Lock size={32} />} {post.title}</h1>
+    <p class="lede" data-summary hidden={!post.summary}>{post.summary}</p>
+    <p class="meta mono">
+      <time datetime={post.date.toISOString().slice(0, 10)}>{fmtDate(post.date)}</time><span>{post.mins} min read</span>
+      {post.locked && <span class="lk"><Lock size={12} /> private</span>}
+      <button type="button" class="relock mono" data-relock hidden>lock again</button>
+    </p>
+
+    {series.length > 1 && (
+      <aside class="series card" aria-label="Series">
+        <p class="eyebrow">Part {post.part ?? at + 1} of {series.length}: <a href={`/blog/series/${post.seriesSlug}`}>{post.series}</a></p>
+        <ol>
+          {series.map((p) => <li aria-current={p.slug === post.slug ? "true" : undefined}>{p.slug === post.slug ? p.title : <a href={`/blog/${p.slug}`}>{p.locked && p.secretTitle ? "Private entry" : p.title}</a>}{p.locked && <> <Lock size={11} /></>}</li>)}
+        </ol>
+      </aside>
+    )}
+
+    {post.locked ? (
+      <>
+        <section class="lock card" data-lock>
+          <p class="eyebrow"><Lock size={13} /> Private</p>
+          <p class="why">This one is locked. Enter the password to read it.</p>
+          <form>
+            <label for="pw" class="sr">Password</label>
+            <input id="pw" type="password" autocomplete="current-password" placeholder="Password" required />
+            <button class="btn primary" type="submit">Unlock</button>
+          </form>
+          <p class="msg mono" data-msg role="status" aria-live="polite"></p>
+          <script type="application/json" id="sealed-data" set:html={JSON.stringify(post.sealed)} />
+        </section>
+        <div class="prose" data-body hidden></div>
+      </>
+    ) : (
+      <div class="prose">{Content && <Content />}</div>
+    )}
+
+    {(prev || next) && (
+      <nav class="pn" aria-label="Series navigation">
+        {prev ? <a class="card" href={`/blog/${prev.slug}`}><span class="mono">← Previous</span>{prev.locked && prev.secretTitle ? "Private entry" : prev.title}</a> : <span />}
+        {next ? <a class="card r" href={`/blog/${next.slug}`}><span class="mono">Next →</span>{next.locked && next.secretTitle ? "Private entry" : next.title}</a> : <span />}
+      </nav>
+    )}
+  </article>
+  {post.locked && <script>import "../../scripts/blog-unlock";</script>}
+</Base>
+<style>
+  .art { padding-top: clamp(32px, 6vw, 72px); padding-bottom: 72px; }
+  .crumbs { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .crumbs a { color: var(--accent); text-decoration: none; }
+  h1 { font-size: clamp(34px, 5.6vw, 64px); font-weight: 800; letter-spacing: -.03em; line-height: 1.04; margin: 14px 0 12px; max-width: 20ch; }
+  .lede { color: var(--muted); font-size: clamp(17px, 2vw, 21px); max-width: 56ch; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 14px 0 32px; }
+  .lk { color: var(--accent); }
+  .relock { background: none; border: 0; color: var(--muted); cursor: pointer; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; text-decoration: underline; padding: 0; }
+  .series { max-width: 68ch; margin-bottom: 32px; padding: 18px 22px; }
+  .series .eyebrow { display: block; line-height: 1.4; letter-spacing: .08em; }
+  .series .eyebrow a { color: inherit; }
+  .series ol { padding-left: 1.3em; margin-top: 12px; display: grid; gap: 4px; font-size: 15px; }
+  .series a { color: var(--text); text-underline-offset: 3px; }
+  .series [aria-current] { color: var(--accent); font-weight: 600; }
+  .lock { max-width: 460px; display: grid; gap: 12px; }
+  .lock[hidden] { display: none; }
+  .lock .why { color: var(--muted); }
+  .lock form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .lock input { flex: 1 1 200px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: 16px var(--font-body); }
+  .lock input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .msg { min-height: 1.2em; font-size: 13px; color: var(--danger); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .pn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; max-width: 68ch; }
+  .pn .card { display: grid; gap: 6px; text-decoration: none; padding: 16px 18px; font-weight: 600; }
+  .pn .card span { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+  .pn .r { text-align: right; }
+  .pn .card:hover { color: var(--accent); }
+  @media (max-width: 560px) { .pn { grid-template-columns: 1fr; } .pn .r { text-align: left; } }
+</style>

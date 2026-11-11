@@ -21,6 +21,7 @@ const cmds: Cmd[] = [
   { label: "GitHub activity", hint: "page", run: go("/activity") },
   { label: "Tech stack", hint: "page", run: go("/experience#stack") },
   { label: "Interests", hint: "page", run: go("/interests") },
+  { label: "Blog", hint: "page", run: go("/blog") },
   { label: "About", hint: "page", run: go("/about") },
   { label: "Contact", hint: "page", run: go("/#contact") },
   { label: "Rupee Engine", hint: "case study", run: go("/projects/rupee-engine") },

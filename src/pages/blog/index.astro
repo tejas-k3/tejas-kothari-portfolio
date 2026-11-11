@@ -1,0 +1,35 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageTitle from "../../components/PageTitle.astro";
+import BlogList from "../../components/BlogList.astro";
+import BlogNav from "../../components/BlogNav.astro";
+import { allSeries, getPosts } from "../../lib/blog";
+const posts = await getPosts();
+const series = allSeries(posts);
+---
+<Base title="Blog | Tejas Kothari" description="Random writing by Tejas Kothari: travel, tech and whatever else was worth writing down.">
+  <link slot="head" rel="alternate" type="application/rss+xml" title="Tejas Kothari: blog" href="/blog/rss.xml" />
+  <PageTitle eyebrow="Blog" title="Random writings." lede="Travel, tech and whatever else was worth writing down." />
+  <div class="wrap">
+    <BlogNav posts={posts} />
+    {series.length > 0 && (
+      <section aria-label="Series">
+        <p class="eyebrow">Series</p>
+        <div class="sers">
+          {series.map((s) => <a class="card" href={`/blog/series/${s.slug}`}><h3>{s.name}</h3><span class="mono">{s.count} {s.count === 1 ? "part" : "parts"}</span></a>)}
+        </div>
+      </section>
+    )}
+    <section aria-label="All posts"><p class="eyebrow">Latest</p><BlogList posts={posts} /></section>
+  </div>
+</Base>
+<style>
+  section { padding-top: clamp(24px, 4vw, 40px); }
+  section > .eyebrow { margin-bottom: 16px; }
+  .sers { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .sers .card { text-decoration: none; display: grid; gap: 6px; padding: 18px 20px; }
+  .sers h3 { font-size: 18px; }
+  .sers span { font-size: 12px; color: var(--muted); }
+  .sers .card:hover h3 { color: var(--accent); }
+  .wrap { padding-bottom: 64px; }
+</style>

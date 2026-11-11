@@ -1,0 +1,21 @@
+---
+import Base from "../../../layouts/Base.astro";
+import PageTitle from "../../../components/PageTitle.astro";
+import BlogList from "../../../components/BlogList.astro";
+import BlogNav from "../../../components/BlogNav.astro";
+import { categories, getPosts } from "../../../lib/blog";
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return categories(posts).map((c) => ({ params: { cat: c.slug }, props: { name: c.name, posts, list: posts.filter((p) => p.categorySlug === c.slug) } }));
+}
+const { cat } = Astro.params;
+const { name, posts, list } = Astro.props;
+---
+<Base title={`${name} | Blog | Tejas Kothari`} description={`Blog posts filed under ${name}.`}>
+  <PageTitle eyebrow="Blog / category" title={name} />
+  <div class="wrap">
+    <BlogNav posts={posts} active={cat} />
+    <section><BlogList posts={list} /></section>
+  </div>
+</Base>
+<style> section { padding: 24px 0 64px; } </style>

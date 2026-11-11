@@ -1,0 +1,17 @@
+---
+import { categories, type Post } from "../lib/blog";
+interface Props { posts: Post[]; active?: string }
+const { posts, active } = Astro.props;
+const cats = categories(posts);
+---
+<nav class="chips" aria-label="Blog categories">
+  <a class="chip" href="/blog" aria-current={!active ? "page" : undefined}>All <b>{posts.length}</b></a>
+  {cats.map((c) => <a class="chip" href={`/blog/category/${c.slug}`} aria-current={active === c.slug ? "page" : undefined}>{c.name} <b>{c.count}</b></a>)}
+</nav>
+<style>
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 8px; }
+  .chip { text-decoration: none; padding: 7px 14px; font-size: 13px; }
+  .chip b { font-weight: 500; opacity: .6; margin-left: 4px; }
+  .chip:hover { border-color: var(--accent); color: var(--text); }
+  .chip[aria-current="page"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+</style>

@@ -32,3 +32,6 @@ dist-ssr
 *.sw?
 
 .astro/
+
+# Plaintext of locked blog posts (sealed copies live in src/content/sealed). NEVER commit this.
+private/

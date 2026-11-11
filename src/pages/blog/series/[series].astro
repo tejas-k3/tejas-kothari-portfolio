@@ -1,0 +1,19 @@
+---
+import Base from "../../../layouts/Base.astro";
+import PageTitle from "../../../components/PageTitle.astro";
+import BlogList from "../../../components/BlogList.astro";
+import { allSeries, getPosts, seriesPosts } from "../../../lib/blog";
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return allSeries(posts).map((s) => ({ params: { series: s.slug }, props: { name: s.name, list: seriesPosts(posts, s.slug) } }));
+}
+const { name, list } = Astro.props;
+---
+<Base title={`${name} | Blog | Tejas Kothari`} description={`All parts of the series "${name}".`}>
+  <PageTitle eyebrow="Blog / series" title={name} lede={`${list.length} ${list.length === 1 ? "part" : "parts"}, in reading order.`} />
+  <div class="wrap">
+    <section><BlogList posts={list} showSeries={false} /></section>
+    <p class="back"><a href="/blog">← All posts</a></p>
+  </div>
+</Base>
+<style> section { padding: 28px 0 24px; } .back { padding-bottom: 64px; } .back a { color: var(--accent); } </style>

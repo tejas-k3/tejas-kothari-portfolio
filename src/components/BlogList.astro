@@ -1,0 +1,36 @@
+---
+import Lock from "./Lock.astro";
+import { fmtDate, type Post } from "../lib/blog";
+interface Props { posts: Post[]; showSeries?: boolean }
+const { posts, showSeries = true } = Astro.props;
+---
+{posts.length === 0 ? <p class="empty mono">Nothing here yet.</p> : (
+  <ul class="list">
+    {posts.map((p) => (
+      <li class="reveal">
+        <a class="card post" href={`/blog/${p.slug}`}>
+          <span class="meta mono">
+            <time datetime={p.date.toISOString().slice(0, 10)}>{fmtDate(p.date)}</time>
+            <span>{p.category}</span>
+            <span>{p.mins} min</span>
+            {p.locked && <span class="lk"><Lock size={12} /> private</span>}
+          </span>
+          <h2>{p.locked && p.secretTitle ? <><Lock size={20} /> {p.title}</> : p.title}</h2>
+          {p.summary && <p class="sum">{p.summary}</p>}
+          {showSeries && p.series && <span class="ser mono">{p.series}{p.part ? ` · part ${p.part}` : ""}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+)}
+<style>
+  .list { list-style: none; padding: 0; display: grid; gap: 14px; }
+  .post { display: grid; gap: 8px; text-decoration: none; padding: clamp(18px, 2.6vw, 28px); }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .lk { color: var(--accent); }
+  h2 { font-size: clamp(20px, 2.6vw, 28px); line-height: 1.15; letter-spacing: -.02em; }
+  .post:hover h2 { color: var(--accent); }
+  .sum { color: var(--muted); max-width: 62ch; }
+  .ser { font-size: 12px; color: var(--accent); }
+  .empty { color: var(--muted); padding: 24px 0; }
+</style>
