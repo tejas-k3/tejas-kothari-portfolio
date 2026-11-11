@@ -3,8 +3,8 @@ title: "Partial goals of 2027"
 date: 2026-11-11
 category: Learnings
 tags: []
-summary: ""        # one line; shown on cards and as the subtitle
-draft: true         # set to false when it is ready to publish
+summary: "A few things I want to get into in 2027, no pressure."
+draft: false
 ---
 
 
