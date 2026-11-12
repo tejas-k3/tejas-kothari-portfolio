@@ -452,7 +452,8 @@ async function refreshList() {
           } catch (err) { lsay((err as Error).message); delBtn.disabled = false; delBtn.textContent = "Delete"; }
         };
       });
-      acts.append(editBtn, delBtn, historyBtn(`Delete + purge history`, r.path, "remove"), historyBtn("Scrub old versions", r.path, "latest"));
+      // Locked posts only ever store ciphertext, so older versions leak nothing: history rewrites are for public posts.
+      acts.append(editBtn, delBtn, ...(r.kind === "public" ? [historyBtn("Delete + purge history", r.path, "remove"), historyBtn("Scrub old versions", r.path, "latest")] : []));
       li.append(top, acts);
       return li;
     }));
@@ -473,7 +474,9 @@ const purgeHolder = $("[data-purge-act]");
 purgeForm.addEventListener("input", () => {
   const raw = String(new FormData(purgeForm).get("path") ?? "").trim();
   const path = raw.includes("/") || !raw ? raw : `src/content/blog/${raw}.md`;
-  purgeHolder.replaceChildren(...(path ? [historyBtn("Purge this path from history", path, "remove", () => {})] : []));
+  const sealed = /^src\/content\/sealed\/|\.json$/.test(path);
+  purgeHolder.replaceChildren(...(path && !sealed ? [historyBtn("Purge this path from history", path, "remove", () => {})] : []));
+  if (sealed) lsay("Locked posts are stored encrypted, so there's nothing to purge from their history.");
 });
 purgeForm.addEventListener("submit", (e) => e.preventDefault());
 
