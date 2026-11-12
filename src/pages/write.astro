@@ -37,7 +37,19 @@ const today = new Date().toISOString().slice(0, 10);
         <span class="mono who" data-who></span>
         <button type="button" class="linkish" data-lock>Lock editor</button>
       </div>
+      <div class="tabs" role="tablist" aria-label="Writing desk">
+        <button type="button" class="chip" role="tab" data-tab="write" aria-selected="true">Write</button>
+        <button type="button" class="chip" role="tab" data-tab="manage" aria-selected="false">Manage posts</button>
+      </div>
 
+      <section data-pane="manage" hidden>
+        <p class="why">Everything on <code>tejas-v3</code>. Editing or deleting commits straight to the branch. Deleting a public post removes it from the site but not from git history.</p>
+        <p class="msg mono" data-lmsg role="status" aria-live="polite"></p>
+        <ul class="plist" data-list></ul>
+      </section>
+
+      <div data-pane="write">
+      <p class="editing card" data-editing hidden><span>Editing <b data-eslug></b></span><button type="button" class="linkish" data-cancel>Cancel</button></p>
       <form class="ed" data-form autocomplete="off">
         <div class="grid2">
           <label>Title<input name="title" required /></label>
@@ -69,6 +81,7 @@ const today = new Date().toISOString().slice(0, 10);
           <span class="msg mono" data-msg role="status" aria-live="polite"></span>
         </div>
       </form>
+      </div>
     </section>
   </main>
   <script>import "../scripts/write";</script>
@@ -98,5 +111,19 @@ const today = new Date().toISOString().slice(0, 10);
   .pv { border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; min-height: 200px; overflow: auto; }
   .pv .prose { font-size: 16px; }
   .act { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tabs .chip { cursor: pointer; padding: 7px 14px; font-size: 13px; }
+  .tabs .chip[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .editing { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 16px; font-size: 14px; }
+  .plist { list-style: none; padding: 0; display: grid; gap: 10px; margin-top: 12px; }
+  .plist li { display: grid; gap: 8px; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; }
+  .plist .top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; justify-content: space-between; }
+  .plist .t { font-weight: 600; }
+  .plist .m { font: 12px var(--font-mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .plist .badge { color: var(--accent); }
+  .plist .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .plist .acts .btn { min-height: 34px; padding: 0 14px; font-size: 13px; }
+  .plist .acts input { max-width: 240px; min-height: 34px; font-size: 14px; }
+  .plist .danger { color: var(--danger); border-color: var(--danger); }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 </style>
