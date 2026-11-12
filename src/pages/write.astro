@@ -47,7 +47,7 @@ const today = new Date().toISOString().slice(0, 10);
         <p class="msg mono" data-lmsg role="status" aria-live="polite"></p>
         <ul class="plist" data-list></ul>
         <form class="purge" data-purge autocomplete="off">
-          <p class="why"><b>Purge a path from history</b> (for posts already deleted, e.g. test posts). Enter a slug for a public post, or a full path such as <code>src/content/sealed/my-post.json</code>.</p>
+          <p class="why"><b>Purge a path from history</b> (for posts already deleted, e.g. test posts). Public posts only (locked posts are stored encrypted, so older versions reveal nothing). Enter a slug, or a full path such as <code>src/content/blog/my-post.md</code>.</p>
           <label class="sr" for="ppath">Path or slug</label>
           <input id="ppath" name="path" placeholder="slug or full path" />
           <div class="acts" data-purge-act></div>
