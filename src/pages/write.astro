@@ -46,6 +46,12 @@ const today = new Date().toISOString().slice(0, 10);
         <p class="why">Everything on <code>tejas-v3</code>. Editing or deleting commits straight to the branch. Deleting a public post removes it from the site but not from git history.</p>
         <p class="msg mono" data-lmsg role="status" aria-live="polite"></p>
         <ul class="plist" data-list></ul>
+        <form class="purge" data-purge autocomplete="off">
+          <p class="why"><b>Purge a path from history</b> (for posts already deleted, e.g. test posts). Enter a slug for a public post, or a full path such as <code>src/content/sealed/my-post.json</code>.</p>
+          <label class="sr" for="ppath">Path or slug</label>
+          <input id="ppath" name="path" placeholder="slug or full path" />
+          <div class="acts" data-purge-act></div>
+        </form>
       </section>
 
       <div data-pane="write">
@@ -125,5 +131,9 @@ const today = new Date().toISOString().slice(0, 10);
   .plist .acts .btn { min-height: 34px; padding: 0 14px; font-size: 13px; }
   .plist .acts input { max-width: 240px; min-height: 34px; font-size: 14px; }
   .plist .danger { color: var(--danger); border-color: var(--danger); }
+  .purge { display: grid; gap: 10px; margin-top: 28px; max-width: 560px; }
+  .purge .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .purge .btn { min-height: 34px; padding: 0 14px; font-size: 13px; }
+  .purge .danger { color: var(--danger); border-color: var(--danger); }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 </style>

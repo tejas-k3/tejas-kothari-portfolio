@@ -7,6 +7,7 @@
 // Locked posts mirror scripts/seal.mjs exactly (render -> gzip -> AES-GCM with the shared blog password) so the plaintext
 // never leaves the browser; only src/content/sealed/<slug>.json is committed.
 import { marked } from "marked";
+import { plan as planRewrite, run as runRewrite, type Api, type Mode, type Plan } from "../lib/rewrite";
 
 const root = document.querySelector<HTMLElement>("[data-write]")!;
 const REPO = root.dataset.repo!;
@@ -92,6 +93,12 @@ async function readFile(path: string) {
   const j = await res.json();
   return { sha: j.sha as string, text: new TextDecoder().decode(fromB64(String(j.content).replace(/\n/g, ""))) };
 }
+
+const gitApi: Api = {
+  async get(path) { const r = await gh(path); if (r.status === 404) return null; if (!r.ok) await ghFail(r, path); return r.json(); },
+  async post(path, body) { const r = await gh(path, { method: "POST", body: JSON.stringify(body) }); if (!r.ok) await ghFail(r, path); return r.json(); },
+  async patch(path, body) { const r = await gh(path, { method: "PATCH", body: JSON.stringify(body) }); if (!r.ok) await ghFail(r, path); return r.json(); },
+};
 
 /* ---------- gate ---------- */
 const hasVault = () => { try { return !!localStorage.getItem(VAULT); } catch { return false; } };
@@ -378,6 +385,36 @@ async function openForEdit(r: Row, pw?: string) {
   } catch (err) { lsay((err as Error).message); }
 }
 
+// History rewrites: plan first (read-only), show what it will touch, and only run on a second click.
+function historyBtn(label: string, path: string, mode: Mode, after: () => void = () => refreshList()) {
+  let planned: Plan | null = null, timer: ReturnType<typeof setTimeout> | undefined;
+  const b = button(label, "btn danger", async () => {
+    if (!planned) {
+      b.disabled = true; lsay("Planning…");
+      try {
+        planned = await planRewrite(gitApi, BRANCH, path, mode);
+        const n = planned.order.length;
+        lsay(mode === "remove"
+          ? `${path} will be erased from every commit. ${n} commits get new hashes and ${BRANCH} is force-pushed. Click "${label}" again within 10s to confirm.`
+          : `Older versions of ${path} will be replaced by the current one. ${n} commits get new hashes and ${BRANCH} is force-pushed. Click again within 10s to confirm.`);
+        b.textContent = "Confirm rewrite";
+        timer = setTimeout(() => { planned = null; b.textContent = label; lsay(""); }, 10000);
+      } catch (err) { lsay((err as Error).message); }
+      b.disabled = false;
+      return;
+    }
+    clearTimeout(timer);
+    const pl = planned; planned = null; b.disabled = true;
+    try {
+      const res = await runRewrite(gitApi, pl, (d, t) => lsay(`Rewriting history… ${d}/${t}`));
+      await after();
+      lsay(res.changed ? `Done. ${BRANCH} now points at ${res.tip.slice(0, 7)}. The site redeploys; any other clone needs "git fetch && git reset --hard origin/${BRANCH}".` : "Nothing needed rewriting.", true);
+    } catch (err) { lsay((err as Error).message); b.textContent = label; }
+    b.disabled = false;
+  });
+  return b;
+}
+
 async function refreshList() {
   const ul = $("[data-list]");
   lsay("Loading posts…");
@@ -415,7 +452,7 @@ async function refreshList() {
           } catch (err) { lsay((err as Error).message); delBtn.disabled = false; delBtn.textContent = "Delete"; }
         };
       });
-      acts.append(editBtn, delBtn);
+      acts.append(editBtn, delBtn, historyBtn(`Delete + purge history`, r.path, "remove"), historyBtn("Scrub old versions", r.path, "latest"));
       li.append(top, acts);
       return li;
     }));
@@ -430,6 +467,15 @@ function tab(name: "write" | "manage") {
   if (name === "manage") refreshList();
 }
 root.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach((b) => b.addEventListener("click", () => tab(b.dataset.tab as "write" | "manage")));
+
+const purgeForm = $<HTMLFormElement>("[data-purge]");
+const purgeHolder = $("[data-purge-act]");
+purgeForm.addEventListener("input", () => {
+  const raw = String(new FormData(purgeForm).get("path") ?? "").trim();
+  const path = raw.includes("/") || !raw ? raw : `src/content/blog/${raw}.md`;
+  purgeHolder.replaceChildren(...(path ? [historyBtn("Purge this path from history", path, "remove", () => {})] : []));
+});
+purgeForm.addEventListener("submit", (e) => e.preventDefault());
 
 restoreDraft();
 field<HTMLInputElement>("date").value = localToday();
