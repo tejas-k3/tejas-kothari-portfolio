@@ -2,6 +2,8 @@
 title: "I made a blog with no backend, and some posts are locked"
 date: 2026-11-22
 category: tech
+series: "Backendless blog"
+part: 1
 tags: [astro, encryption, static-sites]
 summary: "Publishing is just a git push. Some posts stay private even though the repo is public. Here's how it works."
 draft: false
@@ -117,3 +119,5 @@ Nope. Git blogs are everywhere, and there are tools that password-protect static
 - Smarter handling of photos, since they make locked posts big.
 
 If you want to poke at it, it's all in my portfolio repo: [github.com/tejas-k3/tejas-kothari-portfolio](https://github.com/tejas-k3/tejas-kothari-portfolio). This feature was built with AI-assisted development.
+
+Next up, part 2: how I write and publish posts from the site itself, without a local copy of the repo.
